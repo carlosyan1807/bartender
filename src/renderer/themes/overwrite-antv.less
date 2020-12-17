@@ -1,0 +1,30 @@
+.navmenu-main {
+  .ant-menu-inline,
+  .ant-menu-vertical,
+  .ant-menu-vertical-left {
+    border-right: none;
+  }
+
+  .ant-menu-inline-collapsed > .ant-menu-item,
+  .ant-menu-inline-collapsed > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-item,
+  .ant-menu-inline-collapsed
+    > .ant-menu-item-group
+    > .ant-menu-item-group-list
+    > .ant-menu-submenu
+    > .ant-menu-submenu-title,
+  .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+    padding: 0 !important;
+    text-align: center;
+  }
+  .ant-menu-item.ant-menu-item-selected::before {
+    position: absolute;
+    content: '';
+    width: @menu-item-active-border-width;
+    height: 48px;
+    display: block;
+    background-color: @primary-color;
+    transition-property: background-color;
+    transition-duration: 0ms;
+    transition-delay: 0.1s;
+  }
+}
