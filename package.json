@@ -20,8 +20,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "ant-design-vue": "^2.0.0-rc.4",
+    "ant-design-vue": "^2.0.0-rc.5",
     "electron-updater": "^4.3.5",
+    "splitpanes": "^3.0.4",
     "vue": "^3.0.4",
     "vue-router": "^4.0.1",
     "vuex": "^4.0.0-rc.2"
@@ -35,6 +36,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-typescript": "^6.1.0",
+    "@types/splitpanes": "^2.2.0",
     "@vue/babel-plugin-jsx": "^1.0.0-rc.5",
     "@vue/compiler-sfc": "^3.0.4",
     "builtin-modules": "^3.1.0",

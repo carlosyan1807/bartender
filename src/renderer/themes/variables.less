@@ -4,14 +4,20 @@
 @text-color: #cccccc;
 @text-color-secondary: #7f848e;
 
+@heading-color: @text-color;
+
+@border-color-base: lighten(@component-background, 4%);
 @border-color-split: lighten(@component-background, 8%);
+
+@item-hover-bg: @component-background;
+
+@shadow-color: darken(@body-background, 8%);
 
 @layout-body-background: @body-background;
 @layout-header-height: 30px;
 @layout-header-padding: none;
-@layout-header-background: @body-background;
+@layout-header-background: @component-background;
 @layout-sider-background: @component-background;
-
 
 @menu-collapsed-width: 48px;
 @menu-inline-toplevel-item-height: 48px;
@@ -23,6 +29,19 @@
 @menu-item-active-bg: @component-background;
 @menu-item-active-border-width: 2px;
 @menu-icon-size-lg: 24px;
+
+@collapse-header-padding: 0;
+@collapse-header-padding-extra: 20px;
+@collapse-header-bg: @component-background;
+@collapse-content-bg: @body-background;
+@collapse-content-padding: 0;
+
+@tree-directory-selected-color: @text-color;
+@tree-directory-selected-bg: lighten(@component-background, 4%);
+
+@tabs-highlight-color: @text-color;
+@tabs-hover-color: @text-color-secondary;
+@tabs-active-color: @text-color;
 // @text-color: rgba(215, 218, 224, 0.4);
 // @background-color: #21252b;
 // @font-color: rgba(215, 218, 224, 0.4);

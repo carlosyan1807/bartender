@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import './dialog'
 import { Logger } from './logger'
@@ -16,9 +16,11 @@ async function main() {
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
+    height: 768,
+    width: 1024,
     frame: false,
+    minHeight: 600,
+    minWidth: 800,
     show: false,
     webPreferences: {
       preload: join(__static, 'preload.js'),
@@ -32,13 +34,35 @@ function createWindow() {
   mainWindow.on('ready-to-show', function () {
     mainWindow.show()
   })
+
+  ipcMain.on('renderer2main', (event, func) => {
+    console.log(`ipcMain: renderer2main - ${func}`)
+    switch (func) {
+      case 'window-min':
+        mainWindow.minimize()
+        break
+      case 'window-max':
+        if (mainWindow.isMaximized()) {
+          mainWindow.unmaximize()
+        } else {
+          mainWindow.maximize()
+        }
+        break
+      case 'reload':
+        mainWindow.reload()
+        break
+      case 'app-exit':
+        mainWindow.close()
+        break
+      default:
+    }
+  })
 }
 
 // ensure app start as single instance
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 }
-console.log(app.getVersion())
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
