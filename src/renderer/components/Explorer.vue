@@ -1,8 +1,8 @@
 <template>
   <a-layout class="explorer">
-    <a-header class="explorer-header">
+    <a-layout-header class="explorer-header">
       <span>资源管理器</span>
-    </a-header>
+    </a-layout-header>
     <a-collapse class="explorer-collapse" v-model:activeKey="activeKey" :bordered="false">
       <a-collapse-panel key="1" header="收藏夹">
         <a-directory-tree
@@ -22,9 +22,9 @@
           </template>
           <template #title="item">
             <span>
-              <icon-font class="tree-icon-folder" type="icon-folder" v-if="item.children?.length > 0 && !item.expanded" />
-              <icon-font class="tree-icon-folder" type="icon-folder-open" v-else-if="item.children?.length > 0 && item.expanded" />
-              <icon-font class="tree-icon-redis" type="icon-redis" v-else/>
+              <iconfont class="tree-icon-folder" name="folder" v-if="item.children?.length > 0 && !item.expanded" />
+              <iconfont class="tree-icon-folder" name="folder-open" v-else-if="item.children?.length > 0 && item.expanded" />
+              <iconfont class="tree-icon-redis" name="redis" v-else/>
               {{ item.title }}
             </span>
           </template>

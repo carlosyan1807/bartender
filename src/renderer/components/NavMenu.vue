@@ -3,7 +3,7 @@
     <div class="navmenu-main">
       <a-menu v-model:selectedKeys="state.selectedMenu" mode="inline">
         <a-menu-item v-for="item in navMenuItems" :key="item.name">
-          <icon-font :type="item.icon" />
+          <iconfont :name="item.icon" />
           <span>{{ item.label }}</span>
         </a-menu-item>
       </a-menu>
@@ -11,7 +11,7 @@
     <div class="navmenu-extra">
       <a-dropdown :align="{offset: [56, 40]}" :trigger="['click']" placement="topLeft">
         <a-button class="navmenu-extra-button" type="link" ghost @click="e => e.preventDefault()">
-          <icon-font type="icon-setting" />
+          <iconfont name="setting" />
         </a-button>
         <template #overlay>
           <a-menu>
@@ -39,8 +39,8 @@ export default defineComponent({
   name: 'NavMenu',
   setup(props) {
     const navMenuItems = [
-      { name: 'explorer', label: '资源管理器', icon: 'icon-sever' },
-      { name: 'reserved', label: '预留项', icon: 'icon-wrench' },
+      { name: 'explorer', label: '资源管理器', icon: 'server' },
+      { name: 'reserved', label: '预留项', icon: 'wrench' },
     ]
     const state = reactive({
       selectedMenu: ['explorer'],

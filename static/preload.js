@@ -19,8 +19,8 @@ const api = {
     },
     showSaveDialog(...options) {
       return ipcRenderer.invoke('dialog:showSaveDialog', ...options)
-    }
-  }
+    },
+  },
 }
 
 try {

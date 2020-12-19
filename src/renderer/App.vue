@@ -13,11 +13,16 @@
               <a-tab-pane key="quick-connect">
                 <template #tab>
                   <span>
-                  <icon-font type="icon-thunderbolt"/>
-                  快速连接
+                    <iconfont name="thunderbolt" />
+                    快速连接
                   </span>
                 </template>
-                aaaaaa</a-tab-pane>
+                <iconfont style="color: red" name="win-minimize" />
+                <iconfont style="color: red" name="win-maximize" />
+                <iconfont style="color: red" name="win-restore" />
+                <iconfont style="color: red" name="win-close" />
+                123
+              </a-tab-pane>
               <a-tab-pane key="2" tab="Tab 2" force-render> Content of Tab Pane 2 </a-tab-pane>
               <a-tab-pane key="3" tab="Tab 3"> Content of Tab Pane 3 </a-tab-pane>
             </a-tabs>
@@ -28,7 +33,7 @@
           
         </a-layout-content> -->
         <a-button @click="handleReload">
-          <template #icon><icon-font type="icon-reload" /></template>
+          <template #icon><iconfont name="reload" /></template>
           重载
         </a-button>
       </a-layout>

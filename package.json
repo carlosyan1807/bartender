@@ -47,7 +47,7 @@
     "electron-builder": "^22.9.1",
     "esbuild": "^0.6.33",
     "fs-extra": "^9.0.1",
-    "less": "^3.13.0",
+    "less": "^3.13.1",
     "less-loader": "^7.1.0",
     "rollup": "^2.35.1",
     "tslib": "^1.14.1",
