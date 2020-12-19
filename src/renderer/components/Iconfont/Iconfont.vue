@@ -1,5 +1,5 @@
 <template>
-  <svg class="anticon icon" aria-hidden="true">
+  <svg class="anticon iconfont" aria-hidden="true">
     <use :xlink:href="state.iconName" />
   </svg>
 </template>
@@ -24,7 +24,7 @@ export default defineComponent({
 </script>
 
 <style>
-.icon {
+.iconfont {
   width: 1em;
   height: 1em;
   vertical-align: -0.2em;

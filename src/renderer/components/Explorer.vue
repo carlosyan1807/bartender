@@ -1,17 +1,15 @@
 <template>
-  <a-layout class="explorer">
+  <a-layout class="app-explorer">
     <a-layout-header class="explorer-header">
       <span>资源管理器</span>
     </a-layout-header>
-    <a-collapse class="explorer-collapse" v-model:activeKey="activeKey" :bordered="false">
+    <a-collapse class="explorer-collapse" v-model:activeKey="state.activeKey" :bordered="false">
       <a-collapse-panel key="1" header="收藏夹">
         <a-directory-tree
           :tree-data="treeNodes"
           v-model:expandedKeys="state.expandedKeys"
           v-model:selectedKeys="state.selectedKeys"
           v-model:checkedKeys="state.checkedKeys"
-          @select="onSelect"
-          @check="onCheck"
           :block-node="true"
           :show-icon="false"
         >
@@ -22,9 +20,17 @@
           </template>
           <template #title="item">
             <span>
-              <iconfont class="tree-icon-folder" name="folder" v-if="item.children?.length > 0 && !item.expanded" />
-              <iconfont class="tree-icon-folder" name="folder-open" v-else-if="item.children?.length > 0 && item.expanded" />
-              <iconfont class="tree-icon-redis" name="redis" v-else/>
+              <iconfont
+                class="tree-icon folder-color"
+                name="folder"
+                v-if="item.children?.length > 0 && !item.expanded"
+              />
+              <iconfont
+                class="tree-icon folder-color"
+                name="folder-open"
+                v-else-if="item.children?.length > 0 && item.expanded"
+              />
+              <iconfont class="tree-icon redis-color" name="redis" v-else />
               {{ item.title }}
             </span>
           </template>
@@ -77,6 +83,7 @@ export default {
       expandedKeys: ['0-0-0', '0-0-1'],
       selectedKeys: ['0-0-0', '0-0-1'],
       checkedKeys: ['0-0-0', '0-0-1'],
+      activeKey: '1',
     })
     return {
       treeNodes,
@@ -85,3 +92,85 @@ export default {
   },
 }
 </script>
+
+<style lang="less">
+@import url('../themes/variables');
+
+.app-explorer {
+  overflow: hidden;
+
+  .explorer-header.ant-layout-header {
+    color: @text-color-secondary;
+    height: 35px;
+    font-size: 12px;
+    line-height: 35px;
+    padding: 0 20px;
+    background-color: @body-background;
+  }
+  .explorer-collapse.ant-collapse {
+    background-color: @body-background;
+
+    .ant-collapse-header {
+      background-color: @component-background;
+      color: @text-color-secondary;
+      font-size: 11px;
+      font-weight: 600;
+
+      .ant-collapse-arrow {
+        left: 2px !important;
+        margin: 0 2px;
+      }
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .ant-collapse-borderless > .ant-collapse-item {
+    border-bottom: none;
+  }
+
+  .ant-collapse-borderless
+    > .ant-collapse-item
+    > .ant-collapse-content
+    > .ant-collapse-content-box {
+    padding-top: 0;
+  }
+
+  .ant-tree {
+    font-size: 12px;
+  }
+  .ant-tree > li:first-child {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .ant-tree li {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .ant-tree-child-tree > li:first-child {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .ant-tree > li:last-child {
+    padding-bottom: 0;
+  }
+  .ant-tree-switcher.ant-tree-switcher-noop,
+  .ant-tree-switcher.ant-tree-switcher_close,
+  .ant-tree-switcher.ant-tree-switcher_open {
+    display: none !important;
+  }
+  .ant-tree.ant-tree-block-node li .ant-tree-node-content-wrapper {
+    width: 100%;
+    padding: 0 12px;
+    color: @text-color-secondary;
+  }
+  .ant-tree-node-selected {
+    color: @text-color-secondary !important;
+  }
+
+  .tree-icon {
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+</style>

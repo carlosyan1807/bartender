@@ -1,9 +1,20 @@
+@app-titlebar-height: 30px;
+@app-statusbar-height: 22px;
+@app-navmenu-width: 48px;
+
+@reids-icon-color: #e06c75;
+@folder-icon-color: #3399cc;
+@settings-icon-color: #e2c08d;
+
+/* Ant Design */
+
 @body-background: #21252b;
 @component-background: #282c34;
 
-@text-color: #cccccc;
-@text-color-secondary: #7f848e;
+@text-color: #7f848e;
+@text-color-secondary: #cccccc;
 
+@primary-color: #3399cc;
 @heading-color: @text-color;
 
 @border-color-base: lighten(@component-background, 4%);
@@ -13,19 +24,23 @@
 
 @shadow-color: darken(@body-background, 8%);
 
+@font-size-sm: 12px;
+
 @layout-body-background: @body-background;
-@layout-header-height: 30px;
+@layout-header-height: @app-titlebar-height;
 @layout-header-padding: none;
 @layout-header-background: @component-background;
 @layout-sider-background: @component-background;
+@layout-footer-background: @layout-body-background;
+@layout-footer-padding: 0;
 
-@menu-collapsed-width: 48px;
-@menu-inline-toplevel-item-height: 48px;
-@menu-item-height: 48px;
+@menu-collapsed-width: @app-navmenu-width;
+@menu-inline-toplevel-item-height: @app-navmenu-width;
+@menu-item-height: @app-navmenu-width;
 @menu-item-boundary-margin: 0px;
 @menu-item-vertical-margin: 0px;
-@menu-item-color: @text-color-secondary;
-@menu-highlight-color: @text-color;
+@menu-item-color: @text-color;
+@menu-highlight-color: @text-color-secondary;
 @menu-item-active-bg: @component-background;
 @menu-item-active-border-width: 2px;
 @menu-icon-size-lg: 24px;
@@ -38,10 +53,15 @@
 
 @tree-directory-selected-color: @text-color;
 @tree-directory-selected-bg: lighten(@component-background, 4%);
+@tree-child-padding: 12px;
 
-@tabs-highlight-color: @text-color;
+@tabs-card-head-background: @body-background;
+@tabs-card-height: 35px;
+@tabs-card-active-color: @text-color-secondary;
 @tabs-hover-color: @text-color-secondary;
-@tabs-active-color: @text-color;
+// @tabs-highlight-color: @text-color;
+// @tabs-hover-color: @text-color-secondary;
+// @tabs-active-color: @text-color;
 // @text-color: rgba(215, 218, 224, 0.4);
 // @background-color: #21252b;
 // @font-color: rgba(215, 218, 224, 0.4);

@@ -9,8 +9,8 @@
       </a-menu>
     </div>
     <div class="navmenu-extra">
-      <a-dropdown :align="{offset: [56, 40]}" :trigger="['click']" placement="topLeft">
-        <a-button class="navmenu-extra-button" type="link" ghost @click="e => e.preventDefault()">
+      <a-dropdown :align="{ offset: [56, 40] }" :trigger="['click']" placement="topLeft">
+        <a-button class="navmenu-extra-button" type="link" ghost @click="(e) => e.preventDefault()">
           <iconfont name="setting" />
         </a-button>
         <template #overlay>
@@ -70,3 +70,68 @@ export default defineComponent({
   // },
 })
 </script>
+<style lang="less">
+@import url('../themes/variables');
+
+.app-navmenu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+
+  .navmenu-main {
+    .ant-menu-inline,
+    .ant-menu-vertical,
+    .ant-menu-vertical-left {
+      border-right: none;
+    }
+
+    .ant-menu-inline-collapsed > .ant-menu-item,
+    .ant-menu-inline-collapsed > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-item,
+    .ant-menu-inline-collapsed
+      > .ant-menu-item-group
+      > .ant-menu-item-group-list
+      > .ant-menu-submenu
+      > .ant-menu-submenu-title,
+    .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+      padding: 0 !important;
+      text-align: center;
+    }
+    .ant-menu-item.ant-menu-item-selected::before {
+      position: absolute;
+      content: '';
+      width: @menu-item-active-border-width;
+      height: 48px;
+      display: block;
+      background-color: @primary-color;
+      transition-property: background-color;
+      transition-duration: 0ms;
+      transition-delay: 0.1s;
+    }
+  }
+
+  .navmenu-extra-button.ant-btn {
+    height: 48px;
+    font-size: 24px;
+    width: 48px;
+    color: @text-color;
+    padding: 0;
+
+    &:active,
+    &:hover,
+    &:focus {
+      color: @text-color-secondary;
+    }
+  }
+}
+
+.ant-dropdown-menu-item:hover,
+.ant-dropdown-menu-submenu-title:hover {
+  background-color: lighten(@component-background, 4%);
+}
+.ant-dropdown-menu-item:active,
+.ant-dropdown-menu-submenu-title:active {
+  background-color: lighten(@component-background, 8%);
+}
+</style>
