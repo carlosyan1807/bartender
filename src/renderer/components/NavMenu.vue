@@ -14,7 +14,7 @@
           <iconfont name="setting" />
         </a-button>
         <template #overlay>
-          <a-menu>
+          <a-menu class="context-menu">
             <a-menu-item key="0" title="">
               <span>设置</span>
             </a-menu-item>
@@ -125,13 +125,9 @@ export default defineComponent({
     }
   }
 }
-
-.ant-dropdown-menu-item:hover,
-.ant-dropdown-menu-submenu-title:hover {
-  background-color: lighten(@component-background, 4%);
-}
-.ant-dropdown-menu-item:active,
-.ant-dropdown-menu-submenu-title:active {
-  background-color: lighten(@component-background, 8%);
+.context-menu {
+  .ant-dropdown-menu-item-active {
+    background-color: lighten(@component-background, 8%) !important;
+  }
 }
 </style>

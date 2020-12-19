@@ -17,7 +17,6 @@
                 size="small"
                 type="editable-card"
                 :hide-add="true"
-                @change="heiheihei"
               >
                 <a-tab-pane v-for="item in state.tabsData" :key="item.name">
                   <template #tab>
@@ -104,7 +103,6 @@ export default defineComponent({
     }
 
     tabsData.push(tabQuickConnect)
-    tabsData.push(tabSettings)
     chooseIconClass(tabsData)
 
     const handleNewConnection = (options: IConnectionOptions) => {
@@ -119,9 +117,7 @@ export default defineComponent({
       chooseIconClass(tabsData)
       activedTab.value = newTab.name
     }
-    const heiheihei = (a: any) => {
-      console.log(a, activedTab)
-    }
+
     let state = ref({
       appName,
       activedTab,
@@ -130,7 +126,6 @@ export default defineComponent({
     return {
       state,
       handleNewConnection,
-      heiheihei,
     }
   },
 })
