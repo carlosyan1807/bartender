@@ -4,17 +4,17 @@ import App from './App.vue'
 // import router from './router'
 import store from './store'
 
+// 主题样式
 import '/@/themes/index.less'
-// import '/@/assets/iconfont/iconfont.css'
-import { createFromIconfontCN } from '@ant-design/icons-vue'
-const IconFont = createFromIconfontCN({
-  scriptUrl: '/@/assets/iconfont.js'
-})
+
+// 图标组件 及 图标
+import Iconfont from '/@/components/Iconfont'
+import '/@/assets/iconfont'
 
 const app = createApp(App)
 
+app.component('iconfont', Iconfont)
 // app.use(router)
-app.component('IconFont', (<any>IconFont))
 app.use(store)
 app.use(Antd)
 
