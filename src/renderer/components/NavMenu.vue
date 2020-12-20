@@ -33,21 +33,21 @@
 </template>
 
 <script>
-import { defineComponent, reactive } from 'vue'
+import { reactive, toRefs } from 'vue'
 
-export default defineComponent({
+export default {
   name: 'NavMenu',
   setup(props) {
-    const navMenuItems = [
+    const navMenuItems = reactive([
       { name: 'explorer', label: '资源管理器', icon: 'server' },
       { name: 'reserved', label: '预留项', icon: 'wrench' },
-    ]
-    const state = reactive({
+    ])
+    const data = reactive({
+      navMenuItems,
       selectedMenu: ['explorer'],
     })
     return {
-      state,
-      navMenuItems,
+      ...toRefs(data),
     }
   },
   // data() {
@@ -68,8 +68,9 @@ export default defineComponent({
   //     openKeys,
   //   }
   // },
-})
+}
 </script>
+
 <style lang="less">
 @import url('../themes/variables');
 

@@ -3,13 +3,13 @@
     <a-layout-header class="explorer-header">
       <span>资源管理器</span>
     </a-layout-header>
-    <a-collapse class="explorer-collapse" v-model:activeKey="state.activeKey" :bordered="false">
+    <a-collapse class="explorer-collapse" v-model:activeKey="activeKey" :bordered="false">
       <a-collapse-panel key="1" header="收藏夹">
         <a-directory-tree
           :tree-data="treeNodes"
-          v-model:expandedKeys="state.expandedKeys"
-          v-model:selectedKeys="state.selectedKeys"
-          v-model:checkedKeys="state.checkedKeys"
+          v-model:expandedKeys="expandedKeys"
+          v-model:selectedKeys="selectedKeys"
+          v-model:checkedKeys="checkedKeys"
           :block-node="true"
           :show-icon="false"
         >
@@ -47,11 +47,11 @@
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { reactive, toRefs } from 'vue'
 export default {
   name: 'Explorer',
   setup() {
-    const treeNodes = [
+    const treeNodes = reactive([
       { title: 'server1', key: '1' },
       { title: 'server2', key: '2' },
       {
@@ -78,16 +78,16 @@ export default {
           { title: 'WSL', key: '11' },
         ],
       },
-    ]
-    const state = reactive({
+    ])
+    const data = ref({
+      treeNodes,
       expandedKeys: ['0-0-0', '0-0-1'],
       selectedKeys: ['0-0-0', '0-0-1'],
       checkedKeys: ['0-0-0', '0-0-1'],
       activeKey: '1',
     })
     return {
-      treeNodes,
-      state,
+      ...toRefs(data),
     }
   },
 }
