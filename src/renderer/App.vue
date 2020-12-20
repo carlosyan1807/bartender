@@ -52,12 +52,12 @@ export default {
     const appName = 'Bartender'
     const aboutVisible = reactive(false)
 
-    const state = reactive({
+    const data = reactive({
       appName,
       aboutVisible,
     })
     return {
-      ...toRefs(state),
+      ...toRefs(data),
     }
   },
 }

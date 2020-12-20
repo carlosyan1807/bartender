@@ -1,7 +1,7 @@
 <template>
   <div class="app-navmenu">
     <div class="navmenu-main">
-      <a-menu v-model:selectedKeys="state.selectedMenu" mode="inline">
+      <a-menu v-model:selectedKeys="selectedMenu" mode="inline">
         <a-menu-item v-for="item in navMenuItems" :key="item.name">
           <iconfont :name="item.icon" />
           <span>{{ item.label }}</span>

@@ -3,7 +3,7 @@
     <div class="drag-region">
       <div class="window-appicon" />
       <div class="window-title">
-        <span>{{ state.appName }}</span>
+        <span>{{ appName }}</span>
       </div>
       <div class="window-actions">
         <div class="min-button" @click="handleWindowAction('min')">
