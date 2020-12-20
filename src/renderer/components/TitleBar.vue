@@ -3,7 +3,7 @@
     <div class="drag-region">
       <div class="window-appicon" />
       <div class="window-title">
-        <span>{{ state.appName }}</span>
+        <span>{{ appName }}</span>
       </div>
       <div class="window-actions">
         <div class="min-button" @click="handleWindowAction('min')">
@@ -24,11 +24,11 @@
 </template>
 
 <script>
-import { defineComponent, reactive } from 'vue'
+import { reactive, toRefs } from 'vue'
 
 // TODO: 失去焦点时的背景色和字体颜色变更
 
-export default defineComponent({
+export default {
   name: 'TitleBar',
   props: {
     appName: String,
@@ -36,7 +36,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const appName = props.appName
 
-    const state = reactive({
+    const data = reactive({
       appName,
     })
     // 窗口控制
@@ -45,11 +45,11 @@ export default defineComponent({
     }
 
     return {
-      state,
+      ...toRefs(data),
       handleWindowAction,
     }
   },
-})
+}
 </script>
 
 <style lang="less">
@@ -178,5 +178,4 @@ export default defineComponent({
     display: none;
   }
 }
-
 </style>

@@ -1,14 +1,17 @@
 /* eslint-disable no-unused-vars */
 import { StoreOptions } from 'vuex'
 import { BaseGetters, BaseMutations, BaseState, RootState } from './definition'
+import app, { AppModule } from './modules/app'
 import bar, { BarModule } from './modules/bar'
 import foo, { FooModule } from './modules/foo'
+import hub, { HubModule } from './modules/hub'
 
 declare module './definition' {
-
   interface ModuleMap {
     foo: FooModule
     bar: BarModule
+    app: AppModule
+    hub: HubModule
   }
 
   interface BaseState {
@@ -28,9 +31,11 @@ const store = {
   getters,
   mutations,
   modules: {
+    app,
     foo,
-    bar
-  }
+    bar,
+    hub,
+  },
 }
 
-export default store as any as StoreOptions<RootState>
+export default (store as any) as StoreOptions<RootState>

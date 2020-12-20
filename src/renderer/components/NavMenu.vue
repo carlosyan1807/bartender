@@ -1,7 +1,7 @@
 <template>
   <div class="app-navmenu">
     <div class="navmenu-main">
-      <a-menu v-model:selectedKeys="state.selectedMenu" mode="inline">
+      <a-menu v-model:selectedKeys="selectedMenu" mode="inline">
         <a-menu-item v-for="item in navMenuItems" :key="item.name">
           <iconfont :name="item.icon" />
           <span>{{ item.label }}</span>
@@ -14,15 +14,15 @@
           <iconfont name="setting" />
         </a-button>
         <template #overlay>
-          <a-menu>
-            <a-menu-item key="0" title="">
+          <a-menu class="context-menu">
+            <a-menu-item key="0" title="" @click="showHubSettings">
               <span>设置</span>
             </a-menu-item>
-            <a-menu-item key="1" title="">
+            <a-menu-item key="1" title="" disabled>
               <span>检查更新...</span>
             </a-menu-item>
             <a-menu-divider />
-            <a-menu-item key="3" title="">
+            <a-menu-item key="3" title="" @click="showAboutDialog">
               <span>关于</span>
             </a-menu-item>
           </a-menu>
@@ -33,21 +33,33 @@
 </template>
 
 <script>
-import { defineComponent, reactive } from 'vue'
+import { reactive, toRefs } from 'vue'
+import { useStore } from 'vuex'
 
-export default defineComponent({
+export default {
   name: 'NavMenu',
   setup(props) {
-    const navMenuItems = [
+    const store = useStore()
+
+    const navMenuItems = reactive([
       { name: 'explorer', label: '资源管理器', icon: 'server' },
       { name: 'reserved', label: '预留项', icon: 'wrench' },
-    ]
-    const state = reactive({
+    ])
+    const data = reactive({
+      navMenuItems,
       selectedMenu: ['explorer'],
     })
+    const showHubSettings = () => {
+      store.commit('showHubSettings', true)
+    }
+    const showAboutDialog = () => {
+      store.commit('UPDATE_ABOUT_DIALOG_VISIBLE', true)
+    }
+
     return {
-      state,
-      navMenuItems,
+      ...toRefs(data),
+      showAboutDialog,
+      showHubSettings,
     }
   },
   // data() {
@@ -68,8 +80,9 @@ export default defineComponent({
   //     openKeys,
   //   }
   // },
-})
+}
 </script>
+
 <style lang="less">
 @import url('../themes/variables');
 
@@ -125,13 +138,13 @@ export default defineComponent({
     }
   }
 }
-
-.ant-dropdown-menu-item:hover,
-.ant-dropdown-menu-submenu-title:hover {
-  background-color: lighten(@component-background, 4%);
-}
-.ant-dropdown-menu-item:active,
-.ant-dropdown-menu-submenu-title:active {
-  background-color: lighten(@component-background, 8%);
+.context-menu {
+  .ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled),
+  .ant-dropdown-menu-submenu-title:not(.ant-dropdown-menu-item-disabled) {
+    color: @text-color-secondary;
+  }
+  .ant-dropdown-menu-item-active {
+    background-color: lighten(@component-background, 8%) !important;
+  }
 }
 </style>
