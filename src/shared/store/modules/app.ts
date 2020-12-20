@@ -1,31 +1,38 @@
 import { ModuleOption } from '../definition'
-
-interface State {
-  value: number;
-  name: string;
+interface IState {
+  aboutDialogVisible: boolean
+  value: number
+  name: string
 }
 
 interface Getters {
   valueAndName1: string
 }
-
-interface Mutations {
+interface IMutations {
+  UPDATE_ABOUT_DIALOG_VISIBLE: boolean
   setValueAndName1: { value: number; name: string }
 }
 
-export type AppModule = ModuleOption<State, Getters, Mutations>;
+export type AppModule = ModuleOption<IState, Getters, IMutations>
 
 const mod: AppModule = {
   state: {
+    aboutDialogVisible: false,
     value: 0,
-    name: ''
+    name: '',
   },
   getters: {
-    valueAndName1: state => state.name + ' ' + state.value
+    valueAndName1: (state) => state.name + ' ' + state.value,
   },
   mutations: {
-    setValueAndName1: (state, { name, value }) => { state.name = name; state.value = value }
-  }
+    UPDATE_ABOUT_DIALOG_VISIBLE(state, value) {
+      state.aboutDialogVisible = value
+    },
+    setValueAndName1: (state, { name, value }) => {
+      state.name = name
+      state.value = value
+    },
+  },
 }
 
 export default mod

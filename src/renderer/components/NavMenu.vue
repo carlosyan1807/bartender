@@ -15,14 +15,14 @@
         </a-button>
         <template #overlay>
           <a-menu class="context-menu">
-            <a-menu-item key="0" title="">
+            <a-menu-item key="0" title="" @click="showHubSettings">
               <span>设置</span>
             </a-menu-item>
-            <a-menu-item key="1" title="">
+            <a-menu-item key="1" title="" disabled>
               <span>检查更新...</span>
             </a-menu-item>
             <a-menu-divider />
-            <a-menu-item key="3" title="">
+            <a-menu-item key="3" title="" @click="showAboutDialog">
               <span>关于</span>
             </a-menu-item>
           </a-menu>
@@ -34,10 +34,13 @@
 
 <script>
 import { reactive, toRefs } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'NavMenu',
   setup(props) {
+    const store = useStore()
+
     const navMenuItems = reactive([
       { name: 'explorer', label: '资源管理器', icon: 'server' },
       { name: 'reserved', label: '预留项', icon: 'wrench' },
@@ -46,8 +49,17 @@ export default {
       navMenuItems,
       selectedMenu: ['explorer'],
     })
+    const showHubSettings = () => {
+      store.commit('showHubSettings', true)
+    }
+    const showAboutDialog = () => {
+      store.commit('UPDATE_ABOUT_DIALOG_VISIBLE', true)
+    }
+
     return {
       ...toRefs(data),
+      showAboutDialog,
+      showHubSettings,
     }
   },
   // data() {
@@ -127,6 +139,10 @@ export default {
   }
 }
 .context-menu {
+  .ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled),
+  .ant-dropdown-menu-submenu-title:not(.ant-dropdown-menu-item-disabled) {
+    color: @text-color-secondary;
+  }
   .ant-dropdown-menu-item-active {
     background-color: lighten(@component-background, 8%) !important;
   }

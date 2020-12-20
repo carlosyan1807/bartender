@@ -4,12 +4,14 @@ import { BaseGetters, BaseMutations, BaseState, RootState } from './definition'
 import app, { AppModule } from './modules/app'
 import bar, { BarModule } from './modules/bar'
 import foo, { FooModule } from './modules/foo'
+import hub, { HubModule } from './modules/hub'
 
 declare module './definition' {
   interface ModuleMap {
     foo: FooModule
     bar: BarModule
     app: AppModule
+    hub: HubModule
   }
 
   interface BaseState {
@@ -32,6 +34,7 @@ const store = {
     app,
     foo,
     bar,
+    hub,
   },
 }
 

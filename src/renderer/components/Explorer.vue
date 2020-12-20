@@ -79,7 +79,7 @@ export default {
         ],
       },
     ])
-    const data = ref({
+    const data = reactive({
       treeNodes,
       expandedKeys: ['0-0-0', '0-0-1'],
       selectedKeys: ['0-0-0', '0-0-1'],
