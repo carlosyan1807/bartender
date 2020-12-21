@@ -30,12 +30,10 @@ const module: HubModule = {
   mutations: {
     showHubSettings(state, value) {
       state.settingsVisiable = value
-      state.tempActived = !state.tempActived
-      console.log('temp', state.tempActived)
+      if (value) state.activedTab = 'settings'
     },
     updateHubActivedTab(state, value) {
       state.activedTab = value
-      console.log(state.activedTab)
     },
     createHubItem(state, item) {
       state.connections.push(item)

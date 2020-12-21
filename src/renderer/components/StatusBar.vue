@@ -1,7 +1,7 @@
 <template>
   <div class="app-statusbar">
     <div class="footer-left">
-      <a-button type="link" class="footer-button reload" @click="handleReload">
+      <a-button type="link" class="footer-button" @click="handleReload">
         <template #icon><iconfont name="reload" /></template>
       </a-button>
     </div>
@@ -45,11 +45,17 @@ export default {
     line-height: 22px;
     height: 22px;
     font-size: 14px;
+    color: @text-color;
+    
+    &:hover, &:focus,&:active {
+      color: @text-color;
+      background-color: @component-background;
+    }
   }
-  .footer-button.reload {
-    color: @text-color-secondary;
-    width: 34px;
-    background-color: @primary-color;
-  }
+  // .footer-button.reload {
+  //   color: @text-color-secondary;
+  //   width: 34px;
+  //   background-color: @primary-color;
+  // }
 }
 </style>
