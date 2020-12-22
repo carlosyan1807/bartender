@@ -23,16 +23,17 @@
     "ant-design-vue": "^2.0.0-rc.5",
     "electron-updater": "^4.3.5",
     "ioredis": "^4.19.4",
+    "monaco-editor": "^0.21.2",
     "splitpanes": "^3.0.4",
     "uuid": "^8.3.2",
     "vue": "^3.0.4",
     "vue-router": "^4.0.1",
-    "vuex": "^4.0.0-rc.2"
+    "vuex": "^4.0.0-rc.2",
+    "xterm": "^4.9.0"
   },
   "external": [
     "electron-updater",
-    "ioredis",
-    "uuid"
+    "ioredis"
   ],
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.1",
@@ -45,7 +46,7 @@
     "@types/uuid": "^8.3.0",
     "@vue/babel-plugin-jsx": "^1.0.0-rc.5",
     "@vue/compiler-sfc": "^3.0.4",
-    "builtin-modules": "^3.1.0",
+    "builtin-modules": "^3.2.0",
     "chalk": "^4.1.0",
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",

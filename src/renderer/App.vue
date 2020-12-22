@@ -23,8 +23,8 @@
   </a-layout>
 </template>
 
-<script>
-import { reactive, ref, toRefs } from 'vue'
+<script lang="ts">
+import { defineComponent, reactive, ref, toRefs } from 'vue'
 import { useStore } from 'vuex'
 
 import { Splitpanes, Pane } from 'splitpanes'
@@ -36,7 +36,9 @@ import Explorer from '/@/components/Explorer.vue'
 import Hub from '/@/components/Hub'
 import AboutDialog from '/@/components/AboutDialog.vue'
 
-export default {
+import { useIpc } from '/@/hooks'
+
+export default defineComponent({
   name: 'App',
   components: {
     TitleBar,
@@ -49,26 +51,19 @@ export default {
     AboutDialog,
   },
   setup(props) {
-    const store = useStore()
-
+    const { commit } = useStore()
     const appName = ref('Bartender')
 
     const data = reactive({
       appName,
     })
-
+    useIpc().on('clientStatusUpdated', (event, result) => {
+      console.log('%c clientStatusUpdated', 'color:cyan', result)
+      commit('updateConnectionStatus', result)
+    })
     return {
       ...toRefs(data),
     }
   },
-}
+})
 </script>
-
-<style lang="less">
-@import url('./themes/variables');
-
-.app-content {
-  height: 100%;
-  background-color: @component-background;
-}
-</style>

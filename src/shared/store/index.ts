@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { StoreOptions } from 'vuex'
+import { StoreOptions, createLogger } from 'vuex'
 import { BaseGetters, BaseMutations, BaseState, RootState } from './definition'
 import app, { AppModule } from './modules/app'
 import bar, { BarModule } from './modules/bar'
@@ -36,6 +36,7 @@ const store = {
     bar,
     hub,
   },
+  plugins: process.env.NODE_ENV !== 'production' ? [createLogger()] : [],
 }
 
 export default (store as any) as StoreOptions<RootState>

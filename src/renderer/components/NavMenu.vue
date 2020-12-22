@@ -32,29 +32,31 @@
   </div>
 </template>
 
-<script>
-import { reactive, toRefs } from 'vue'
+<script lang="ts">
+import { defineComponent, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 
-export default {
+export default defineComponent({
   name: 'NavMenu',
   setup(props) {
-    const store = useStore()
+    const { commit } = useStore()
 
     const navMenuItems = reactive([
       { name: 'explorer', label: '资源管理器', icon: 'server' },
       { name: 'reserved', label: '预留项', icon: 'wrench' },
     ])
+
+    const showHubSettings = () => {
+      commit('showHubSettings', true)
+    }
+    const showAboutDialog = () => {
+      commit('updateAboutDialogVisiable', true)
+    }
+
     const data = reactive({
       navMenuItems,
       selectedMenu: ['explorer'],
     })
-    const showHubSettings = () => {
-      store.commit('showHubSettings', true)
-    }
-    const showAboutDialog = () => {
-      store.commit('UPDATE_ABOUT_DIALOG_VISIBLE', true)
-    }
 
     return {
       ...toRefs(data),
@@ -80,7 +82,7 @@ export default {
   //     openKeys,
   //   }
   // },
-}
+})
 </script>
 
 <style lang="less">

@@ -1,11 +1,11 @@
 <template>
   <svg class="anticon iconfont" aria-hidden="true">
-    <use :xlink:href="state.iconName" />
+    <use :xlink:href="iconName" />
   </svg>
 </template>
 
-<script>
-import { defineComponent, reactive } from 'vue'
+<script lang="ts">
+import { defineComponent, reactive, toRefs } from 'vue'
 
 export default defineComponent({
   name: 'Iconfont',
@@ -13,11 +13,12 @@ export default defineComponent({
     name: String,
   },
   setup(props) {
-    const state = reactive({
+    const data = reactive({
       iconName: `#icon-${props.name}`,
     })
+
     return {
-      state,
+      ...toRefs(data),
     }
   },
 })

@@ -23,12 +23,12 @@
   </div>
 </template>
 
-<script>
-import { reactive, toRefs } from 'vue'
+<script lang="ts">
+import { defineComponent, reactive, toRefs } from 'vue'
 
 // TODO: 失去焦点时的背景色和字体颜色变更
 
-export default {
+export default defineComponent({
   name: 'TitleBar',
   props: {
     appName: String,
@@ -36,20 +36,21 @@ export default {
   setup(props, { emit }) {
     const appName = props.appName
 
+    // 窗口控制
+    const handleWindowAction = (action: string) => {
+      emit('window-action', action)
+    }
+
     const data = reactive({
       appName,
     })
-    // 窗口控制
-    const handleWindowAction = (action) => {
-      emit('window-action', action)
-    }
 
     return {
       ...toRefs(data),
       handleWindowAction,
     }
   },
-}
+})
 </script>
 
 <style lang="less">

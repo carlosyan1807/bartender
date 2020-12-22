@@ -7,6 +7,11 @@ body {
   height: calc(100vh - @app-titlebar-height - @app-statusbar-height);
 }
 
+.app-content {
+  height: 100%;
+  background-color: @component-background;
+}
+
 .redis-color {
   color: @reids-icon-color;
 }
@@ -17,4 +22,52 @@ body {
 
 .settings-color {
   color: @settings-icon-color;
+}
+
+@redis-badge: badge-redis;
+.@{redis-badge} {
+  & .ant-badge-count {
+    font-weight: 600;
+    width: 36px;
+    padding: 0;
+    text-overflow: ellipsis;
+    border-radius: 2px;
+  }
+  &-list .ant-badge-count {
+    background-color: @redis-list-color;
+  }
+  &-set .ant-badge-count{
+    background-color: @redis-set-color;
+  }
+  &-zset .ant-badge-count {
+    background-color: @redis-zset-color;
+  }
+  &-string .ant-badge-count {
+    background-color: @redis-string-color;
+  }
+  &-hash .ant-badge-count {
+    background-color: @redis-hash-color;
+  }
+}
+
+@redis-icons: icon-redis;
+.@{redis-icons} {
+  & {
+    font-size: 16px;
+  }
+  &-list {
+    color: @redis-list-color;
+  }
+  &-set {
+    color: @redis-set-color;
+  }
+  &-zset {
+    color: @redis-zset-color;
+  }
+  &-string {
+    color: @redis-string-color;
+  }
+  &-hash {
+    color: @redis-hash-color;
+  }
 }

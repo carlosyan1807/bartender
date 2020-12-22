@@ -9,22 +9,22 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import { useIpc } from '/@/hooks'
 
-export default {
+export default defineComponent({
   name: 'StatusBar',
   setup() {
     const handleReload = () => {
-      console.log('Reload!')
       useIpc().send('renderer2main', 'reload')
     }
 
     return {
-      handleReload
+      handleReload,
     }
-  }
-}
+  },
+})
 </script>
 
 <style lang="less">
@@ -46,8 +46,10 @@ export default {
     height: 22px;
     font-size: 14px;
     color: @text-color;
-    
-    &:hover, &:focus,&:active {
+
+    &:hover,
+    &:focus,
+    &:active {
       color: @text-color;
       background-color: @component-background;
     }

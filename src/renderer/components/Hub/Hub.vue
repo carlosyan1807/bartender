@@ -7,7 +7,7 @@
     :hide-add="true"
     @change="handleChangeTab"
   >
-    <a-tab-pane v-for="item in tabsData" :key="item.id">
+    <a-tab-pane v-for="item in connections" :key="item.id">
       <template #tab>
         <a-dropdown
           :trigger="['contextmenu']"
@@ -27,15 +27,14 @@
       </template>
       <QuickConnect v-if="item.id === 'quick-connect'" @new-connection="handleNewTab" />
       <Settings v-else-if="item.id === 'settings'" />
-      <Connection v-else />
+      <Connection v-else :connection-id="item.id" />
     </a-tab-pane>
   </a-tabs>
 </template>
 
 <script lang="ts">
-import { reactive, markRaw, ref, toRefs, computed, watch, watchEffect } from 'vue'
+import { defineComponent, reactive, markRaw, ref, toRefs, computed, watch, watchEffect } from 'vue'
 import { useStore } from 'vuex'
-import { IHubConnection } from '/@/interface'
 
 import QuickConnect from '/@/components/Hub/QuickConnect.vue'
 import Connection from '/@/components/Hub/Connection.vue'
@@ -43,14 +42,13 @@ import Settings from '/@/components/Hub/Settings.vue'
 import ContextMenu from '/@/components/Hub/ContextMenu.vue'
 
 import { v4 as uuidv4 } from 'uuid'
-import { connect } from 'http2'
 
 export interface IConnectionOptions {
-  host: string
-  port: number
+  host?: string
+  port?: number | string
 }
 
-export default {
+export default defineComponent({
   name: 'Hub',
   components: {
     QuickConnect,
@@ -61,43 +59,44 @@ export default {
   setup() {
     const { state, commit } = useStore()
 
-    const connections = state.hub.connections
-    if (connections.findIndex((e: IHubConnection) => e.id === 'quick-connect') === -1)
+    const connections = computed(() => state.hub.connections)
+    // 添加 快速连接 页并激活
+    if (connections.value.findIndex((e: { id: string }) => e.id === 'quick-connect') === -1)
       commit('createHubItem', { id: 'quick-connect', label: '快速连接' })
     commit('updateHubActivedTab', 'quick-connect')
-    const tabsData = computed(() => state.hub.connections)
-    let activedTab = computed(() => state.hub.activedTab)
+    const activedTab = computed(() => state.hub.activedTab)
 
     const settingsVisiable = computed(() => state.hub.settingsVisiable)
     watch(settingsVisiable, (value) => {
       if (value) {
-        if (tabsData.value.findIndex((e: IHubConnection) => e.id === 'settings') === -1)
+        if (connections.value.findIndex((e: { id: string }) => e.id === 'settings') === -1)
           commit('createHubItem', { id: 'settings', label: '设置' })
         commit('updateHubActivedTab', 'settings')
       } else {
         commit('removeHubItem', 'settings')
       }
     })
-
+    // 切换页
     const handleChangeTab = (actived: string) => {
       commit('updateHubActivedTab', actived)
     }
-
-    const handleNewTab = (options: IConnectionOptions) => {
+    // 新建页
+    const handleNewTab = async (options: IConnectionOptions) => {
       const uuid = uuidv4()
       const newItem = {
         id: uuid,
         label: `${options.host}:${options.port}`,
+        options: options,
       }
       commit('createHubItem', newItem)
       commit('updateHubActivedTab', newItem.id)
     }
-
+    // 关闭页
     // TODO: 关闭当前 tab 时, 先切换为 +1 或 -1 索引的 tab, 再进行 remove, 关闭非当前 tab 时, actived 不变
     const handleCloseTab = () => {}
 
     const data = reactive({
-      tabsData,
+      connections,
       activedTab,
       settingsVisiable,
     })
@@ -107,7 +106,7 @@ export default {
       handleChangeTab,
     }
   },
-}
+})
 </script>
 
 <style lang="less">

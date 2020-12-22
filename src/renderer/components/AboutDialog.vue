@@ -4,6 +4,7 @@
     :visible="aboutDialogVisible"
     @cancel="handleHideAboutDialog"
   >
+    <h2>Bartender</h2>
     <a-list
       class="about-list"
       :split="false"
@@ -12,7 +13,9 @@
       :data-source="sysInfoArray"
     >
       <template #renderItem="{ item }">
-        <a-list-item :title="item.title"> <iconfont :name="item.icon" /> {{ item.content }} </a-list-item>
+        <a-list-item :title="item.title">
+          <iconfont :name="item.icon" /> {{ item.content }}
+        </a-list-item>
       </template>
     </a-list>
     <template #footer>
@@ -30,39 +33,44 @@
   </a-modal>
 </template>
 
-<script>
-import { computed, reactive, toRefs } from 'vue'
+<script lang="ts">
+import { defineComponent, computed, onMounted, reactive, toRefs, Ref, ref } from 'vue'
 import { useStore } from 'vuex'
 
 import { useService, useShell } from '/@/hooks'
 
-export default {
+export default defineComponent({
   name: 'AboutDialog',
   setup() {
-    const store = useStore()
+    const { state, commit } = useStore()
     const { openExternal } = useShell()
-    const aboutDialogVisible = computed(() => store.state.app.aboutDialogVisible)
-
-    const handleHideAboutDialog = () => {
-      store.commit('UPDATE_ABOUT_DIALOG_VISIBLE', false)
-    }
     const { getBasicInformation } = useService('BaseService')
 
-    const sysInfoArray = reactive([])
-    getBasicInformation().then(({ electron, os, chrome, nodejs }) => {
-      sysInfoArray.push({
-        title: '操作系统',
-        icon: os.type === 'Linux' ? 'linux' : os.type === 'Darwin' ? 'apple' : 'windows',
-        content: `${os.type}-${os.arch} ${os.release}`,
-      })
-      sysInfoArray.push({ title: 'Electron', icon: 'electron', content: electron })
-      sysInfoArray.push({ title: 'NodeJS', icon: 'nodejs', content: nodejs.version })
-      sysInfoArray.push({ title: 'Chrome', icon: 'chrome', content: chrome })
-    })
+    const aboutDialogVisible = computed(() => state.app.aboutDialogVisible)
+    const sysInfoArray: Ref<{ title: string; icon: string; content: string }[]> = ref([])
+
+    const handleHideAboutDialog = () => {
+      commit('updateAboutDialogVisiable', false)
+    }
 
     const handleOpenGithub = () => {
       openExternal('http://github.com/unclecarlos/bartender')
     }
+
+    const getSysInfo = async () => {
+      const { electron, os, chrome, nodejs } = await getBasicInformation()
+      sysInfoArray.value.push({
+        title: '操作系统',
+        icon: os.type === 'Linux' ? 'linux' : os.type === 'Darwin' ? 'apple' : 'windows',
+        content: `${os.type}-${os.arch} ${os.release}`,
+      })
+      sysInfoArray.value.push({ title: 'Electron', icon: 'electron', content: electron })
+      sysInfoArray.value.push({ title: 'NodeJS', icon: 'nodejs', content: nodejs.version })
+      sysInfoArray.value.push({ title: 'Chrome', icon: 'chrome', content: chrome })
+    }
+
+    onMounted(getSysInfo)
+
     const data = reactive({
       aboutDialogVisible,
       sysInfoArray,
@@ -74,7 +82,7 @@ export default {
       handleOpenGithub,
     }
   },
-}
+})
 </script>
 
 <style lang="less">

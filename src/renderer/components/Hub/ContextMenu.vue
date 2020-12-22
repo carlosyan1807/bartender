@@ -12,26 +12,30 @@
   </a-menu>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 
-export default {
+export default defineComponent({
   name: 'ContextMenu',
   props: {
     itemId: String,
   },
   setup(props) {
-    const store = useStore()
+    const { commit } = useStore()
 
     const handleClose = () => {
-      if(props.itemId === 'settings') store.commit('showHubSettings', false)
-      store.commit('removeHubItem', { id: props.itemId })
+      if (props.itemId === 'settings') commit('showHubSettings', false)
+      commit('removeHubItem', { id: props.itemId })
     }
+
+    const data = reactive({})
     return {
+      ...toRefs(data),
       handleClose,
     }
   },
-}
+})
 </script>
 
 <style></style>

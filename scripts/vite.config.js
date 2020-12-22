@@ -13,9 +13,9 @@ const config = {
     '/@/': join(__dirname, '../src/renderer'),
   },
   optimizeDeps: {
+    link: ['monaco-editor'],
     exclude: external,
   },
-  jsx: "vue",
   cssPreprocessOptions: {
     less: {
       javascriptEnabled: true,

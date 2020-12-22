@@ -9,11 +9,13 @@ function createProxy(service: string) {
       return (payload: any) => {
         return invoke('service:call', service, functionName as string, payload)
       }
-    }
+    },
   })
 }
 const servicesProxy: Services = new Proxy({} as any, {
-  get(_, serviceName) { return createProxy(serviceName as string) }
+  get(_, serviceName) {
+    return createProxy(serviceName as string)
+  },
 })
 
 export function useService<T extends keyof Services>(name: T): Services[T] {

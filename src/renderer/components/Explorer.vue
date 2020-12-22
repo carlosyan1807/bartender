@@ -46,9 +46,10 @@
   </a-layout>
 </template>
 
-<script>
-import { reactive, toRefs } from 'vue'
-export default {
+<script lang="ts">
+import { defineComponent, reactive, toRefs } from 'vue'
+
+export default defineComponent({
   name: 'Explorer',
   setup() {
     const treeNodes = reactive([
@@ -90,7 +91,7 @@ export default {
       ...toRefs(data),
     }
   },
-}
+})
 </script>
 
 <style lang="less">
