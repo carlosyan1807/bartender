@@ -29,12 +29,12 @@ import { useStore } from 'vuex'
 
 import { Splitpanes, Pane } from 'splitpanes'
 
-import TitleBar from '/@/components/TitleBar.vue'
-import NavMenu from '/@/components/NavMenu.vue'
-import StatusBar from '/@/components/StatusBar.vue'
-import Explorer from '/@/components/Explorer.vue'
-import Hub from '/@/components/Hub'
-import AboutDialog from '/@/components/AboutDialog.vue'
+import TitleBar from '/@/components/Layout/TitleBar.vue'
+import NavMenu from '/@/components/Layout/NavMenu.vue'
+import StatusBar from '/@/components/Layout/StatusBar.vue'
+import Explorer from '/@/components/Layout/Explorer.vue'
+import Hub from '/@/components/Layout/Hub.vue'
+import AboutDialog from '/@/components/Layout/AboutDialog.vue'
 
 import { useIpc } from '/@/hooks'
 

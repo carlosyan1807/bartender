@@ -36,10 +36,10 @@
 import { defineComponent, reactive, markRaw, ref, toRefs, computed, watch, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 
-import QuickConnect from '/@/components/Hub/QuickConnect.vue'
-import Connection from '/@/components/Hub/Connection.vue'
-import Settings from '/@/components/Hub/Settings.vue'
-import ContextMenu from '/@/components/Hub/ContextMenu.vue'
+import QuickConnect from '/@/components/QuickConnect.vue'
+import Connection from '/@/components/Connection.vue'
+import Settings from '/@/components/Settings.vue'
+import ContextMenu from '/@/components/Common/ContextMenu.vue'
 
 import { v4 as uuidv4 } from 'uuid'
 

@@ -8,7 +8,7 @@ import store from './store'
 import '/@/themes/index.less'
 
 // 图标组件 及 图标
-import Iconfont from '/@/components/Iconfont'
+import Iconfont from '/@/components/Common/Iconfont.vue'
 import '/@/assets/iconfont'
 
 const app = createApp(App)

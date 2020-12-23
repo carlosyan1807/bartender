@@ -42,7 +42,7 @@
         </span>
       </template>
     </a-directory-tree>
-    <JsonEditor />
+    <MonacoEditor />
   </a-spin>
 </template>
 
@@ -51,11 +51,11 @@ import { onMounted, reactive, toRefs, toRaw, ref, computed, defineComponent, Ref
 import { useStore } from 'vuex'
 import { useService } from '/@/hooks'
 
-import JsonEditor from '/@/components/Connection/JsonEditor.vue'
+import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
 
 export default defineComponent({
   name: 'Connection',
-  components: { JsonEditor },
+  components: { MonacoEditor },
   props: {
     connectionId: String,
   },

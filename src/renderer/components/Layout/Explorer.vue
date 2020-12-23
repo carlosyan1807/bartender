@@ -95,7 +95,7 @@ export default defineComponent({
 </script>
 
 <style lang="less">
-@import url('../themes/variables');
+@import url('../../themes/variables');
 
 .app-explorer {
   overflow: hidden;

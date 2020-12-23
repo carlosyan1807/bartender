@@ -86,7 +86,7 @@ export default defineComponent({
 </script>
 
 <style lang="less">
-@import url('../themes/variables');
+@import url('../../themes/variables');
 
 .app-navmenu {
   height: 100%;
