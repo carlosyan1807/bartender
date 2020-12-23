@@ -34,8 +34,8 @@ import NavMenu from '/@/components/Layout/NavMenu.vue'
 import StatusBar from '/@/components/Layout/StatusBar.vue'
 import Explorer from '/@/components/Layout/Explorer.vue'
 import Hub from '/@/components/Layout/Hub.vue'
-import AboutDialog from '/@/components/Layout/AboutDialog.vue'
-
+import AboutDialog from '/@/components/AboutDialog.vue'
+// TODO: Hub更名为主容器，Explorer需更名为sider，其中tree提出来为公共组件
 import { useIpc } from '/@/hooks'
 
 export default defineComponent({

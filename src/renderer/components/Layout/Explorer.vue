@@ -5,39 +5,24 @@
     </a-layout-header>
     <a-collapse class="explorer-collapse" v-model:activeKey="activeKey" :bordered="false">
       <a-collapse-panel key="1" header="收藏夹">
-        <a-directory-tree
-          :tree-data="treeNodes"
-          v-model:expandedKeys="expandedKeys"
-          v-model:selectedKeys="selectedKeys"
-          v-model:checkedKeys="checkedKeys"
-          :block-node="true"
-          :show-icon="false"
-        >
-          <!-- <template #title0010><span style="color: #1890ff">sss</span></template> -->
-          <!-- <template #title0010></template> -->
-          <template #switcherIcon>
-            <span></span>
+        <Tree :tree-nodes="favNodes">
+          <template #icon="{ item }">
+            <iconfont
+              v-if="item.children?.length > 0 && !item.expanded"
+              name="folder"
+              class="tree-icon folder-color"
+            />
+            <iconfont
+              v-else-if="item.children?.length > 0 && item.expanded"
+              name="folder-open"
+              class="tree-icon folder-color"
+            />
+            <iconfont v-else name="redis" class="tree-icon redis-color" />
           </template>
-          <template #title="item">
-            <span>
-              <iconfont
-                class="tree-icon folder-color"
-                name="folder"
-                v-if="item.children?.length > 0 && !item.expanded"
-              />
-              <iconfont
-                class="tree-icon folder-color"
-                name="folder-open"
-                v-else-if="item.children?.length > 0 && item.expanded"
-              />
-              <iconfont class="tree-icon redis-color" name="redis" v-else />
-              {{ item.title }}
-            </span>
-          </template>
-        </a-directory-tree>
+        </Tree>
       </a-collapse-panel>
       <a-collapse-panel key="2" header="This is panel header 2" :disabled="false">
-        <p>234</p>
+        123
       </a-collapse-panel>
       <a-collapse-panel key="3" header="This is panel header 3">
         <p>345</p>
@@ -47,12 +32,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue'
+import { defineComponent, onMounted, reactive, toRaw, toRefs } from 'vue'
+import Tree from '/@/components/Common/Tree.vue'
 
+// TODO: 侧边栏可收起
 export default defineComponent({
   name: 'Explorer',
+  components: {
+    Tree,
+  },
   setup() {
-    const treeNodes = reactive([
+    const favNodes = reactive([
       { title: 'server1', key: '1' },
       { title: 'server2', key: '2' },
       {
@@ -80,8 +70,13 @@ export default defineComponent({
         ],
       },
     ])
+
+    onMounted(() => {
+      favNodes.push({ title: 'aaa', key: '111' })
+    })
+
     const data = reactive({
-      treeNodes,
+      favNodes,
       expandedKeys: ['0-0-0', '0-0-1'],
       selectedKeys: ['0-0-0', '0-0-1'],
       checkedKeys: ['0-0-0', '0-0-1'],
@@ -135,43 +130,6 @@ export default defineComponent({
     > .ant-collapse-content
     > .ant-collapse-content-box {
     padding-top: 0;
-  }
-
-  .ant-tree {
-    font-size: 12px;
-  }
-  .ant-tree > li:first-child {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .ant-tree li {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .ant-tree-child-tree > li:first-child {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .ant-tree > li:last-child {
-    padding-bottom: 0;
-  }
-  .ant-tree-switcher.ant-tree-switcher-noop,
-  .ant-tree-switcher.ant-tree-switcher_close,
-  .ant-tree-switcher.ant-tree-switcher_open {
-    display: none !important;
-  }
-  .ant-tree.ant-tree-block-node li .ant-tree-node-content-wrapper {
-    width: 100%;
-    padding: 0 12px;
-    color: @text-color-secondary;
-  }
-  .ant-tree-node-selected {
-    color: @text-color-secondary !important;
-  }
-
-  .tree-icon {
-    font-size: 14px;
-    line-height: 22px;
   }
 }
 </style>

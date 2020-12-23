@@ -53,10 +53,11 @@ export class RedisService extends Service {
           const [...typesRes] = await pipeline.exec()
           // FIXME: pipeline.exec 未捕获异常
           result = res.map((e, i) => [e, typesRes[i][1]])
+          console.log('🚀 / RedisService / returnnewPromise / result', result)
         }
         resolve(result)
       } else {
-        // TODO: client 不存在时返回错误
+        // TODO: client 不存在时的错误处理
         reject('client 不存在的错误')
       }
     })
