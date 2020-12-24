@@ -1,16 +1,16 @@
+import { stat } from 'fs-extra'
 import { ModuleOption } from '../definition'
 interface IState {
   aboutDialogVisible: boolean
-  value: number
-  name: string
+  siderVisiable: boolean
+  activedNavMenuItem: string
 }
 
-interface Getters {
-  valueAndName1: string
-}
+interface Getters {}
 interface IMutations {
+  updateSiderVisiable: boolean
   updateAboutDialogVisiable: boolean
-  setValueAndName1: { value: number; name: string }
+  updateActivedNavMenuItem: string
 }
 
 export type AppModule = ModuleOption<IState, Getters, IMutations>
@@ -18,19 +18,19 @@ export type AppModule = ModuleOption<IState, Getters, IMutations>
 const mod: AppModule = {
   state: {
     aboutDialogVisible: false,
-    value: 0,
-    name: '',
+    siderVisiable: true,
+    activedNavMenuItem: 'explorer',
   },
-  getters: {
-    valueAndName1: (state) => state.name + ' ' + state.value,
-  },
+  getters: {},
   mutations: {
+    updateActivedNavMenuItem(state, value) {
+      state.activedNavMenuItem = value
+    },
+    updateSiderVisiable(state, value) {
+      state.siderVisiable = value
+    },
     updateAboutDialogVisiable(state, value) {
       state.aboutDialogVisible = value
-    },
-    setValueAndName1: (state, { name, value }) => {
-      state.name = name
-      state.value = value
     },
   },
 }

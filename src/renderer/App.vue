@@ -7,7 +7,7 @@
       <a-layout-sider collapsedWidth="48" :collapsed="true"><NavMenu /></a-layout-sider>
       <a-layout>
         <splitpanes class="splitpanes-theme">
-          <pane size="20" min-size="20"><Explorer /></pane>
+          <Sider />
           <pane min-size="20">
             <a-layout-content class="app-content">
               <Hub />
@@ -31,6 +31,7 @@ import { Splitpanes, Pane } from 'splitpanes'
 
 import TitleBar from '/@/components/Layout/TitleBar.vue'
 import NavMenu from '/@/components/Layout/NavMenu.vue'
+import Sider from '/@/components/Layout/Sider.vue'
 import StatusBar from '/@/components/Layout/StatusBar.vue'
 import Explorer from '/@/components/Layout/Explorer.vue'
 import Hub from '/@/components/Layout/Hub.vue'
@@ -43,6 +44,7 @@ export default defineComponent({
   components: {
     TitleBar,
     NavMenu,
+    Sider,
     StatusBar,
     Explorer,
     Splitpanes,

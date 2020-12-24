@@ -15,7 +15,8 @@
             <a-select size="small" v-model:value="selectedDB" style="width: 120px">
               <a-select-option value="jack"> 1 </a-select-option>
             </a-select>
-            <MonacoEditor />
+            <!-- <MonacoEditor /> -->
+            <CodeEditor />
             <a-button @click="handleRefreshKeys" type="primary">刷新</a-button>
             <a-switch v-model:checked="showBadge" />
           </pane>
@@ -81,7 +82,8 @@ import {
 } from 'vue'
 
 import { Splitpanes, Pane } from 'splitpanes'
-import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
+// import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
+import CodeEditor from '/@/components/Common/CodeEditor.vue'
 import Tree from '/@/components/Common/Tree.vue'
 import TreeBadge from '/@/components/Common/TreeBadge.vue'
 
@@ -90,7 +92,7 @@ import { useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'Connection',
-  components: { Splitpanes, Pane, Tree, TreeBadge, MonacoEditor },
+  components: { Splitpanes, Pane, Tree, TreeBadge, CodeEditor },
   props: {
     connectionId: String,
   },
