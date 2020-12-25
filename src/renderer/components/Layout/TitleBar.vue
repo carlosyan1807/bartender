@@ -1,21 +1,21 @@
 <template>
-  <div class="app-title-bar">
+  <div class="app-title-bar" :class="isFocus ? 'is-focus' : 'is-blur'">
     <div class="drag-region">
       <div class="window-appicon" />
       <div class="window-title">
         <span>{{ `${appName} v${appVersion}` }}</span>
       </div>
       <div class="window-actions">
-        <div class="min-button" @click="handleWindowAction('min')">
+        <div class="min-button" @click="handleWindowAction('window-min')">
           <iconfont name="win-minimize" />
         </div>
-        <div class="max-button" @click="handleWindowAction('max')">
+        <div v-if="!isMaximized" class="max-button" @click="handleWindowAction('window-max')">
           <iconfont name="win-maximize" />
         </div>
-        <div class="restore-button" @click="handleWindowAction('max')">
+        <div v-if="isMaximized" class="restore-button" @click="handleWindowAction('window-max')">
           <iconfont name="win-restore" />
         </div>
-        <div class="close-button" @click="handleWindowAction('close')">
+        <div class="close-button" @click="handleWindowAction('app-exit')">
           <iconfont name="win-close" />
         </div>
       </div>
@@ -25,7 +25,8 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs } from 'vue'
-import { useService } from '/@/hooks'
+import { useIpc, useService } from '/@/hooks'
+import { Modal } from 'ant-design-vue'
 
 // TODO: 失去焦点时的背景色和字体颜色变更
 
@@ -38,19 +39,42 @@ export default defineComponent({
     const { getBasicInformation } = useService('BaseService')
     const appName = ref(props.appName)
     const appVersion = ref('')
+    const exitConfirmVisiable = ref(false)
+    const isFocus = ref(false)
+    const isMaximized = ref(false)
 
+    // 获取版本信息
     const fetchAppVersion = async () => {
       const { electron } = await getBasicInformation()
       appVersion.value = electron
     }
+    fetchAppVersion()
+
     // 窗口控制
     const handleWindowAction = (action: string) => {
-      emit('window-action', action)
+      if (action === 'app-exit') {
+        Modal.confirm({
+          title: '确认退出吗？',
+          cancelText: '取消',
+          okText: '退出',
+          onOk() {
+            useIpc().send('renderer2main', 'app-exit')
+          },
+        })
+      } else useIpc().send('renderer2main', action)
     }
-    fetchAppVersion()
+
+    useIpc().on('updateWindowStatus', (event, result) => {
+      if (result.isFocus !== undefined) isFocus.value = result.isFocus
+      if (result.isMaximized !== undefined) isMaximized.value =result.isMaximized
+    })
+
     const data = reactive({
       appName,
       appVersion,
+      exitConfirmVisiable,
+      isFocus,
+      isMaximized,
     })
 
     return {
@@ -68,7 +92,13 @@ export default defineComponent({
   display: block;
   position: fixed;
   width: 100%;
-  // background-color: @component-background;
+
+  &.is-blur {
+    background-color: @app-background;
+  }
+  &.is-focus {
+    background-color: @app-component-background;
+  }
 
   .drag-region {
     width: 100%;
@@ -176,15 +206,15 @@ export default defineComponent({
   // }
 }
 
-.restore-button {
-  display: none !important;
-}
-.maximized {
-  .restore-button {
-    display: flex !important;
-  }
-  .max-button {
-    display: none;
-  }
-}
+// .restore-button {
+//   display: none !important;
+// }
+// .maximized {
+//   .restore-button {
+//     display: flex !important;
+//   }
+//   .max-button {
+//     display: none;
+//   }
+// }
 </style>
