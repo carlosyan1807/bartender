@@ -5,25 +5,33 @@
     v-model:selectedKeys="selectedKeys"
     v-model:checkedKeys="checkedKeys"
     :block-node="true"
-    :show-icon="false"
+    :show-icon="true"
     :show-line="false"
   >
     <!-- <template #switcherIcon><span></span></template> -->
+    <template #folder="{ expanded }">
+      <iconfont v-if="expanded" name="folder-open" class="tree-icon folder-color" />
+      <iconfont v-else name="folder" class="tree-icon folder-color" />
+    </template>
+    <template #redis><iconfont name="redis" class="tree-icon redis-color" /></template>
+
     <template #title="item">
-      <slot name="icon" :item="item">
+      <!-- <slot name="icon" :item="item">
         <iconfont :name="item.icon" class="tree-icon" />
-      </slot>
+      </slot> -->
       <span>{{ item.title }} </span>
     </template>
   </a-directory-tree>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, ref, watchEffect } from 'vue'
+import { defineComponent, reactive, toRefs, onMounted, ref, watchEffect, watch } from 'vue'
+
+import ContextMenu from '/@/components/Common/ContextMenu.vue'
 
 export default defineComponent({
   name: 'Tree',
-  components: {},
+  components: { ContextMenu },
   props: {
     treeNodes: {
       type: Array,
@@ -34,7 +42,7 @@ export default defineComponent({
     leafIcon: String,
     activedKey: String,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const treeNodes = reactive(props.treeNodes)
     const activedKey = ref(props.activedKey)
 
@@ -44,7 +52,6 @@ export default defineComponent({
 
     onMounted(() => {})
 
-    const updateExpandedNodeIcon = () => {}
     const data = reactive({
       activedKey,
       expandedKeys,
@@ -96,7 +103,7 @@ export default defineComponent({
 
   .ant-tree-title {
     span {
-      margin-left: 4px;
+      // margin-left: 4px;
       text-overflow: ellipsis;
     }
   }

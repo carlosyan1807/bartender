@@ -113,6 +113,8 @@ export default defineComponent({
 @import url('../../themes/variables');
 
 .app-hub {
+  height: 100%;
+
   .ant-tabs-card-bar {
     border-bottom: none;
     background-color: @body-background;
@@ -157,7 +159,11 @@ export default defineComponent({
   }
 
   .ant-tabs-content {
-    padding: 0 16px;
+    padding: 0;
+    height: 100%;
+  }
+  .ant-tabs-tabpane {
+    height: 100%;
   }
 }
 </style>

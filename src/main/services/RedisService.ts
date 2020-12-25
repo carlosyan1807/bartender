@@ -21,7 +21,7 @@ export class RedisService extends Service {
     const client = await redis.createStandAloneConnection(options)
 
     client.on('ready', () => {
-      this.webContent?.send('clientStatusUpdated', { id: id, status: 'ready' })
+      this.webContent?.send('connectionStatusUpdated', { id: id, status: 'ready' })
     })
 
     this.clients.push({ id, client })

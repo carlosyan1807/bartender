@@ -1,31 +1,36 @@
 <template>
-  <a-spin :spinning="isLoading">
-    <splitpanes class="splitpanes-theme" horizontal :push-other-panes="false">
-      <pane>
-        <splitpanes class="splitpanes-theme">
-          <pane size="20" min-size="20">
-            <a-input-search placeholder="搜索键名" size="small" />
-            <Tree :treeNodes="keysData">
-              <template #icon="{ item }">
-                <TreeBadge :badge="showBadge" :type="item.type" />
-              </template>
-            </Tree>
-          </pane>
-          <pane min-size="20">
-            <a-select size="small" v-model:value="selectedDB" style="width: 120px">
-              <a-select-option value="jack"> 1 </a-select-option>
-            </a-select>
-            <!-- <MonacoEditor /> -->
-            <CodeEditor />
-            <a-button @click="handleRefreshKeys" type="primary">刷新</a-button>
-            <a-switch v-model:checked="showBadge" />
-          </pane>
-        </splitpanes>
-      </pane>
-      <pane>console</pane>
-    </splitpanes>
+  <splitpanes style="height: 100%" class="splitpanes-theme" horizontal :push-other-panes="false">
+    <pane min-size="50">
+      <div class="connection-container">
+        <a-spin :spinning="isLoading">
+          <splitpanes class="splitpanes-theme" :push-other-panes="false">
+            <pane size="20" min-size="20">
+              <a-input-search placeholder="搜索键名" size="small" />
+              <Tree :treeNodes="keysData">
+                <template #icon="{ item }">
+                  <TreeBadge :badge="showBadge" :type="item.type" />
+                </template>
+              </Tree>
+            </pane>
+            <pane min-size="20">
+              <a-select size="small" v-model:value="selectedDB" style="width: 120px">
+                <a-select-option value="jack"> 1 </a-select-option>
+              </a-select>
+              <!-- <MonacoEditor /> -->
+              <!-- <CodeEditor /> -->
+              <a-button @click="handleRefreshKeys" type="primary">刷新</a-button>
+              <a-button @click="showConsole = !showConsole" type="primary">显示控制台</a-button>
+              <a-switch v-model:checked="showBadge" />
+            </pane>
+          </splitpanes>
+        </a-spin>
+      </div>
+    </pane>
 
-    <!-- <a-directory-tree :tree-data="keysData" :block-node="true" :show-icon="false">
+    <pane min-size="20"><div class="console-container">console</div></pane>
+  </splitpanes>
+
+  <!-- <a-directory-tree :tree-data="keysData" :block-node="true" :show-icon="false">
       <template #switcherIcon>
         <span></span>
       </template>
@@ -65,7 +70,6 @@
         </span>
       </template>
     </a-directory-tree> -->
-  </a-spin>
 </template>
 
 <script lang="ts">
@@ -79,11 +83,12 @@ import {
   defineComponent,
   Ref,
   watchEffect,
+  getCurrentInstance,
 } from 'vue'
 
 import { Splitpanes, Pane } from 'splitpanes'
 // import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
-import CodeEditor from '/@/components/Common/CodeEditor.vue'
+// import CodeEditor from '/@/components/Common/CodeEditor.vue'
 import Tree from '/@/components/Common/Tree.vue'
 import TreeBadge from '/@/components/Common/TreeBadge.vue'
 
@@ -92,7 +97,7 @@ import { useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'Connection',
-  components: { Splitpanes, Pane, Tree, TreeBadge, CodeEditor },
+  components: { Splitpanes, Pane, Tree, TreeBadge },
   props: {
     connectionId: String,
   },
@@ -100,20 +105,22 @@ export default defineComponent({
     const { state } = useStore()
     const { createConnection, scanKeys } = useService('RedisService')
 
-    const found = state.hub.connections.findIndex(
-      (e: { id: string | undefined }) => e.id === props.connectionId
-    )
+    const found = state.hub.connections.findIndex((e: { id: string | undefined }) => e.id === props.connectionId)
     const connection = computed(() => state.hub.connections[found])
     const isLoading = computed(() => connection.value.status !== 'ready')
     const showBadge = ref(true)
-    const keysData: any = reactive([])
     const selectedDB = ref(0)
+    const showConsole = ref(false)
+
+    const keysData: any = reactive([])
+
     const getAllKeys = async () => {
       const result = await scanKeys({ id: toRaw(connection.value.id) })
       const payload: { title: string; type: string }[] = []
       result.forEach((e) => payload.push({ title: e[0], type: e[1] }))
       return payload
     }
+    const refConnection = ref(null)
     onMounted(async () => {
       const payload = {
         id: toRaw(connection.value.id),
@@ -126,13 +133,23 @@ export default defineComponent({
     const handleRefreshKeys = async () => {
       keysData.value = keysData.splice(0, keysData.length, ...(await getAllKeys()))
     }
-    const data = reactive({ isLoading, connection, keysData, showBadge, selectedDB })
+    const data = reactive({ isLoading, connection, keysData, showBadge, selectedDB, showConsole })
     return {
       ...toRefs(data),
       handleRefreshKeys,
+      refConnection,
     }
   },
 })
 </script>
 
-<style></style>
+<style lang="less">
+@import url('../themes/variables');
+
+.connection-container {
+  padding: 0 16px;
+}
+.console-container {
+  border-top: 1px solid @border-color-base;
+}
+</style>

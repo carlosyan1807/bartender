@@ -3,35 +3,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, ref, Ref, onBeforeUnmount } from 'vue'
+import {
+  defineComponent,
+  reactive,
+  toRefs,
+  onMounted,
+  ref,
+  Ref,
+  onBeforeUnmount,
+  markRaw,
+} from 'vue'
 import codemirror, { Editor } from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 import '/@/assets/codemirror-onedark.css'
 // import 'codemirror/addon/scroll/simplescrollbars'
 // import 'codemirror/addon/scroll/simplescrollbars.css'
+const CodeMirror = window.CodeMirror || codemirror
 
 export default defineComponent({
   name: 'CodeEditor',
   components: {},
   props: {},
   setup(props, context) {
-    let editor: Ref<Editor | null> = ref(null)
-
+    let refEditor: Ref<Editor | null> = ref(null)
+    let editor
     onMounted(() => {
-      codemirror((editor.value as unknown) as HTMLElement, {
-        lineNumbers: true,
-        theme: 'one-dark',
-        // scrollbarStyle: 'simple',
-      })
+      editor = markRaw(
+        codemirror((refEditor.value as unknown) as HTMLElement, {
+          value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+          lineNumbers: true,
+          theme: 'one-dark',
+          scrollbarStyle: 'simple',
+        })
+      )
+      editor.setSize('100%', '300px')
     })
-    onBeforeUnmount(()=> {
 
-    })
     const data = reactive({})
 
     return {
       ...toRefs(data),
-      editor,
+      refEditor,
     }
   },
 })
