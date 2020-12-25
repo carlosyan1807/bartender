@@ -5,19 +5,25 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, onMounted, reactive, toRefs } from 'vue'
+
+export default defineComponent({
   name: 'QuickConnect',
+
   setup(props, { emit }) {
-    const connectRedis = (options) => {
+    let redisClients = reactive({})
+
+    const connectRedis = (options: { host?: string; port?: number | string }) => {
       emit('newConnection', options)
     }
-
+    const data = reactive({})
     return {
+      ...toRefs(data),
       connectRedis,
     }
   },
-}
+})
 </script>
 
 <style></style>

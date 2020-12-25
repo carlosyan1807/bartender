@@ -1,7 +1,8 @@
 <template>
   <div class="app-navmenu">
     <div class="navmenu-main">
-      <a-menu v-model:selectedKeys="selectedMenu" mode="inline">
+      <!-- antdv菜单的selectedKeys(v-model)必须是数组 string[] -->
+      <a-menu :selectedKeys="[activedNavMenuItem]" mode="inline" @click="handleMenuItemClick">
         <a-menu-item v-for="item in navMenuItems" :key="item.name">
           <iconfont :name="item.icon" />
           <span>{{ item.label }}</span>
@@ -15,7 +16,7 @@
         </a-button>
         <template #overlay>
           <a-menu class="context-menu">
-            <a-menu-item key="0" title="" @click="showHubSettings">
+            <a-menu-item key="0" title="" @click="showSettings">
               <span>设置</span>
             </a-menu-item>
             <a-menu-item key="1" title="" disabled>
@@ -32,34 +33,47 @@
   </div>
 </template>
 
-<script>
-import { reactive, toRefs } from 'vue'
+<script lang="ts">
+import { computed, defineComponent, reactive, toRefs, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 
-export default {
+export default defineComponent({
   name: 'NavMenu',
   setup(props) {
-    const store = useStore()
+    const { state, commit } = useStore()
+
+    const activedNavMenuItem = computed(() => state.app.activedNavMenuItem)
 
     const navMenuItems = reactive([
       { name: 'explorer', label: '资源管理器', icon: 'server' },
       { name: 'reserved', label: '预留项', icon: 'wrench' },
     ])
+
+    // 打开设置
+    const showSettings = () => {
+      commit('showHubSettings', true)
+    }
+    // 打开关于
+    const showAboutDialog = () => {
+      commit('updateAboutDialogVisiable', true)
+    }
+
+    const handleMenuItemClick = (event: { key: string }) => {
+      const { key } = event
+      if (key === activedNavMenuItem.value) commit('updateActivedNavMenuItem', '')
+      else commit('updateActivedNavMenuItem', key)
+    }
+
     const data = reactive({
       navMenuItems,
-      selectedMenu: ['explorer'],
+      activedNavMenuItem,
     })
-    const showHubSettings = () => {
-      store.commit('showHubSettings', true)
-    }
-    const showAboutDialog = () => {
-      store.commit('UPDATE_ABOUT_DIALOG_VISIBLE', true)
-    }
 
     return {
       ...toRefs(data),
       showAboutDialog,
-      showHubSettings,
+      showSettings,
+      handleMenuItemClick,
     }
   },
   // data() {
@@ -80,11 +94,11 @@ export default {
   //     openKeys,
   //   }
   // },
-}
+})
 </script>
 
 <style lang="less">
-@import url('../themes/variables');
+@import url('../../themes/variables');
 
 .app-navmenu {
   height: 100%;

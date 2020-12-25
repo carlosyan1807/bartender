@@ -15,7 +15,6 @@ const config = {
   optimizeDeps: {
     exclude: external,
   },
-  jsx: "vue",
   cssPreprocessOptions: {
     less: {
       javascriptEnabled: true,

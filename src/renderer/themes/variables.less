@@ -4,16 +4,21 @@
 @app-titlebar-height: 30px;
 @app-statusbar-height: 22px;
 @app-navmenu-width: 48px;
+@app-sider-header-height: 35px;
 
 @reids-icon-color: #e06c75;
 @folder-icon-color: #3399cc;
 @settings-icon-color: #e2c08d;
-
+@redis-list-color: #e5c07b;
+@redis-set-color: #61afef;
+@redis-zset-color: #e06c75;
+@redis-string-color: #98c379;
+@redis-hash-color: #c678dd;
 
 /* Ant Design */
 
-@body-background: #21252b;
-@component-background: #282c34;
+@body-background: @app-background;
+@component-background: @app-component-background;
 
 @disabled-color: darken(@text-color, 20%);
 
@@ -23,8 +28,12 @@
 @primary-color: #3399cc;
 @heading-color: @text-color;
 
-@border-color-base: lighten(@component-background, 4%);
-@border-color-split: lighten(@component-background, 8%);
+@link-color: @text-color;
+@link-hover-color: @text-color-secondary;
+@link-active-color: @text-color-secondary;
+
+@border-color-base: lighten(@component-background, 8%);
+@border-color-split: lighten(@component-background, 16%);
 
 @item-hover-bg: @component-background;
 
@@ -65,6 +74,11 @@
 @tabs-card-height: 35px;
 @tabs-card-active-color: @text-color-secondary;
 @tabs-hover-color: @text-color-secondary;
+
+@badge-height: 16px;
+
+@input-padding-vertical-sm: 0px;
+// @badge-text-color: @text-color;
 // @tabs-highlight-color: @text-color;
 // @tabs-hover-color: @text-color-secondary;
 // @tabs-active-color: @text-color;

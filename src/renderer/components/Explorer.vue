@@ -1,62 +1,104 @@
 <template>
-  <a-layout class="app-explorer">
-    <a-layout-header class="explorer-header">
+  <!-- <a-layout class="app-explorer">
+    <a-layout-header class="explorer-header"> -->
+  <Sider>
+    <template #header>
       <span>资源管理器</span>
-    </a-layout-header>
-    <a-collapse class="explorer-collapse" v-model:activeKey="activeKey" :bordered="false">
-      <a-collapse-panel key="1" header="收藏夹">
-        <a-directory-tree
-          :tree-data="treeNodes"
-          v-model:expandedKeys="expandedKeys"
-          v-model:selectedKeys="selectedKeys"
-          v-model:checkedKeys="checkedKeys"
-          :block-node="true"
-          :show-icon="false"
-        >
-          <!-- <template #title0010><span style="color: #1890ff">sss</span></template> -->
-          <!-- <template #title0010></template> -->
-          <template #switcherIcon>
-            <span></span>
+    </template>
+    <!-- </a-layout-header> -->
+    <a-collapse
+      class="explorer-collapse"
+      v-model:activeKey="expandedKeys"
+      :bordered="false"
+      ref="collapse"
+      :open-animation="{ onEnter: null }"
+    >
+      <a-collapse-panel key="1" header="收藏夹" ref="collapsePanel1" :style="tree1Style">
+        <Tree :tree-nodes="favNodes">
+          <template #icon="{ item }">
+            <iconfont
+              v-if="item.children?.length > 0 && !item.expanded"
+              name="folder"
+              class="tree-icon folder-color"
+            />
+            <iconfont
+              v-else-if="item.children?.length > 0 && item.expanded"
+              name="folder-open"
+              class="tree-icon folder-color"
+            />
+            <iconfont v-else name="redis" class="tree-icon redis-color" />
           </template>
-          <template #title="item">
-            <span>
-              <iconfont
-                class="tree-icon folder-color"
-                name="folder"
-                v-if="item.children?.length > 0 && !item.expanded"
-              />
-              <iconfont
-                class="tree-icon folder-color"
-                name="folder-open"
-                v-else-if="item.children?.length > 0 && item.expanded"
-              />
-              <iconfont class="tree-icon redis-color" name="redis" v-else />
-              {{ item.title }}
-            </span>
+        </Tree>
+      </a-collapse-panel>
+      <a-collapse-panel
+        key="2"
+        header="This is panel header 2"
+        ref="collapsePanel2"
+        :style="tree2Style"
+      >
+        <Tree :tree-nodes="favNodes">
+          <template #icon="{ item }">
+            <iconfont
+              v-if="item.children?.length > 0 && !item.expanded"
+              name="folder"
+              class="tree-icon folder-color"
+            />
+            <iconfont
+              v-else-if="item.children?.length > 0 && item.expanded"
+              name="folder-open"
+              class="tree-icon folder-color"
+            />
+            <iconfont v-else name="redis" class="tree-icon redis-color" />
           </template>
-        </a-directory-tree>
+        </Tree>
       </a-collapse-panel>
-      <a-collapse-panel key="2" header="This is panel header 2" :disabled="false">
-        <p>234</p>
-      </a-collapse-panel>
-      <a-collapse-panel key="3" header="This is panel header 3">
-        <p>345</p>
+      <a-collapse-panel
+        key="3"
+        header="This is panel header 3"
+        ref="collapsePanel3"
+        :style="tree3Style"
+      >
+        <Tree :tree-nodes="favNodes">
+          <!-- <template #icon="{ item }">
+            <iconfont
+              v-if="item.children?.length > 0 && !item.expanded"
+              name="folder"
+              class="tree-icon folder-color"
+            />
+            <iconfont
+              v-else-if="item.children?.length > 0 && item.expanded"
+              name="folder-open"
+              class="tree-icon folder-color"
+            />
+            <iconfont v-else name="redis" class="tree-icon redis-color" />
+          </template> -->
+        </Tree>
       </a-collapse-panel>
     </a-collapse>
-  </a-layout>
+    <!-- </a-layout> -->
+  </Sider>
 </template>
 
-<script>
-import { reactive, toRefs } from 'vue'
-export default {
+<script lang="ts">
+import { defineComponent, onMounted, reactive, ref, toRaw, toRefs, watchEffect } from 'vue'
+import Sider from '/@/components/Layout/Sider.vue'
+import Tree from '/@/components/Common/Tree.vue'
+import TempComponent from './TempComponent.vue'
+
+export default defineComponent({
   name: 'Explorer',
+  components: {
+    Sider,
+    Tree,
+  },
   setup() {
-    const treeNodes = reactive([
+    const favNodes = reactive([
       { title: 'server1', key: '1' },
       { title: 'server2', key: '2' },
       {
         title: '公司',
         key: '3',
+        slots: { icon: 'folder' },
         children: [
           { title: '官网', key: '4' },
           { title: 'dev', key: '5' },
@@ -79,98 +121,83 @@ export default {
         ],
       },
     ])
+    const collapse = ref(null)
+    const collapsePanel1 = ref(null)
+    const collapsePanel2 = ref(null)
+    const collapsePanel3 = ref(null)
+    const tree1Style = reactive({ height: 50 })
+    const tree2Style = reactive({ height: 50 })
+    const tree3Style = reactive({ height: 50 })
+    const expandedKeys = reactive(['1'])
+
+    // 节点图标
+    const insertNodeIcon = (nodes: any[]) => {
+      nodes.forEach((node) => {
+        if (node.children) {
+          node.slots = { icon: 'folder' }
+          insertNodeIcon(node.children)
+        } else {
+          node.slots = { icon: 'redis' }
+        }
+      })
+    }
+    watchEffect(() => insertNodeIcon(favNodes))
+
+    onMounted(() => {
+      // console.log('collapse', collapse.value.$el.offsetHeight)
+      // console.log('collapsePanel1', collapsePanel1)
+      // tree1Style.height = `${collapse.value.$el.offsetHeight - 44}px`
+      // console.log(tree1Style)
+    })
+
     const data = reactive({
-      treeNodes,
-      expandedKeys: ['0-0-0', '0-0-1'],
-      selectedKeys: ['0-0-0', '0-0-1'],
-      checkedKeys: ['0-0-0', '0-0-1'],
-      activeKey: '1',
+      favNodes,
+      expandedKeys,
+      collapse,
+      collapsePanel1,
+      collapsePanel2,
+      collapsePanel3,
+      tree1Style,
+      tree2Style,
+      tree3Style,
     })
     return {
       ...toRefs(data),
     }
   },
-}
+})
 </script>
 
 <style lang="less">
 @import url('../themes/variables');
 
-.app-explorer {
-  overflow: hidden;
+.explorer-collapse.ant-collapse-borderless {
+  height: calc(100vh - @app-titlebar-height - @app-statusbar-height - @app-sider-header-height);
+  background-color: @body-background;
 
-  .explorer-header.ant-layout-header {
+  .ant-collapse-header {
+    background-color: @component-background;
     color: @text-color-secondary;
-    height: 35px;
-    font-size: 12px;
-    line-height: 35px;
-    padding: 0 20px;
-    background-color: @body-background;
-  }
-  .explorer-collapse.ant-collapse {
-    background-color: @body-background;
+    font-size: 11px;
+    font-weight: 600;
 
-    .ant-collapse-header {
-      background-color: @component-background;
-      color: @text-color-secondary;
-      font-size: 11px;
-      font-weight: 600;
-
-      .ant-collapse-arrow {
-        left: 2px !important;
-        margin: 0 2px;
-      }
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .ant-collapse-arrow {
+      left: 2px !important;
+      margin: 0 2px;
     }
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  // .ant-collapse-content {
+  //   overflow: auto;
+  // }
+
+  .ant-collapse-item {
+    border-bottom: none !important;
   }
 
-  .ant-collapse-borderless > .ant-collapse-item {
-    border-bottom: none;
-  }
-
-  .ant-collapse-borderless
-    > .ant-collapse-item
-    > .ant-collapse-content
-    > .ant-collapse-content-box {
-    padding-top: 0;
-  }
-
-  .ant-tree {
-    font-size: 12px;
-  }
-  .ant-tree > li:first-child {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .ant-tree li {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .ant-tree-child-tree > li:first-child {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .ant-tree > li:last-child {
-    padding-bottom: 0;
-  }
-  .ant-tree-switcher.ant-tree-switcher-noop,
-  .ant-tree-switcher.ant-tree-switcher_close,
-  .ant-tree-switcher.ant-tree-switcher_open {
-    display: none !important;
-  }
-  .ant-tree.ant-tree-block-node li .ant-tree-node-content-wrapper {
-    width: 100%;
-    padding: 0 12px;
-    color: @text-color-secondary;
-  }
-  .ant-tree-node-selected {
-    color: @text-color-secondary !important;
-  }
-
-  .tree-icon {
-    font-size: 14px;
-    line-height: 22px;
+  .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+    padding-top: 0 !important;
   }
 }
 </style>

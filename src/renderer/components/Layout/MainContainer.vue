@@ -1,15 +1,19 @@
 <template>
   <a-tabs
     class="app-hub"
-    v-model:activeKey="activedTab"
-    :animated="false"
+    :activeKey="activedTab"
     size="small"
     type="editable-card"
     :hide-add="true"
+    @change="handleChangeTab"
   >
-    <a-tab-pane v-for="item in tabsData" :key="item.id">
+    <a-tab-pane v-for="item in connections" :key="item.id">
       <template #tab>
-        <a-dropdown :trigger="['contextmenu']" placement="bottomLeft" :disabled="item.id === 'quick-connect'">
+        <a-dropdown
+          :trigger="['contextmenu']"
+          placement="bottomLeft"
+          :disabled="item.id === 'quick-connect'"
+        >
           <div class="contextmenu-region">
             <iconfont v-if="item.id === 'quick-connect'" class="folder-color" name="thunderbolt" />
             <iconfont v-else-if="item.id === 'settings'" class="settings-color" name="setting" />
@@ -23,30 +27,28 @@
       </template>
       <QuickConnect v-if="item.id === 'quick-connect'" @new-connection="handleNewTab" />
       <Settings v-else-if="item.id === 'settings'" />
-      <Connection v-else />
+      <Connection v-else :connection-id="item.id" />
     </a-tab-pane>
   </a-tabs>
 </template>
 
 <script lang="ts">
-import { reactive, markRaw, ref, toRefs, computed, watch, watchEffect } from 'vue'
+import { defineComponent, reactive, markRaw, ref, toRefs, computed, watch, watchEffect } from 'vue'
 import { useStore } from 'vuex'
-import { IHubConnection } from '/@/interface'
 
-import QuickConnect from '/@/components/Hub/QuickConnect.vue'
-import Connection from '/@/components/Hub/Connection.vue'
-import Settings from '/@/components/Hub/Settings.vue'
-import ContextMenu from '/@/components/Hub/ContextMenu.vue'
+import QuickConnect from '/@/components/QuickConnect.vue'
+import Connection from '/@/components/Connection.vue'
+import Settings from '/@/components/Settings.vue'
+import ContextMenu from '/@/components/Common/ContextMenu.vue'
 
 import { v4 as uuidv4 } from 'uuid'
-import { connect } from 'http2'
 
 export interface IConnectionOptions {
-  host: string
-  port: number
+  host?: string
+  port?: number | string
 }
 
-export default {
+export default defineComponent({
   name: 'Hub',
   components: {
     QuickConnect,
@@ -55,62 +57,64 @@ export default {
     ContextMenu,
   },
   setup() {
-    const store = useStore()
+    const { state, commit } = useStore()
 
-    const connections = store.state.hub.connections
-    if (connections.findIndex((e: IHubConnection) => e.id === 'quick-connect') === -1)
-      store.commit('createHubItem', { id: 'quick-connect', label: '快速连接' })
-    const tabsData = computed(() => store.state.hub.connections)
-    let activedTab = ref('quick-connect')
+    const connections = computed(() => state.hub.connections)
+    // 添加 快速连接 页并激活
+    if (connections.value.findIndex((e: { id: string }) => e.id === 'quick-connect') === -1)
+      commit('createHubItem', { id: 'quick-connect', label: '快速连接' })
+    commit('updateHubActivedTab', 'quick-connect')
+    const activedTab = computed(() => state.hub.activedTab)
 
-    const settingsVisiable = computed(() => store.state.hub.settingsVisiable)
+    const settingsVisiable = computed(() => state.hub.settingsVisiable)
     watch(settingsVisiable, (value) => {
       if (value) {
-        if (tabsData.value.findIndex((e: IHubConnection) => e.id === 'settings') === -1)
-          store.commit('createHubItem', { id: 'settings', label: '设置' })
-        activedTab.value = 'settings'
+        if (connections.value.findIndex((e: { id: string }) => e.id === 'settings') === -1)
+          commit('createHubItem', { id: 'settings', label: '设置' })
+        commit('updateHubActivedTab', 'settings')
       } else {
-        store.commit('removeHubItem', 'settings')
+        commit('removeHubItem', 'settings')
       }
     })
-    // FIXME: 似乎有点不对劲，暂时先这样
-    watch(
-      () => store.state.hub.tempActived,
-      () => (activedTab.value = 'settings')
-    )
-
-    watchEffect(() => store.commit('updateHubActivedTab', activedTab.value))
-
-    const handleNewTab = (options: IConnectionOptions) => {
+    // 切换页
+    const handleChangeTab = (actived: string) => {
+      commit('updateHubActivedTab', actived)
+    }
+    // 新建页
+    const handleNewTab = async (options: IConnectionOptions) => {
       const uuid = uuidv4()
       const newItem = {
         id: uuid,
         label: `${options.host}:${options.port}`,
+        options: options,
       }
-      store.commit('createHubItem', newItem)
-      activedTab.value = newItem.id
+      commit('createHubItem', newItem)
+      commit('updateHubActivedTab', newItem.id)
     }
-
+    // 关闭页
     // TODO: 关闭当前 tab 时, 先切换为 +1 或 -1 索引的 tab, 再进行 remove, 关闭非当前 tab 时, actived 不变
     const handleCloseTab = () => {}
 
     const data = reactive({
-      tabsData,
+      connections,
       activedTab,
       settingsVisiable,
     })
     return {
       ...toRefs(data),
       handleNewTab,
+      handleChangeTab,
     }
   },
-}
+})
 </script>
 
 <style lang="less">
 @import url('../../themes/variables');
 
 .app-hub {
+  height: 100%;
+
   .ant-tabs-card-bar {
     border-bottom: none;
     background-color: @body-background;
@@ -155,7 +159,11 @@ export default {
   }
 
   .ant-tabs-content {
-    padding: 0 16px;
+    padding: 0;
+    height: 100%;
+  }
+  .ant-tabs-tabpane {
+    height: 100%;
   }
 }
 </style>

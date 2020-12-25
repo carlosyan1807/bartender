@@ -3,7 +3,7 @@
     <div class="drag-region">
       <div class="window-appicon" />
       <div class="window-title">
-        <span>{{ appName }}</span>
+        <span>{{ `${appName} v${appVersion}` }}</span>
       </div>
       <div class="window-actions">
         <div class="min-button" @click="handleWindowAction('min')">
@@ -23,37 +23,46 @@
   </div>
 </template>
 
-<script>
-import { reactive, toRefs } from 'vue'
+<script lang="ts">
+import { defineComponent, onMounted, reactive, ref, toRefs } from 'vue'
+import { useService } from '/@/hooks'
 
 // TODO: 失去焦点时的背景色和字体颜色变更
 
-export default {
+export default defineComponent({
   name: 'TitleBar',
   props: {
     appName: String,
   },
   setup(props, { emit }) {
-    const appName = props.appName
+    const { getBasicInformation } = useService('BaseService')
+    const appName = ref(props.appName)
+    const appVersion = ref('')
 
-    const data = reactive({
-      appName,
-    })
+    const fetchAppVersion = async () => {
+      const { electron } = await getBasicInformation()
+      appVersion.value = electron
+    }
     // 窗口控制
-    const handleWindowAction = (action) => {
+    const handleWindowAction = (action: string) => {
       emit('window-action', action)
     }
+    fetchAppVersion()
+    const data = reactive({
+      appName,
+      appVersion,
+    })
 
     return {
       ...toRefs(data),
       handleWindowAction,
     }
   },
-}
+})
 </script>
 
 <style lang="less">
-@import url('../themes/variables');
+@import url('../../themes/variables');
 
 .app-title-bar {
   display: block;
@@ -75,7 +84,7 @@ export default {
     height: 100%;
     position: relative;
     z-index: 3000;
-    background-image: url('../assets/logo.png');
+    background-image: url('../../assets/logo.png');
     background-repeat: no-repeat;
     background-position: 50%;
     background-size: 16px;

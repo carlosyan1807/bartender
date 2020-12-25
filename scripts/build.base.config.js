@@ -3,7 +3,7 @@
  * @type {import('electron-builder').Configuration}
  */
 const config = {
-  productName: '',
+  productName: 'Bartender',
   appId: '',
   directories: {
     output: 'build',

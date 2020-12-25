@@ -13,6 +13,7 @@ interface Getters {}
 interface IMutations {
   showHubSettings: boolean
   updateHubActivedTab: string
+  updateConnectionStatus: { id: string, status: string }
   removeHubItem: { id: string }
   createHubItem: IHubConnection
 }
@@ -30,12 +31,17 @@ const module: HubModule = {
   mutations: {
     showHubSettings(state, value) {
       state.settingsVisiable = value
-      state.tempActived = !state.tempActived
-      console.log('temp', state.tempActived)
+      if (value) state.activedTab = 'settings'
     },
     updateHubActivedTab(state, value) {
       state.activedTab = value
-      console.log(state.activedTab)
+    },
+    updateConnectionStatus(state, value) {
+      const { id, status } = value
+      const found = state.connections.findIndex(e=> e.id === id)
+      if(found !== -1) {
+        state.connections[found].status = status
+      }
     },
     createHubItem(state, item) {
       state.connections.push(item)

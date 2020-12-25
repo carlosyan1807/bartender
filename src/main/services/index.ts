@@ -2,14 +2,16 @@ import { ipcMain } from 'electron'
 import { Logger } from '../logger'
 import { BaseService } from './BaseService'
 import { FooService } from './FooService'
+import { RedisService } from './RedisService'
 import { INJECTIONS_SYMBOL } from './Service'
 
 /**
  * All services definition
  */
 export interface Services {
-  FooService: FooService,
+  FooService: FooService
   BaseService: BaseService
+  RedisService: RedisService
 }
 
 let _services!: Services
@@ -22,7 +24,8 @@ let _services!: Services
 export function initialize(logger: Logger) {
   _initialize({
     BaseService: new BaseService(logger),
-    FooService: new FooService(logger)
+    FooService: new FooService(logger),
+    RedisService: new RedisService(logger)
   })
 }
 
@@ -46,7 +49,11 @@ function _initialize(services: Services) {
           throw new Error(`Cannot set service ${type} to ${Object.getPrototypeOf(serv)}`)
         }
       } else {
-        throw new Error(`Cannot find service named ${type}! Which is required by ${Object.getPrototypeOf(serv).constructor.name}`)
+        throw new Error(
+          `Cannot find service named ${type}! Which is required by ${
+            Object.getPrototypeOf(serv).constructor.name
+          }`
+        )
       }
     }
   }
