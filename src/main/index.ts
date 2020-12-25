@@ -36,6 +36,22 @@ function createWindow() {
     mainWindow.show()
   })
 
+  mainWindow.on('maximize', function () {
+    mainWindow.webContents.send('updateWindowStatus', { isMaximized: true })
+  })
+
+  mainWindow.on('unmaximize', function () {
+    mainWindow.webContents.send('updateWindowStatus', { isMaximized: false })
+  })
+
+  mainWindow.on('blur', function () {
+    mainWindow.webContents.send('updateWindowStatus', { isFocus: false })
+  })
+
+  mainWindow.on('focus', function () {
+    mainWindow.webContents.send('updateWindowStatus', { isFocus: true })
+  })
+
   ipcMain.on('renderer2main', (event, func) => {
     console.log(`ipcMain: renderer2main - ${func}`)
     switch (func) {
