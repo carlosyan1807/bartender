@@ -1,12 +1,23 @@
 body {
   user-select: none;
   height: 100vh;
+  width: 100vw;
 }
 
+.app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  // height: calc(100vh - @app-titlebar-height - @app-statusbar-height);
+  height: 100vh;
+}
 .app-container {
-  height: calc(100vh - @app-titlebar-height - @app-statusbar-height);
+  height: 100%;
+  margin-top: @app-titlebar-height;
+  // margin-bottom: @app-statusbar-height;
 }
-
 .app-content {
   height: 100%;
   background-color: @component-background;
@@ -24,6 +35,21 @@ body {
   color: @settings-icon-color;
 }
 
+.icon-button {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: 14px;
+  color: @text-color;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: @text-color;
+    background-color: @component-background;
+  }
+}
+
 @redis-badge: badge-redis;
 .@{redis-badge} {
   & .ant-badge-count {
@@ -37,7 +63,7 @@ body {
   &-list .ant-badge-count {
     background-color: @redis-list-color;
   }
-  &-set .ant-badge-count{
+  &-set .ant-badge-count {
     background-color: @redis-set-color;
   }
   &-zset .ant-badge-count {

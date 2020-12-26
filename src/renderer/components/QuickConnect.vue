@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="quick-connect-container">
     <a-button @click="connectRedis({ port: 6379 })" type="primary">连接6379</a-button>
     <a-button @click="connectRedis({ port: 6380 })">连接6380</a-button>
   </div>
@@ -26,4 +26,8 @@ export default defineComponent({
 })
 </script>
 
-<style></style>
+<style>
+.quick-connect-container {
+  padding: 16px;
+}
+</style>

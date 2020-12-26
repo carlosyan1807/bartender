@@ -30,7 +30,9 @@
     "vue": "^3.0.4",
     "vue-router": "^4.0.1",
     "vuex": "^4.0.0-rc.2",
-    "xterm": "^4.9.0"
+    "xterm": "^4.9.0",
+    "xterm-addon-fit": "^0.4.0",
+    "xterm-addon-web-links": "^0.4.0"
   },
   "external": [
     "electron-updater",
@@ -46,7 +48,7 @@
     "@types/ioredis": "^4.17.10",
     "@types/splitpanes": "^2.2.0",
     "@types/uuid": "^8.3.0",
-    "@vue/babel-plugin-jsx": "^1.0.0-rc.5",
+    "@vue/babel-plugin-jsx": "^1.0.0",
     "@vue/compiler-sfc": "^3.0.4",
     "builtin-modules": "^3.2.0",
     "chalk": "^4.1.0",

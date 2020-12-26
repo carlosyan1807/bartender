@@ -1,7 +1,7 @@
 <template>
   <div class="app-statusbar">
     <div class="footer-left">
-      <a-button type="link" class="footer-button" @click="handleReload">
+      <a-button type="link" class="icon-button" @click="handleReload">
         <template #icon><iconfont name="reload" /></template>
       </a-button>
     </div>
@@ -31,28 +31,14 @@ export default defineComponent({
 @import url('../../themes/variables');
 
 .app-statusbar {
-  position: fixed;
-  bottom: 0;
   width: 100%;
   height: 22px;
   display: flex;
   justify-content: space-between;
 
-  .footer-button {
-    border: 0;
-    border-radius: 0;
-    padding: 0;
+  .icon-button {
     line-height: 22px;
     height: 22px;
-    font-size: 14px;
-    color: @text-color;
-
-    &:hover,
-    &:focus,
-    &:active {
-      color: @text-color;
-      background-color: @component-background;
-    }
   }
   // .footer-button.reload {
   //   color: @text-color-secondary;

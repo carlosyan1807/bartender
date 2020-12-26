@@ -115,9 +115,10 @@ export default defineComponent({
 .app-hub {
   height: 100%;
 
-  .ant-tabs-card-bar {
+  .ant-tabs-bar.ant-tabs-card-bar {
     border-bottom: none;
     background-color: @body-background;
+    margin: 0;
   }
   .ant-tabs-tab {
     font-size: @font-size-sm;
@@ -160,7 +161,10 @@ export default defineComponent({
 
   .ant-tabs-content {
     padding: 0;
-    height: 100%;
+    position: absolute;
+    top: 36px;
+    bottom: 0;
+    left: 0;
   }
   .ant-tabs-tabpane {
     height: 100%;

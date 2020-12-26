@@ -1,8 +1,8 @@
 <template>
-  <a-layout>
-    <a-layout-header>
+  <a-layout class="app">
+    <!-- <a-layout-header> -->
       <TitleBar :app-name="appName" />
-    </a-layout-header>
+    <!-- </a-layout-header> -->
     <a-layout class="app-container">
       <a-layout-sider collapsedWidth="48" :collapsed="true"><NavMenu /></a-layout-sider>
       <a-layout>
@@ -12,10 +12,12 @@
               <component :is="activedComponent" />
             </keep-alive>
           </pane>
-          <pane :size="mainContainerSize">
-            <a-layout-content class="app-content">
-              <MainContainer />
-            </a-layout-content>
+          <pane :size="hubSize">
+            <a-layout class="app-content">
+              <a-layout-content>
+                <Hub />
+              </a-layout-content>
+            </a-layout>
           </pane>
         </splitpanes>
       </a-layout>
@@ -37,13 +39,12 @@ import TitleBar from '/@/components/Layout/TitleBar.vue'
 import NavMenu from '/@/components/Layout/NavMenu.vue'
 import Sider from '/@/components/Layout/Sider.vue'
 import StatusBar from '/@/components/Layout/StatusBar.vue'
-import MainContainer from '/@/components/Layout/MainContainer.vue'
+import Hub from '/@/components/Layout/Hub.vue'
 import AboutDialog from '/@/components/AboutDialog.vue'
 
 import Explorer from '/@/components/Explorer.vue'
 import TempComponent from '/@/components/TempComponent.vue'
 
-// TODO: Hub更名为主容器，Explorer需更名为sider，其中tree提出来为公共组件
 import { useIpc } from '/@/hooks'
 
 export default defineComponent({
@@ -55,7 +56,7 @@ export default defineComponent({
     StatusBar,
     Splitpanes,
     Pane,
-    MainContainer,
+    Hub,
     AboutDialog,
     Explorer,
     TempComponent,
@@ -75,9 +76,9 @@ export default defineComponent({
 
     // 容器大小
     const siderSize = ref(20)
-    const mainContainerSize = ref(80)
+    const hubSize = ref(80)
     const handleToggleSider = (value: string) => {
-      if (!value) mainContainerSize.value = 100
+      if (!value) hubSize.value = 100
     }
     watchEffect(() => handleToggleSider(state.app.activedNavMenuItem))
 
@@ -86,7 +87,7 @@ export default defineComponent({
       activedComponent,
       siderVisiable,
       siderSize,
-      mainContainerSize,
+      hubSize,
     })
 
     return {

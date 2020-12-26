@@ -1,6 +1,6 @@
 <template>
-  <splitpanes style="height: 100%" class="splitpanes-theme" horizontal :push-other-panes="false">
-    <pane min-size="50">
+  <splitpanes class="splitpanes-theme" horizontal :push-other-panes="false">
+    <pane :size="100 - consoleSize">
       <div class="connection-container">
         <a-spin :spinning="isLoading">
           <splitpanes class="splitpanes-theme" :push-other-panes="false">
@@ -13,9 +13,10 @@
               </Tree>
             </pane>
             <pane min-size="20">
-              <a-select size="small" v-model:value="selectedDB" style="width: 120px">
+              <a-select size="small" v-model:value="selectedDB">
                 <a-select-option value="jack"> 1 </a-select-option>
               </a-select>
+              <List :listData="keysData"></List>
               <!-- <MonacoEditor /> -->
               <!-- <CodeEditor /> -->
               <a-button @click="handleRefreshKeys" type="primary">刷新</a-button>
@@ -27,7 +28,22 @@
       </div>
     </pane>
 
-    <pane min-size="20"><div class="console-container">console</div></pane>
+    <pane :size="consoleSize" v-if="showConsole">
+      <a-layout class="console-container">
+        <a-layout-header class="console-header">
+          <div class="console-header-left"><span>终端</span></div>
+          <div class="console-header-right">
+            <a-button class="icon-button" type="link">
+              <template #icon><iconfont name="up" /></template>
+            </a-button>
+            <a-button class="icon-button" type="link" @click="showConsole = false">
+              <template #icon><iconfont name="close" /></template>
+            </a-button>
+          </div>
+        </a-layout-header>
+        <Terminal ref="refTerminal" />
+      </a-layout>
+    </pane>
   </splitpanes>
 
   <!-- <a-directory-tree :tree-data="keysData" :block-node="true" :show-icon="false">
@@ -91,13 +107,15 @@ import { Splitpanes, Pane } from 'splitpanes'
 // import CodeEditor from '/@/components/Common/CodeEditor.vue'
 import Tree from '/@/components/Common/Tree.vue'
 import TreeBadge from '/@/components/Common/TreeBadge.vue'
+import List from '/@/components/Common/List.vue'
+import Terminal from '/@/components/Common/Terminal.vue'
 
 import { useStore } from 'vuex'
 import { useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'Connection',
-  components: { Splitpanes, Pane, Tree, TreeBadge },
+  components: { Splitpanes, Pane, Tree, TreeBadge, List, Terminal },
   props: {
     connectionId: String,
   },
@@ -105,13 +123,15 @@ export default defineComponent({
     const { state } = useStore()
     const { createConnection, scanKeys } = useService('RedisService')
 
-    const found = state.hub.connections.findIndex((e: { id: string | undefined }) => e.id === props.connectionId)
+    const found = state.hub.connections.findIndex(
+      (e: { id: string | undefined }) => e.id === props.connectionId
+    )
     const connection = computed(() => state.hub.connections[found])
     const isLoading = computed(() => connection.value.status !== 'ready')
     const showBadge = ref(true)
     const selectedDB = ref(0)
     const showConsole = ref(false)
-
+    const consoleSize = ref(20)
     const keysData: any = reactive([])
 
     const getAllKeys = async () => {
@@ -120,7 +140,7 @@ export default defineComponent({
       result.forEach((e) => payload.push({ title: e[0], type: e[1] }))
       return payload
     }
-    const refConnection = ref(null)
+
     onMounted(async () => {
       const payload = {
         id: toRaw(connection.value.id),
@@ -133,11 +153,18 @@ export default defineComponent({
     const handleRefreshKeys = async () => {
       keysData.value = keysData.splice(0, keysData.length, ...(await getAllKeys()))
     }
-    const data = reactive({ isLoading, connection, keysData, showBadge, selectedDB, showConsole })
+    const data = reactive({
+      isLoading,
+      connection,
+      keysData,
+      showBadge,
+      selectedDB,
+      showConsole,
+      consoleSize,
+    })
     return {
       ...toRefs(data),
       handleRefreshKeys,
-      refConnection,
     }
   },
 })
@@ -147,9 +174,29 @@ export default defineComponent({
 @import url('../themes/variables');
 
 .connection-container {
-  padding: 0 16px;
+  padding: 16px 16px 0 16px;
 }
 .console-container {
+  height: 100%;
   border-top: 1px solid @border-color-base;
+}
+
+.console-header.ant-layout-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  .icon-button {
+    color: @text-color-secondary;
+    &:hover,
+    &:focus,
+    &:active {
+      color: @text-color-secondary;
+    }
+  }
+  .console-header-left {
+    padding-left: 16px;
+    font-size: @font-size-sm;
+  }
 }
 </style>

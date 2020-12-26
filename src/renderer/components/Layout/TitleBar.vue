@@ -40,7 +40,7 @@ export default defineComponent({
     const appName = ref(props.appName)
     const appVersion = ref('')
     const exitConfirmVisiable = ref(false)
-    const isFocus = ref(false)
+    const isFocus = ref(true)
     const isMaximized = ref(false)
 
     // 获取版本信息
@@ -171,11 +171,13 @@ export default defineComponent({
     }
 
     .min-button:hover,
-    .max-button:hover {
+    .max-button:hover,
+    .restore-button:hover {
       background: lighten(@component-background, 4%);
     }
     .min-button:active,
-    .max-button:active {
+    .max-button:active,
+    .restore-button:hover {
       background: lighten(@component-background, 8%);
     }
 
