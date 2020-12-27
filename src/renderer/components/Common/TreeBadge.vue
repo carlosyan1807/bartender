@@ -30,7 +30,7 @@ export default defineComponent({
     })
     const iconName = computed(() => `redis-${props.type}`)
     const showBadge = computed(() => props.badge)
-    
+
     onMounted(() => {})
 
     const data = reactive({ label, className, iconName, showBadge })

@@ -7,7 +7,7 @@
 [![Vue](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/vue?color=41B883&label=Vue&logo=vue.js)](https://github.com/vuejs/vue-next)
 [![electron](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/dev/electron?color=%239feaf9&label=Electron&logo=electron&logoColor=%239feaf9)](https://github.com/electron/electron)
 [![vite](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/dev/vite/dev?label=Vite&color=41B883)]((https://github.com/vitejs/vite))
-[![Typescript](https://img.shields.io/badge/Typescript-informational?logo=Typescript&color=3178c6)](https://github.com/microsoft/TypeScript)
+[![Typescript](https://img.shields.io/badge/Typescript-informational?logo=Typescript&color=3178c6&logoColor=white)](https://github.com/microsoft/TypeScript)
 [![VSCode](https://img.shields.io/badge/Editor-VSCode-informational?logo=visual-studio-code&logoColor=23A7F2&color=3178c6)](https://github.com/microsoft/vscode)
 ![GitHub](https://img.shields.io/github/license/UncleCarlos/bartender)
 
@@ -37,7 +37,7 @@
 | | 依赖|
 | --- | -- |
 | UI | [![Vue](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/ant-design-vue)](https://github.com/vueComponent/ant-design-vue) |
-| Editor | [![monaco-editor](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/monaco-editor)](https://github.com/microsoft/monaco-editor) [![codemirror](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/codemirror)](https://github.com/codemirror/CodeMirror) <br/> 目前均未搞懂怎么在Vue3+Vite中使用，库内资源加载都有问题。 ![need help](https://img.shields.io/badge/-need%20help-red)|
+| Editor | [![monaco-editor](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/monaco-editor)](https://github.com/microsoft/monaco-editor) [![codemirror](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/codemirror)](https://github.com/codemirror/CodeMirror) <br/> 目前均未搞懂怎么在Vue3+Vite中使用，库内资源加载都有问题。 ![help wanted](https://img.shields.io/badge/-help%20wanted-red)|
 | Redis | [![ioredis](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/ioredis)](https://github.com/luin/ioredis) |
 | Terminal | [![xterm](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/xterm)](https://github.com/xtermjs/xterm.js)|
 

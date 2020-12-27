@@ -1,37 +1,47 @@
 <template>
   <a-directory-tree
     :tree-data="treeNodes"
-    v-model:expandedKeys="expandedKeys"
-    v-model:selectedKeys="selectedKeys"
-    v-model:checkedKeys="checkedKeys"
     :block-node="true"
-    :show-icon="true"
+    :show-icon="!customIcon"
     :show-line="false"
+    expand-action="dblclick"
+    @select="handleNodeChange"
+    :defaultSelectedKeys="selectedKey"
+    v-model:selectedKeys="selectedKey"
   >
-    <!-- <template #switcherIcon><span></span></template> -->
     <template #folder="{ expanded }">
       <iconfont v-if="expanded" name="folder-open" class="tree-icon folder-color" />
       <iconfont v-else name="folder" class="tree-icon folder-color" />
     </template>
     <template #redis><iconfont name="redis" class="tree-icon redis-color" /></template>
-
+    <!-- <template #redis-key="item">
+      <TreeBadge :badge="showBadge" :type="item.type" />
+    </template> -->
     <template #title="item">
-      <!-- <slot name="icon" :item="item">
-        <iconfont :name="item.icon" class="tree-icon" />
-      </slot> -->
+      <TreeBadge v-if="customIcon" :badge="showBadge" :type="item.type" />
       <span>{{ item.title }} </span>
     </template>
   </a-directory-tree>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, ref, watchEffect, watch } from 'vue'
+import {
+  defineComponent,
+  reactive,
+  toRefs,
+  onMounted,
+  ref,
+  watchEffect,
+  watch,
+  computed,
+} from 'vue'
 
+import TreeBadge from '/@/components/Common/TreeBadge.vue'
 import ContextMenu from '/@/components/Common/ContextMenu.vue'
 
 export default defineComponent({
   name: 'Tree',
-  components: { ContextMenu },
+  components: { TreeBadge, ContextMenu },
   props: {
     treeNodes: {
       type: Array,
@@ -39,28 +49,48 @@ export default defineComponent({
         return []
       },
     },
-    leafIcon: String,
-    activedKey: String,
+    customIcon: {
+      type: Boolean,
+      default: false,
+    },
+    showBadge: Boolean,
   },
   setup(props, { emit }) {
-    const treeNodes = reactive(props.treeNodes)
-    const activedKey = ref(props.activedKey)
-
-    const expandedKeys = ref([])
-    const selectedKeys = ref([])
-    const checkedKeys = ref([])
+    const treeNodes = computed(() => props.treeNodes)
+    const customIcon = computed(() => props.customIcon)
+    const showBadge = computed(() => props.showBadge)
+    const selectedKey: string[] = reactive([])
+    const handleNodeChange = (key: string, e: any) => {
+      emit('change', key, e)
+    }
+    const insertNodeIcon = (nodes: any[]) => {
+      nodes.forEach((node) => {
+        if (node.children) {
+          node.slots = { icon: 'folder' }
+          insertNodeIcon(node.children)
+        } else {
+          if (!customIcon) node.slots = { icon: 'redis-key' }
+          else node.slots = { icon: 'redis' }
+        }
+      })
+    }
+    watchEffect(() => {
+      insertNodeIcon(treeNodes.value)
+      if (selectedKey.length === 0 && treeNodes.value.length > 0)
+        selectedKey.push(treeNodes.value[0].key)
+    })
 
     onMounted(() => {})
 
     const data = reactive({
-      activedKey,
-      expandedKeys,
-      selectedKeys,
-      checkedKeys,
       treeNodes,
+      showBadge,
+      customIcon,
+      selectedKey,
     })
     return {
       ...toRefs(data),
+      handleNodeChange,
     }
   },
 })
@@ -103,7 +133,6 @@ export default defineComponent({
 
   .ant-tree-title {
     span {
-      // margin-left: 4px;
       text-overflow: ellipsis;
     }
   }

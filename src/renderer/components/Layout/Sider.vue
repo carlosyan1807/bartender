@@ -45,13 +45,14 @@ export default defineComponent({
 @import url('../../themes/variables');
 
 .app-sider {
+  height: calc(100vh - @app-titlebar-height - @app-statusbar-height);
   overflow: hidden;
 
   .sider-header.ant-layout-header {
     color: @text-color-secondary;
-    height: 35px;
+    height: @app-sider-header-height;
     font-size: 12px;
-    line-height: 35px;
+    line-height: @app-sider-header-height;
     padding: 0 20px;
     background-color: @body-background;
   }

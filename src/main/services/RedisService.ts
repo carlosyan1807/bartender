@@ -30,6 +30,7 @@ export class RedisService extends Service {
       resolve(true)
     })
   }
+
   private whichClient(id: string): IORedis.Redis | undefined {
     const found = this.clients.find((e) => e.id === id)
     if (found) {
@@ -38,7 +39,19 @@ export class RedisService extends Service {
     return
   }
 
+  getStringKey(params: any): Promise<string | null> {
+    console.log('🚀 / RedisService / getStringKey ', params[0])
+    const { id, name } = params[0]
+    return new Promise(async (resolve, reject) => {
+      const client = this.whichClient(id)
+      if (client) {
+        const res = await client.get(name)
+        resolve(res)
+      } else reject('client 不存在的错误')
+    })
+  }
   scanKeys(params: any): Promise<any[][]> {
+    console.log('🚀 / RedisService / scanKeys ', params[0])
     const { id } = params[0]
     let pattern = '*',
       fetchCount = 100
@@ -53,7 +66,6 @@ export class RedisService extends Service {
           const [...typesRes] = await pipeline.exec()
           // FIXME: pipeline.exec 未捕获异常
           result = res.map((e, i) => [e, typesRes[i][1]])
-          console.log('🚀 / RedisService / returnnewPromise / result', result)
         }
         resolve(result)
       } else {

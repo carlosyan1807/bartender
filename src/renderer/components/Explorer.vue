@@ -13,66 +13,14 @@
       ref="collapse"
       :open-animation="{ onEnter: null }"
     >
-      <a-collapse-panel key="1" header="收藏夹" ref="collapsePanel1" :style="tree1Style">
-        <Tree :tree-nodes="favNodes">
-          <template #icon="{ item }">
-            <iconfont
-              v-if="item.children?.length > 0 && !item.expanded"
-              name="folder"
-              class="tree-icon folder-color"
-            />
-            <iconfont
-              v-else-if="item.children?.length > 0 && item.expanded"
-              name="folder-open"
-              class="tree-icon folder-color"
-            />
-            <iconfont v-else name="redis" class="tree-icon redis-color" />
-          </template>
-        </Tree>
+      <a-collapse-panel key="1" header="收藏夹">
+        <Tree :tree-nodes="favNodes" />
       </a-collapse-panel>
-      <a-collapse-panel
-        key="2"
-        header="This is panel header 2"
-        ref="collapsePanel2"
-        :style="tree2Style"
-      >
-        <Tree :tree-nodes="favNodes">
-          <template #icon="{ item }">
-            <iconfont
-              v-if="item.children?.length > 0 && !item.expanded"
-              name="folder"
-              class="tree-icon folder-color"
-            />
-            <iconfont
-              v-else-if="item.children?.length > 0 && item.expanded"
-              name="folder-open"
-              class="tree-icon folder-color"
-            />
-            <iconfont v-else name="redis" class="tree-icon redis-color" />
-          </template>
-        </Tree>
+      <a-collapse-panel key="2" header="This is panel header 2">
+        <Tree :tree-nodes="favNodes" />
       </a-collapse-panel>
-      <a-collapse-panel
-        key="3"
-        header="This is panel header 3"
-        ref="collapsePanel3"
-        :style="tree3Style"
-      >
-        <Tree :tree-nodes="favNodes">
-          <!-- <template #icon="{ item }">
-            <iconfont
-              v-if="item.children?.length > 0 && !item.expanded"
-              name="folder"
-              class="tree-icon folder-color"
-            />
-            <iconfont
-              v-else-if="item.children?.length > 0 && item.expanded"
-              name="folder-open"
-              class="tree-icon folder-color"
-            />
-            <iconfont v-else name="redis" class="tree-icon redis-color" />
-          </template> -->
-        </Tree>
+      <a-collapse-panel key="3" header="This is panel header 3">
+        <Tree :tree-nodes="favNodes" />
       </a-collapse-panel>
     </a-collapse>
     <!-- </a-layout> -->
@@ -98,7 +46,7 @@ export default defineComponent({
       {
         title: '公司',
         key: '3',
-        slots: { icon: 'folder' },
+        // slots: { icon: 'folder' },
         children: [
           { title: '官网', key: '4' },
           { title: 'dev', key: '5' },
@@ -121,27 +69,20 @@ export default defineComponent({
         ],
       },
     ])
-    const collapse = ref(null)
-    const collapsePanel1 = ref(null)
-    const collapsePanel2 = ref(null)
-    const collapsePanel3 = ref(null)
-    const tree1Style = reactive({ height: 50 })
-    const tree2Style = reactive({ height: 50 })
-    const tree3Style = reactive({ height: 50 })
     const expandedKeys = reactive(['1'])
 
     // 节点图标
-    const insertNodeIcon = (nodes: any[]) => {
-      nodes.forEach((node) => {
-        if (node.children) {
-          node.slots = { icon: 'folder' }
-          insertNodeIcon(node.children)
-        } else {
-          node.slots = { icon: 'redis' }
-        }
-      })
-    }
-    watchEffect(() => insertNodeIcon(favNodes))
+    // const insertNodeIcon = (nodes: any[]) => {
+    //   nodes.forEach((node) => {
+    //     if (node.children) {
+    //       node.slots = { icon: 'folder' }
+    //       insertNodeIcon(node.children)
+    //     } else {
+    //       node.slots = { icon: 'redis' }
+    //     }
+    //   })
+    // }
+    // watchEffect(() => insertNodeIcon(favNodes))
 
     onMounted(() => {
       // console.log('collapse', collapse.value.$el.offsetHeight)
@@ -153,13 +94,6 @@ export default defineComponent({
     const data = reactive({
       favNodes,
       expandedKeys,
-      collapse,
-      collapsePanel1,
-      collapsePanel2,
-      collapsePanel3,
-      tree1Style,
-      tree2Style,
-      tree3Style,
     })
     return {
       ...toRefs(data),

@@ -60,12 +60,12 @@ export default defineComponent({
     const { state, commit } = useStore()
 
     const connections = computed(() => state.hub.connections)
-    // 添加 快速连接 页并激活
+    // 添加 快速连接 页并激活为默认页
     if (connections.value.findIndex((e: { id: string }) => e.id === 'quick-connect') === -1)
       commit('createHubItem', { id: 'quick-connect', label: '快速连接' })
     commit('updateHubActivedTab', 'quick-connect')
     const activedTab = computed(() => state.hub.activedTab)
-
+    // 设置页显示状态
     const settingsVisiable = computed(() => state.hub.settingsVisiable)
     watch(settingsVisiable, (value) => {
       if (value) {
@@ -114,11 +114,11 @@ export default defineComponent({
 
 .app-hub {
   height: 100%;
+  overflow: hidden;
 
   .ant-tabs-bar.ant-tabs-card-bar {
     border-bottom: none;
     background-color: @body-background;
-    margin: 0;
   }
   .ant-tabs-tab {
     font-size: @font-size-sm;
@@ -158,16 +158,16 @@ export default defineComponent({
     transition-duration: 0ms;
     transition-delay: 0.1s;
   }
-
   .ant-tabs-content {
-    padding: 0;
     position: absolute;
-    top: 36px;
+    top: @app-sider-header-height;
     bottom: 0;
     left: 0;
-  }
-  .ant-tabs-tabpane {
-    height: 100%;
+    right: 0;
+
+    .ant-tabs-tabpane-active {
+      height:100%;
+    }
   }
 }
 </style>

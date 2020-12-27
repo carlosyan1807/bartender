@@ -41,6 +41,11 @@
 
 @font-size-sm: 12px;
 
+@padding-lg: 16px; // containers
+@padding-md: 12px; // small containers and buttons
+@padding-sm: 8px; // Form controls and items
+@padding-xs: 4px;
+
 @layout-body-background: @body-background;
 @layout-header-height: @app-titlebar-height;
 @layout-header-padding: none;
@@ -71,11 +76,16 @@
 @tree-child-padding: 12px;
 
 @tabs-card-head-background: @body-background;
-@tabs-card-height: 35px;
+@tabs-card-height: @app-sider-header-height;
 @tabs-card-active-color: @text-color-secondary;
 @tabs-hover-color: @text-color-secondary;
+@tabs-bar-margin: 0;
 
 @badge-height: 16px;
+
+@list-item-meta-margin-bottom: @padding-md;
+@list-item-meta-avatar-margin-right: @padding-md;
+@list-item-meta-title-margin-bottom: @padding-sm;
 
 @input-padding-vertical-sm: 0px;
 // @badge-text-color: @text-color;

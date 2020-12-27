@@ -51,7 +51,7 @@ export default defineComponent({
     const xtermWebLinksAddon = new WebLinksAddon()
     const xtermFitAddon = new FitAddon()
 
-    // xterm.loadAddon(xtermWebLinksAddon)
+    xterm.loadAddon(xtermWebLinksAddon)
     xterm.loadAddon(xtermFitAddon)
 
     onMounted(() => {
@@ -79,9 +79,5 @@ export default defineComponent({
 .terminal-container {
   background-color: @app-component-background;
   // padding-left: 8px;
-
-  .terminal.xterm {
-    height: 100%;
-  }
 }
 </style>

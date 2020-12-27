@@ -1,23 +1,23 @@
 <template>
-  <a-layout class="app">
+  <a-layout>
     <!-- <a-layout-header> -->
-      <TitleBar :app-name="appName" />
+    <TitleBar :app-name="appName" />
     <!-- </a-layout-header> -->
-    <a-layout class="app-container">
+    <a-layout>
       <a-layout-sider collapsedWidth="48" :collapsed="true"><NavMenu /></a-layout-sider>
       <a-layout>
         <splitpanes class="splitpanes-theme" :dbl-click-splitter="false">
-          <pane :size="siderSize" min-size="20" v-show="siderVisiable">
+          <pane :size="siderSize" v-show="siderVisiable">
             <keep-alive>
               <component :is="activedComponent" />
             </keep-alive>
           </pane>
-          <pane :size="hubSize">
-            <a-layout class="app-content">
-              <a-layout-content>
-                <Hub />
-              </a-layout-content>
-            </a-layout>
+          <pane :size="100 - siderSize">
+            <!-- <a-layout class="app-content">
+              <a-layout-content> -->
+            <Hub />
+            <!-- </a-layout-content>
+            </a-layout> -->
           </pane>
         </splitpanes>
       </a-layout>
@@ -76,9 +76,10 @@ export default defineComponent({
 
     // 容器大小
     const siderSize = ref(20)
-    const hubSize = ref(80)
+    // const hubSize = ref(80)
     const handleToggleSider = (value: string) => {
-      if (!value) hubSize.value = 100
+      if (!value) siderSize.value = 0
+      else siderSize.value = 20
     }
     watchEffect(() => handleToggleSider(state.app.activedNavMenuItem))
 
@@ -87,7 +88,7 @@ export default defineComponent({
       activedComponent,
       siderVisiable,
       siderSize,
-      hubSize,
+      // hubSize,
     })
 
     return {

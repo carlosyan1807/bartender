@@ -1,10 +1,12 @@
 <template>
   <a-modal
-    wraplClassName="about-dialog"
+    wrap-class-name="about-dialog"
     :visible="aboutDialogVisible"
     @cancel="handleHideAboutDialog"
   >
-    <h2>Bartender</h2>
+    <h2>
+      Bartender <span class="app-version">{{ appVersion }}</span>
+    </h2>
     <a-list
       class="about-list"
       :split="false"
@@ -47,8 +49,8 @@ export default defineComponent({
     const { getBasicInformation } = useService('BaseService')
 
     const aboutDialogVisible = computed(() => state.app.aboutDialogVisible)
-    const sysInfoArray: Ref<{ title: string; icon: string; content: string }[]> = ref([])
-
+    const sysInfoArray: Ref<{ title: string; icon?: string; content: string }[]> = ref([])
+    const appVersion = ref('')
     const handleHideAboutDialog = () => {
       commit('updateAboutDialogVisiable', false)
     }
@@ -58,15 +60,17 @@ export default defineComponent({
     }
 
     const getSysInfo = async () => {
-      const { electron, os, chrome, nodejs } = await getBasicInformation()
+      const { app, electron, os, chrome, nodejs, v8 } = await getBasicInformation()
       sysInfoArray.value.push({
         title: '操作系统',
         icon: os.type === 'Linux' ? 'linux' : os.type === 'Darwin' ? 'apple' : 'windows',
         content: `${os.type}-${os.arch} ${os.release}`,
       })
       sysInfoArray.value.push({ title: 'Electron', icon: 'electron', content: electron })
-      sysInfoArray.value.push({ title: 'NodeJS', icon: 'nodejs', content: nodejs.version })
+      sysInfoArray.value.push({ title: 'NodeJS', icon: 'nodejs', content: nodejs })
+      sysInfoArray.value.push({ title: 'V8', icon: 'v8', content: v8 })
       sysInfoArray.value.push({ title: 'Chrome', icon: 'chrome', content: chrome })
+      if (process.env.NODE_ENV === 'production') appVersion.value = 'v' + app
     }
 
     onMounted(getSysInfo)
@@ -74,6 +78,7 @@ export default defineComponent({
     const data = reactive({
       aboutDialogVisible,
       sysInfoArray,
+      appVersion,
     })
 
     return {
@@ -88,6 +93,9 @@ export default defineComponent({
 <style lang="less">
 .about-dialog {
   padding: 0;
+  .app-version {
+    font-size: 12px;
+  }
 }
 .about-list {
   .ant-list-item {

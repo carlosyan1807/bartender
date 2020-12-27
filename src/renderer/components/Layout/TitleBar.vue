@@ -3,7 +3,7 @@
     <div class="drag-region">
       <div class="window-appicon" />
       <div class="window-title">
-        <span>{{ `${appName} v${appVersion}` }}</span>
+        <span>{{ `${appName} ${appVersion}` }}</span>
       </div>
       <div class="window-actions">
         <div class="min-button" @click="handleWindowAction('window-min')">
@@ -45,10 +45,10 @@ export default defineComponent({
 
     // 获取版本信息
     const fetchAppVersion = async () => {
-      const { electron } = await getBasicInformation()
-      appVersion.value = electron
+      const { app } = await getBasicInformation()
+      appVersion.value = 'v' + app
     }
-    fetchAppVersion()
+    if (process.env.NODE_ENV === 'production') fetchAppVersion()
 
     // 窗口控制
     const handleWindowAction = (action: string) => {
@@ -66,7 +66,7 @@ export default defineComponent({
 
     useIpc().on('updateWindowStatus', (event, result) => {
       if (result.isFocus !== undefined) isFocus.value = result.isFocus
-      if (result.isMaximized !== undefined) isMaximized.value =result.isMaximized
+      if (result.isMaximized !== undefined) isMaximized.value = result.isMaximized
     })
 
     const data = reactive({
@@ -89,9 +89,11 @@ export default defineComponent({
 @import url('../../themes/variables');
 
 .app-title-bar {
-  display: block;
-  position: fixed;
-  width: 100%;
+  // display: block;
+  // position: fixed;
+  width: inherit;
+  height: @app-titlebar-height;
+  // overflow: hidden;
 
   &.is-blur {
     background-color: @app-background;
@@ -111,7 +113,8 @@ export default defineComponent({
   .window-appicon {
     grid-column: 1;
     width: 35px;
-    height: 100%;
+    // height: 100%;
+    // height: @app-titlebar-height;
     position: relative;
     z-index: 3000;
     background-image: url('../../assets/logo.png');
@@ -145,7 +148,8 @@ export default defineComponent({
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
+    // height: 100%;
+    height: @app-titlebar-height;
 
     .min-button,
     .max-button,

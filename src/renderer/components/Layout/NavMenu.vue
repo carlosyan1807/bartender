@@ -101,7 +101,7 @@ export default defineComponent({
 @import url('../../themes/variables');
 
 .app-navmenu {
-  height: 100%;
+  height: calc(100vh - @app-titlebar-height - @app-statusbar-height);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -129,7 +129,7 @@ export default defineComponent({
       position: absolute;
       content: '';
       width: @menu-item-active-border-width;
-      height: 48px;
+      height: @app-navmenu-width;
       display: block;
       background-color: @primary-color;
       transition-property: background-color;
@@ -139,9 +139,9 @@ export default defineComponent({
   }
 
   .navmenu-extra-button.ant-btn {
-    height: 48px;
+    height: @app-navmenu-width;
     font-size: 24px;
-    width: 48px;
+    width: @app-navmenu-width;
     color: @text-color;
     padding: 0;
 

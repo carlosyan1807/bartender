@@ -31,19 +31,12 @@ export default defineComponent({
 @import url('../../themes/variables');
 
 .app-statusbar {
-  width: 100%;
-  height: 22px;
-  display: flex;
+  width: inherit;
   justify-content: space-between;
 
   .icon-button {
-    line-height: 22px;
-    height: 22px;
+    line-height: @app-statusbar-height;
+    height: @app-statusbar-height;
   }
-  // .footer-button.reload {
-  //   color: @text-color-secondary;
-  //   width: 34px;
-  //   background-color: @primary-color;
-  // }
 }
 </style>
