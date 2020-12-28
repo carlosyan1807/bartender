@@ -1,5 +1,10 @@
 <template>
-  <a-textarea v-model:value="strResult" placeholder="Basic usage" :rows="4" />
+  <a-textarea
+    v-model:value="strResult"
+    placeholder="Basic usage"
+    :rows="4"
+    class="string-content"
+  />
 </template>
 
 <script lang="ts">
@@ -33,7 +38,7 @@ export default defineComponent({
       const result = await getStringKey({ id: connectionId, name })
       return result
     }
-    watchEffect(async () => strResult.value = await getKey(toRaw(keyName.value)))
+    watchEffect(async () => (strResult.value = await getKey(toRaw(keyName.value))))
     onMounted(() => {})
 
     const data = reactive({ strResult })
@@ -46,4 +51,14 @@ export default defineComponent({
 })
 </script>
 
-<style></style>
+<style lang="less">
+.string-content.ant-input {
+  border: 0;
+  height: 100% !important;
+
+  &:hover, &:focus {
+    border: 0;
+    box-shadow: none;
+  }
+}
+</style>

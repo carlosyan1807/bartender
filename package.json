@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "ant-design-vue": "^2.0.0-rc.5",
+    "ant-design-vue": "^2.0.0-rc.7",
     "codemirror": "^5.59.0",
     "electron-updater": "^4.3.5",
     "ioredis": "^4.19.4",
@@ -28,7 +28,8 @@
     "splitpanes": "^3.0.4",
     "uuid": "^8.3.2",
     "vue": "^3.0.4",
-    "vue-router": "^4.0.1",
+    "vue-router": "^4.0.2",
+    "vue3-perfect-scrollbar": "^1.5.5",
     "vuex": "^4.0.0-rc.2",
     "xterm": "^4.9.0",
     "xterm-addon-fit": "^0.4.0",

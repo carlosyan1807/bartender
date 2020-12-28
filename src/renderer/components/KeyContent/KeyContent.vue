@@ -1,5 +1,7 @@
 <template>
-  <component :is="contentComponent" :key-name="keyName" />
+  <div class="key-content">
+    <component :is="contentComponent" :key-name="keyName" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -37,4 +39,8 @@ export default defineComponent({
 })
 </script>
 
-<style></style>
+<style lang="less">
+.key-content {
+  height: 100vh;
+}
+</style>
