@@ -18,6 +18,7 @@ import {
   ref,
   toRaw,
   watchEffect,
+  Ref,
 } from 'vue'
 
 import { useService } from '/@/hooks'
@@ -32,13 +33,17 @@ export default defineComponent({
     const { getStringKey } = useService('RedisService')
     const connectionId = inject('connectionId')
     const keyName = computed(() => props.keyName)
-    const strResult = ref('')
+    const strResult = ref<string | null>('')
 
     const getKey = async (name: string) => {
-      const result = await getStringKey({ id: connectionId, name })
+      const id = <string>connectionId
+      const result = await getStringKey(id, name)
       return result
     }
-    watchEffect(async () => (strResult.value = await getKey(toRaw(keyName.value))))
+    watchEffect(async () => {
+      const name = <string>toRaw(keyName.value)
+      strResult.value = await getKey(name)
+    })
     onMounted(() => {})
 
     const data = reactive({ strResult })
@@ -56,7 +61,8 @@ export default defineComponent({
   border: 0;
   height: 100% !important;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     border: 0;
     box-shadow: none;
   }

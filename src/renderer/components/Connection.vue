@@ -15,7 +15,7 @@
                   <a-input size="small" :allow-clear="true">
                     <template #prefix><iconfont name="search" /></template>
                     <template #addonAfter>
-                      <iconfont name="reload" @click="handleRefreshKeys" />
+                      <iconfont name="reload" @click="fetchKeys" />
                     </template>
                   </a-input>
                 </div>
@@ -44,8 +44,12 @@
           <div class="key-editor-container">
             <a-row class="key-editor-header" justify="space-between">
               <a-col class="key-editor-header-left">
-                <a-select size="small" v-model:value="selectedDB">
-                  <a-select-option value="jack">DB: 1 </a-select-option>
+                <a-select
+                  size="small"
+                  v-model:value="dbSelected"
+                  :options="dbItems"
+                  style="width: 100px"
+                >
                 </a-select>
                 <!-- <MonacoEditor /> -->
                 <!-- <CodeEditor /> -->
@@ -98,7 +102,6 @@ import {
   Ref,
   watchEffect,
   getCurrentInstance,
-  Component,
   provide,
   nextTick,
   onUnmounted,
@@ -123,7 +126,7 @@ export default defineComponent({
   },
   setup(props) {
     const { state } = useStore()
-    const { createConnection, scanKeys } = useService('RedisService')
+    const { createStandAloneConnection, getConfig, scanKeys } = useService('RedisService')
 
     const found = state.hub.connections.findIndex(
       (e: { id: string | undefined }) => e.id === props.connectionId
@@ -133,18 +136,30 @@ export default defineComponent({
 
     const isLoading = computed(() => connection.value.status !== 'ready')
     const showBadge = ref(true)
-    const selectedDB = ref(0)
-    const showConsole = ref(true)
-    let keysData: any[] = reactive([])
 
-    const getAllKeys = async () => {
-      return await scanKeys({ id: toRaw(connection.value.id) })
+    const showConsole = ref(true)
+
+    // 获取DB数量
+    const dbCount = ref(0)
+    const dbItems: any[] = reactive([])
+    const dbSelected = ref(0)
+    const fetchDatabaseCount = async () => {
+      const result = await getConfig(toRaw(connection.value.id), 'databases')
+      if (result[1]) {
+        dbCount.value = Number(result[1])
+      }
     }
-    // 刷新键列表
-    const handleRefreshKeys = async () => {
-      const keys = await getAllKeys()
+    watchEffect(() => {
+      for (let i = 0; i < dbCount.value; i++) {
+        dbItems.push({ label: i, value: i })
+      }
+    })
+    // 获取键列表
+    let keysData: any[] = reactive([])
+    const fetchKeys = async () => {
+      const keys = await scanKeys(toRaw(connection.value.id))
       const result: { title: string; type: string; key: string }[] = []
-      keys.forEach((e) => result.push({ title: e[0], type: e[1], key: e[0] }))
+      if (keys && keys.length > 0) keys.forEach((e) => result.push({ title: e[0], type: e[1], key: e[0] }))
       keysData.splice(0, keysData.length, ...result)
       if (result.length > 0) keySelectedItem.value = { name: result[0].title, type: result[0].type }
     }
@@ -162,9 +177,6 @@ export default defineComponent({
     const refKeyListScrollbar = ref(null)
     const refConsolePane = ref(null)
     const handlePaneResize = () => {
-      // console.log(refKeyListScrollbar)
-      // console.log(refConsolePane.value.$el.offsetHeight)
-      // console.log(refKeyContainer.value.offsetHeight)
       refKeyList.value.style.height = `${
         refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
       }px`
@@ -176,8 +188,11 @@ export default defineComponent({
         id: toRaw(connection.value.id),
         options: toRaw(connection.value.options),
       }
-      const result = await createConnection(payload)
-      if (result) handleRefreshKeys()
+      const result = await createStandAloneConnection(payload.id, payload.options)
+      if (result) {
+        fetchDatabaseCount()
+        fetchKeys()
+      }
 
       nextTick(() => {
         handlePaneResize()
@@ -185,7 +200,7 @@ export default defineComponent({
     })
 
     onUnmounted(() => {
-      if (refKeyListScrollbar.value.ps) {
+      if (refKeyListScrollbar.value?.ps) {
         refKeyListScrollbar.value.ps.destory()
         refKeyListScrollbar.value.ps = null
       }
@@ -194,15 +209,18 @@ export default defineComponent({
     const data = reactive({
       isLoading,
       connection,
+      dbCount,
+      dbItems,
+      dbSelected,
       keysData,
       showBadge,
-      selectedDB,
       showConsole,
       keySelectedItem,
     })
     return {
       ...toRefs(data),
-      handleRefreshKeys,
+      fetchDatabaseCount,
+      fetchKeys,
       handleShowKeyContent,
       refKeyContainer,
       refConsolePane,

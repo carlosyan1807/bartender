@@ -4,7 +4,6 @@ import { Service } from './Service'
 export class BaseService extends Service {
   async getBasicInformation() {
     this.log('getBasicInformation is called!')
-    console.log(process.versions)
     const result = {
       os: {
         type: os.type(),

@@ -13,7 +13,7 @@ const config = {
     '/@/': join(__dirname, '../src/renderer'),
   },
   optimizeDeps: {
-    exclude: [...external, 'monaco-editor', 'codemirror'],
+    exclude: external,
   },
   cssPreprocessOptions: {
     less: {

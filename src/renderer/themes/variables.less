@@ -32,6 +32,9 @@
 @link-hover-color: @text-color-secondary;
 @link-active-color: @text-color-secondary;
 
+@item-active-bg: lighten(@component-background, 8%);
+@item-hover-bg: lighten(@component-background, 8%);
+
 @border-color-base: lighten(@component-background, 8%);
 @border-color-split: lighten(@component-background, 16%);
 
@@ -89,6 +92,9 @@
 
 @input-padding-vertical-sm: 0px;
 @input-addon-bg: @app-component-background;
+
+@select-item-active-bg: @item-active-bg;
+@select-item-selected-bg: lighten(@component-background, 16%);
 // @badge-text-color: @text-color;
 // @tabs-highlight-color: @text-color;
 // @tabs-hover-color: @text-color-secondary;

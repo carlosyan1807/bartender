@@ -1,9 +1,9 @@
 import { Service } from './Service'
 import { Logger } from '/@main/logger'
 
-import redis from '../lib/redisClient'
+// import redis from '../lib/redisClient'
 import { app, WebContents } from 'electron'
-import IORedis from 'ioredis'
+import IORedis, { RedisOptions } from 'ioredis'
 export class RedisService extends Service {
   private clients: any[] = []
   private webContent: WebContents | undefined
@@ -16,21 +16,6 @@ export class RedisService extends Service {
     })
   }
 
-  async createConnection(params: any): Promise<any> {
-    const { id, options } = params[0]
-    const client = await redis.createStandAloneConnection(options)
-
-    client.on('ready', () => {
-      this.webContent?.send('connectionStatusUpdated', { id: id, status: 'ready' })
-    })
-
-    this.clients.push({ id, client })
-
-    return new Promise((resolve) => {
-      resolve(true)
-    })
-  }
-
   private whichClient(id: string): IORedis.Redis | undefined {
     const found = this.clients.find((e) => e.id === id)
     if (found) {
@@ -39,20 +24,43 @@ export class RedisService extends Service {
     return
   }
 
-  getStringKey(params: any): Promise<string | null> {
-    console.log('🚀 / RedisService / getStringKey ', params[0])
-    const { id, name } = params[0]
+  createStandAloneConnection(id: string, options: RedisOptions): Promise<any> {
+    // const { id, options } = params
+    const client = new IORedis(options)
+
+    client.on('ready', () => {
+      this.webContent?.send('connectionStatusUpdated', { id: id, status: 'ready' })
+    })
+
+    this.clients.push({ id, client })
+    return new Promise((resolve) => {
+      resolve({ result: true, count: this.clients.length })
+    })
+  }
+
+  getConfig(id: string, name: string): Promise<string[]> {
+    console.log('🚀 / RedisService / getConfig /', id, name)
+    return new Promise(async (resolve, reject) => {
+      const client = this.whichClient(id)
+      if (client) {
+        const res = await client.config('GET', name)
+        resolve(res)
+      }
+      reject('错误')
+    })
+  }
+  getStringKey(id: string, name: string): Promise<string | null> {
     return new Promise(async (resolve, reject) => {
       const client = this.whichClient(id)
       if (client) {
         const res = await client.get(name)
         resolve(res)
-      } else reject('client 不存在的错误')
+      }
+      reject('client 不存在的错误')
     })
   }
-  scanKeys(params: any): Promise<any[][]> {
-    console.log('🚀 / RedisService / scanKeys ', params[0])
-    const { id } = params[0]
+
+  scanKeys(id: string): Promise<any[][]> {
     let pattern = '*',
       fetchCount = 100
     const client = this.whichClient(id)
@@ -68,10 +76,9 @@ export class RedisService extends Service {
           result = res.map((e, i) => [e, typesRes[i][1]])
         }
         resolve(result)
-      } else {
-        // TODO: client 不存在时的错误处理
-        reject('client 不存在的错误')
       }
+      // TODO: client 不存在时的错误处理
+      reject('client 不存在的错误')
     })
   }
 }

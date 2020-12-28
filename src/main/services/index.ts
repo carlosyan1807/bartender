@@ -25,7 +25,7 @@ export function initialize(logger: Logger) {
   _initialize({
     BaseService: new BaseService(logger),
     FooService: new FooService(logger),
-    RedisService: new RedisService(logger)
+    RedisService: new RedisService(logger),
   })
 }
 
@@ -70,7 +70,7 @@ export class ServiceMethodNotFoundError extends Error {
   }
 }
 
-ipcMain.handle('service:call', (event, name: string, method: string, ...args: any[]) => {
+ipcMain.handle('service:call', (event, name: string, method: string, ...args: any) => {
   if (!_services) {
     throw new Error('Cannot call any service until the services are ready!')
   }
@@ -81,5 +81,6 @@ ipcMain.handle('service:call', (event, name: string, method: string, ...args: an
   if (!service[method]) {
     throw new ServiceMethodNotFoundError(name, method)
   }
-  return service[method](args)
+  console.log('🚀 /', name, '/', method, '/', ...args)
+  return service[method](...args)
 })

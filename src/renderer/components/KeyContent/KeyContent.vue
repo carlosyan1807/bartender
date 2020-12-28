@@ -12,9 +12,11 @@ export default defineComponent({
   name: 'KeyContent',
   components: { StringContent },
   props: {
-    item: Object,
-    default: () => {
-      return {}
+    item: {
+      type: Object,
+      default: () => {
+        return {}
+      },
     },
   },
   setup(props) {
