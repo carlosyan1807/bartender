@@ -41,6 +41,10 @@
 | Redis | [![ioredis](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/ioredis)](https://github.com/luin/ioredis) |
 | Terminal | [![xterm](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/xterm)](https://github.com/xtermjs/xterm.js)|
 
+
+## 🎨 截图
+![screenshots](https://github.com/UncleCarlos/bartender/blob/dev/screenshots/20201229011051.png)
+
 ## 🚀 开始
 
 ```sh
