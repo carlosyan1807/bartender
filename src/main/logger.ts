@@ -2,7 +2,7 @@ import { app, BrowserWindow } from 'electron'
 import { createWriteStream } from 'fs'
 import { join, resolve } from 'path'
 import { PassThrough, pipeline, Transform } from 'stream'
-import { format } from 'util'
+import { format, inspect } from 'util'
 
 function formatMsg(message: any, options: any[]) {
   return options.length !== 0 ? format(message, options) : format(message)

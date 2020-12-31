@@ -1,12 +1,12 @@
 import { Service } from './Service'
 import { Logger } from '/@main/logger'
-
 // import redis from '../lib/redisClient'
 import { app, WebContents } from 'electron'
 import IORedis, { RedisOptions } from 'ioredis'
+import { v4 as uuidv4 } from 'uuid'
 export class RedisService extends Service {
   private clients: any[] = []
-  private webContent: WebContents | undefined
+  private webContent!: WebContents
 
   constructor(logger: Logger) {
     super(logger)
@@ -24,29 +24,90 @@ export class RedisService extends Service {
     return
   }
 
-  createStandAloneConnection(id: string, options: RedisOptions): Promise<any> {
-    // const { id, options } = params
-    const client = new IORedis(options)
+  createStandAloneConnection(options: RedisOptions): Promise<any> {
+    const _options = Object.assign({}, options, {
+      retryStrategy(attempts: number) {
+        if (attempts < 3) return 100
+      },
+    })
+    const id = uuidv4()
+    const client = new IORedis(_options)
+    const newClient = { id, client }
+    this.webContent?.send('trying2Connect', { id, options })
+    this.clients.push(newClient)
 
     client.on('ready', () => {
-      this.webContent?.send('connectionStatusUpdated', { id: id, status: 'ready' })
+      this.log('onReady', id)
+      this.webContent?.send('connectionStatusUpdated', { id, status: 'ready' })
     })
 
-    this.clients.push({ id, client })
+    client.on('error', (e) => {
+      this.error('onError', e.message)
+      this.webContent?.send('connectionLogUpdated', { id, content: e })
+    })
+    client.on('connect', () => {
+      // this.webContent?.send('connectionStatusUpdated', { id, status: 'connect' })
+      this.log('onConnect', id)
+    })
+    client.on('close', () => {
+      this.log('onClose', id)
+    })
+    client.on('end', () => {
+      this.log('onEnd', id)
+      if (this.clients.findIndex((e) => e.id === id) !== -1)
+        this.webContent?.send('connectionStatusUpdated', { id, status: 'end' })
+    })
+    client.on('reconnecting', (delay) => {
+      this.log('onReconnecting', delay, id)
+    })
+    client.on('select', (dbIndex) => {
+      // if (this.clients.findIndex((e) => e.id === id) !== -1)
+      //   this.webContent?.send('connectionLogUpdated', { id, content: e })
+      this.log('onSelect', dbIndex)
+    })
     return new Promise((resolve) => {
-      resolve({ result: true, count: this.clients.length })
+      resolve(id)
     })
   }
-
+  createConnection(options: RedisOptions): Promise<any> {
+    return this.createStandAloneConnection(options)
+  }
+  async dropConnection(id: string) {
+    const client = this.whichClient(id)
+    this.listConnections()
+    this.clients.splice(
+      this.clients.findIndex((e) => e.id === id),
+      1
+    )
+    this.listConnections()
+    if (client) {
+      client.disconnect()
+      await client.quit()
+    }
+  }
+  listConnections() {
+    this.log(
+      this.clients.length,
+      this.clients.map((e) => e.id)
+    )
+  }
   getConfig(id: string, name: string): Promise<string[]> {
-    console.log('🚀 / RedisService / getConfig /', id, name)
     return new Promise(async (resolve, reject) => {
       const client = this.whichClient(id)
       if (client) {
         const res = await client.config('GET', name)
         resolve(res)
       }
-      reject('错误')
+    })
+  }
+  changeDb(id: string, db: number): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const client = this.whichClient(id)
+      if (client) {
+        const res = await client.select(db)
+        if (res === 'OK') resolve(true)
+        reject('错误')
+      }
     })
   }
   getStringKey(id: string, name: string): Promise<string | null> {

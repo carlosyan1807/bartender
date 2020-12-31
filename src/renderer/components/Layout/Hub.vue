@@ -21,11 +21,11 @@
             {{ item.label }}
           </div>
           <template #overlay>
-            <ContextMenu :item-id="item.id" />
+            <ContextMenu :item-id="item.id" :items="contextMenuItems" />
           </template>
         </a-dropdown>
       </template>
-      <QuickConnect v-if="item.id === 'quick-connect'" @new-connection="handleNewTab" />
+      <QuickConnect v-if="item.id === 'quick-connect'" />
       <Settings v-else-if="item.id === 'settings'" />
       <Connection v-else :connection-id="item.id" />
     </a-tab-pane>
@@ -41,12 +41,7 @@ import Connection from '/@/components/Connection.vue'
 import Settings from '/@/components/Settings.vue'
 import ContextMenu from '/@/components/Common/ContextMenu.vue'
 
-import { v4 as uuidv4 } from 'uuid'
-
-export interface IConnectionOptions {
-  host?: string
-  port?: number | string
-}
+import { useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'Hub',
@@ -58,11 +53,11 @@ export default defineComponent({
   },
   setup() {
     const { state, commit } = useStore()
-
-    const connections = computed(() => state.hub.connections)
+    const { createConnection, dropConnection } = useService('RedisService')
+    const connections = computed(() => state.hub.connections.filter((e: any) => !e.isTrying))
     // 添加 快速连接 页并激活为默认页
     if (connections.value.findIndex((e: { id: string }) => e.id === 'quick-connect') === -1)
-      commit('createHubItem', { id: 'quick-connect', label: '快速连接' })
+      commit('updateConnectionStatus', { id: 'quick-connect', label: '快速连接' })
     commit('updateHubActivedTab', 'quick-connect')
     const activedTab = computed(() => state.hub.activedTab)
     // 设置页显示状态
@@ -70,7 +65,7 @@ export default defineComponent({
     watch(settingsVisiable, (value) => {
       if (value) {
         if (connections.value.findIndex((e: { id: string }) => e.id === 'settings') === -1)
-          commit('createHubItem', { id: 'settings', label: '设置' })
+          commit('updateConnectionStatus', { id: 'settings', label: '设置' })
         commit('updateHubActivedTab', 'settings')
       } else {
         commit('removeHubItem', 'settings')
@@ -80,29 +75,37 @@ export default defineComponent({
     const handleChangeTab = (actived: string) => {
       commit('updateHubActivedTab', actived)
     }
-    // 新建页
-    const handleNewTab = async (options: IConnectionOptions) => {
-      const uuid = uuidv4()
-      const newItem = {
-        id: uuid,
-        label: `${options.host}:${options.port}`,
-        options: options,
-      }
-      commit('createHubItem', newItem)
-      commit('updateHubActivedTab', newItem.id)
+    // Tabs右键菜单 - 关闭
+    const handleCloseTab = (targetId: string) => {
+      const found = connections.value.findIndex((e: { id: string }) => e.id === targetId)
+      let newIndex = 0
+      if (found < connections.value.length - 1) newIndex = found + 1
+      else newIndex = found - 1
+      const newActived = connections.value[newIndex]
+      dropConnection(targetId)
+      commit('removeConnection', { id: targetId })
+      if (targetId === activedTab.value) commit('updateHubActivedTab', newActived.id)
     }
+    // tabs右键菜单 - 关闭全部
+    const handleCloseAllTabs = () => {}
+    // tabs右键菜单 - 关闭其他
+    const handleCloseOtherTabs = () => {}
+    const contextMenuItems = reactive([
+      { label: '关闭', func: handleCloseTab },
+      { label: '关闭其他', func: handleCloseAllTabs },
+      { label: '关闭全部', func: handleCloseOtherTabs },
+    ])
     // 关闭页
     // TODO: 关闭当前 tab 时, 先切换为 +1 或 -1 索引的 tab, 再进行 remove, 关闭非当前 tab 时, actived 不变
-    const handleCloseTab = () => {}
 
     const data = reactive({
       connections,
       activedTab,
       settingsVisiable,
+      contextMenuItems,
     })
     return {
       ...toRefs(data),
-      handleNewTab,
       handleChangeTab,
     }
   },
@@ -166,7 +169,7 @@ export default defineComponent({
     right: 0;
 
     .ant-tabs-tabpane-active {
-      height:100%;
+      height: 100%;
     }
   }
 }

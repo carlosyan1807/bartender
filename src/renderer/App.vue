@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, toRefs, watchEffect } from 'vue'
+import { computed, defineComponent, inject, reactive, ref, toRefs, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 
 import { Splitpanes, Pane } from 'splitpanes'
@@ -62,6 +62,7 @@ export default defineComponent({
     TempComponent,
   },
   setup(props) {
+    const $notification: any = inject('$notification')
     const { state, commit } = useStore()
     const appName = ref('Bartender')
     const siderVisiable = computed(() => !!state.app.activedNavMenuItem)
@@ -69,11 +70,21 @@ export default defineComponent({
       state.app.activedNavMenuItem === 'explorer' ? Explorer : TempComponent
     )
 
-    useIpc().on('connectionStatusUpdated', (event, result) => {
-      console.log('%c connectionStatusUpdated', 'color:cyan', result)
-      commit('updateConnectionStatus', result)
+    useIpc().on('connectionStatusUpdated', (event, res) => {
+      console.log('%c connectionStatusUpdated', 'color:cyan', res)
+      commit('updateConnectionStatus', res)
     })
-
+    useIpc().on('connectionLogUpdated', (event, res) => {
+      // const { id, error } = res
+      // $notification.error({
+      //   key: id,
+      //   message: 'Error',
+      //   description: String(error),
+      //   placement: 'bottomRight',
+      //   duration: 0,
+      // })
+      commit('updateConnectionLog', res)
+    })
     // 容器大小
     const siderSize = ref(20)
     // const hubSize = ref(80)

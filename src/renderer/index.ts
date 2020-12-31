@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import Antd from 'ant-design-vue'
+import Antd, { notification } from 'ant-design-vue'
 import App from './App.vue'
 
 // import router from './router'
@@ -15,6 +15,7 @@ import '/@/assets/iconfont'
 
 const app = createApp(App)
 
+app.provide('$notification', notification)
 app.component('iconfont', Iconfont)
 // app.use(router)
 app.use(store)

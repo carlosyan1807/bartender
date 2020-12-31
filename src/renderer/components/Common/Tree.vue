@@ -8,6 +8,7 @@
     @select="handleNodeChange"
     :defaultSelectedKeys="selectedKey"
     v-model:selectedKeys="selectedKey"
+    @dblclick="handleDblClick"
   >
     <template #folder="{ expanded }">
       <iconfont v-if="expanded" name="folder-open" class="tree-icon folder-color" />
@@ -17,6 +18,9 @@
     <!-- <template #redis-key="item">
       <TreeBadge :badge="showBadge" :type="item.type" />
     </template> -->
+    <template #node="item">
+      {{ item }}
+    </template>
     <template #title="item">
       <TreeBadge v-if="customIcon" :badge="showBadge" :type="item.type" />
       <span>{{ item.title }} </span>
@@ -79,7 +83,9 @@ export default defineComponent({
       if (selectedKey.length === 0 && treeNodes.value.length > 0)
         selectedKey.push(treeNodes.value[0].key)
     })
-
+    const handleDblClick = (a, b, c) => {
+      console.log('dblclick',a, b, c)
+    }
     onMounted(() => {})
 
     const data = reactive({
@@ -91,6 +97,7 @@ export default defineComponent({
     return {
       ...toRefs(data),
       handleNodeChange,
+      handleDblClick
     }
   },
 })

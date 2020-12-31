@@ -49,6 +49,7 @@
                   v-model:value="dbSelected"
                   :options="dbItems"
                   style="width: 100px"
+                  @change="handleChangeDb"
                 >
                 </a-select>
                 <!-- <MonacoEditor /> -->
@@ -125,8 +126,8 @@ export default defineComponent({
     connectionId: String,
   },
   setup(props) {
-    const { state } = useStore()
-    const { createStandAloneConnection, getConfig, scanKeys } = useService('RedisService')
+    const { state, commit } = useStore()
+    const { changeDb, createStandAloneConnection, getConfig, scanKeys } = useService('RedisService')
 
     const found = state.hub.connections.findIndex(
       (e: { id: string | undefined }) => e.id === props.connectionId
@@ -154,13 +155,20 @@ export default defineComponent({
         dbItems.push({ label: i, value: i })
       }
     })
+    // 改变选择的 Db
+    const handleChangeDb = async (value: number) => {
+      const result = await changeDb(toRaw(connection.value.id), value)
+      if (result) fetchKeys()
+    }
     // 获取键列表
     let keysData: any[] = reactive([])
     const fetchKeys = async () => {
       const keys = await scanKeys(toRaw(connection.value.id))
       const result: { title: string; type: string; key: string }[] = []
-      if (keys && keys.length > 0) keys.forEach((e) => result.push({ title: e[0], type: e[1], key: e[0] }))
+      if (keys && keys.length > 0)
+        keys.forEach((e) => result.push({ title: e[0], type: e[1], key: e[0] }))
       keysData.splice(0, keysData.length, ...result)
+      commit('updateConnectionKeysCount', { id: connection.value.id, count: keysData.length })
       if (result.length > 0) keySelectedItem.value = { name: result[0].title, type: result[0].type }
     }
     // 键列表选择
@@ -176,23 +184,24 @@ export default defineComponent({
     const refKeyHeader = ref(null)
     const refKeyListScrollbar = ref(null)
     const refConsolePane = ref(null)
+
     const handlePaneResize = () => {
       refKeyList.value.style.height = `${
         refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
       }px`
-      refKeyListScrollbar.value.ps.update()
+      if (refKeyListScrollbar.value.ps) refKeyListScrollbar.value.ps.update()
     }
 
     onMounted(async () => {
-      const payload = {
-        id: toRaw(connection.value.id),
-        options: toRaw(connection.value.options),
-      }
-      const result = await createStandAloneConnection(payload.id, payload.options)
-      if (result) {
-        fetchDatabaseCount()
-        fetchKeys()
-      }
+      // const payload = {
+      //   id: toRaw(connection.value.id),
+      //   options: toRaw(connection.value.options),
+      // }
+      // const result = await createStandAloneConnection(payload.id, payload.options)
+      // if (result) {
+      fetchDatabaseCount()
+      fetchKeys()
+      // }
 
       nextTick(() => {
         handlePaneResize()
@@ -228,6 +237,7 @@ export default defineComponent({
       refKeyList,
       refKeyHeader,
       handlePaneResize,
+      handleChangeDb,
     }
   },
 })

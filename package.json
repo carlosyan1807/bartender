@@ -27,7 +27,7 @@
     "monaco-editor": "^0.21.2",
     "splitpanes": "^3.0.4",
     "uuid": "^8.3.2",
-    "vue": "^3.0.4",
+    "vue": "^3.0.5",
     "vue-router": "^4.0.2",
     "vue3-perfect-scrollbar": "^1.5.5",
     "vuex": "^4.0.0-rc.2",
@@ -37,7 +37,8 @@
   },
   "external": [
     "electron-updater",
-    "ioredis"
+    "ioredis",
+    "uuid"
   ],
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.1",
@@ -50,7 +51,7 @@
     "@types/splitpanes": "^2.2.0",
     "@types/uuid": "^8.3.0",
     "@vue/babel-plugin-jsx": "^1.0.0",
-    "@vue/compiler-sfc": "^3.0.4",
+    "@vue/compiler-sfc": "^3.0.5",
     "builtin-modules": "^3.2.0",
     "chalk": "^4.1.0",
     "cross-env": "^7.0.3",
@@ -60,7 +61,7 @@
     "esbuild": "^0.6.33",
     "fs-extra": "^9.0.1",
     "less": "^3.13.1",
-    "less-loader": "^7.2.0",
+    "less-loader": "^7.2.1",
     "rollup": "^2.35.1",
     "tslib": "^1.14.1",
     "typescript": "^4.1.3",
