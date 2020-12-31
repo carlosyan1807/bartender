@@ -1,5 +1,6 @@
 ## ✨ 概述
 
+![GitHub package.json version](https://img.shields.io/github/package-json/v/unclecarlos/bartender)
 ![WIP](https://img.shields.io/badge/-WIP-red)
 ![GitHub last commit](https://img.shields.io/github/last-commit/unclecarlos/bartender)
 ![pr](https://img.shields.io/badge/PRs-welcome-success)
