@@ -1,15 +1,17 @@
 ## ✨ 概述
 
+![GitHub package.json version](https://img.shields.io/github/package-json/v/unclecarlos/bartender)
 ![WIP](https://img.shields.io/badge/-WIP-red)
 ![GitHub last commit](https://img.shields.io/github/last-commit/unclecarlos/bartender)
 ![pr](https://img.shields.io/badge/PRs-welcome-success)
+![GitHub](https://img.shields.io/github/license/UncleCarlos/bartender)
 
 [![Vue](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/vue?color=41B883&label=Vue&logo=vue.js)](https://github.com/vuejs/vue-next)
 [![electron](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/dev/electron?color=%239feaf9&label=Electron&logo=electron&logoColor=%239feaf9)](https://github.com/electron/electron)
 [![vite](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/dev/vite/dev?label=Vite&color=41B883)]((https://github.com/vitejs/vite))
 [![Typescript](https://img.shields.io/badge/Typescript-informational?logo=Typescript&color=3178c6&logoColor=white)](https://github.com/microsoft/TypeScript)
 [![VSCode](https://img.shields.io/badge/Editor-VSCode-informational?logo=visual-studio-code&logoColor=23A7F2&color=3178c6)](https://github.com/microsoft/vscode)
-![GitHub](https://img.shields.io/github/license/UncleCarlos/bartender)
+
 
 [WIP] 基于 vue3 + vite + electron 的个人练习项目
 
