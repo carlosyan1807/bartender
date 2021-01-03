@@ -1,21 +1,45 @@
 <template>
-  <a-layout>
-    <a-layout-header>
+  <el-container class="app-layout">
+    <el-header class="app-layout-header">
       <TitleBar :app-name="appName" />
-    </a-layout-header>
-    <a-layout class="app-container">
-      <a-layout-sider collapsedWidth="48" :collapsed="true"><NavMenu /></a-layout-sider>
-      <a-layout>
-        <splitpanes class="splitpanes-theme" :dbl-click-splitter="false">
-          <pane :size="siderSize" min-size="20" v-show="siderVisiable">
+    </el-header>
+    <el-container class="app-layout-content">
+      <el-aside class="app-layout-navmenu">
+        <NavMenu />
+      </el-aside>
+      <el-main class="app-layout-main">
+        <splitpanes :dbl-click-splitter="false">
+          <pane :size="siderSize" v-show="siderVisiable">
             <keep-alive>
               <component :is="activedComponent" />
             </keep-alive>
           </pane>
-          <pane :size="mainContainerSize">
-            <a-layout-content class="app-content">
-              <MainContainer />
-            </a-layout-content>
+          <pane :size="100 - siderSize">
+            <Hub />
+          </pane>
+        </splitpanes>
+      </el-main>
+    </el-container>
+    <el-footer class="app-layout-footer">
+      <StatusBar />
+    </el-footer>
+    <AboutDialog />
+  </el-container>
+  <!-- <a-layout>
+    <TitleBar :app-name="appName" />
+    <a-layout>
+      <a-layout-sider collapsed-width="48" :collapsed="true">
+        <NavMenu />
+      </a-layout-sider>
+      <a-layout>
+        <splitpanes class="splitpanes-theme" :dbl-click-splitter="false">
+          <pane :size="siderSize" v-show="siderVisiable">
+            <keep-alive>
+              <component :is="activedComponent" />
+            </keep-alive>
+          </pane>
+          <pane :size="100 - siderSize">
+            <Hub />
           </pane>
         </splitpanes>
       </a-layout>
@@ -24,11 +48,11 @@
       <StatusBar />
     </a-layout-footer>
     <AboutDialog />
-  </a-layout>
+  </a-layout> -->
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, toRefs, watchEffect } from 'vue'
+import { computed, defineComponent, inject, provide, reactive, ref, toRefs, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 
 import { Splitpanes, Pane } from 'splitpanes'
@@ -37,13 +61,12 @@ import TitleBar from '/@/components/Layout/TitleBar.vue'
 import NavMenu from '/@/components/Layout/NavMenu.vue'
 import Sider from '/@/components/Layout/Sider.vue'
 import StatusBar from '/@/components/Layout/StatusBar.vue'
-import MainContainer from '/@/components/Layout/MainContainer.vue'
+import Hub from '/@/components/Layout/Hub.vue'
 import AboutDialog from '/@/components/AboutDialog.vue'
 
 import Explorer from '/@/components/Explorer.vue'
 import TempComponent from '/@/components/TempComponent.vue'
 
-// TODO: Hub更名为主容器，Explorer需更名为sider，其中tree提出来为公共组件
 import { useIpc } from '/@/hooks'
 
 export default defineComponent({
@@ -55,7 +78,7 @@ export default defineComponent({
     StatusBar,
     Splitpanes,
     Pane,
-    MainContainer,
+    Hub,
     AboutDialog,
     Explorer,
     TempComponent,
@@ -67,17 +90,19 @@ export default defineComponent({
     const activedComponent = computed(() =>
       state.app.activedNavMenuItem === 'explorer' ? Explorer : TempComponent
     )
-
-    useIpc().on('connectionStatusUpdated', (event, result) => {
-      console.log('%c connectionStatusUpdated', 'color:cyan', result)
-      commit('updateConnectionStatus', result)
+    useIpc().on('connectionStatusUpdated', (event, res) => {
+      console.log('%c connectionStatusUpdated', 'color:cyan', res)
+      commit('updateConnectionStatus', res)
     })
-
+    useIpc().on('connectionLogUpdated', (event, res) => {
+      commit('updateConnectionLog', res)
+    })
     // 容器大小
     const siderSize = ref(20)
-    const mainContainerSize = ref(80)
-    const handleToggleSider = (value: string) => {
-      if (!value) mainContainerSize.value = 100
+    // const hubSize = ref(80)
+    const handleToggleSider = (value: any) => {
+      if (!value) siderSize.value = 0
+      else siderSize.value = 20
     }
     watchEffect(() => handleToggleSider(state.app.activedNavMenuItem))
 
@@ -86,7 +111,7 @@ export default defineComponent({
       activedComponent,
       siderVisiable,
       siderSize,
-      mainContainerSize,
+      // hubSize,
     })
 
     return {

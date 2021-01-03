@@ -1,38 +1,37 @@
 <template>
   <a-menu class="context-menu">
-    <a-menu-item key="0" title="" @click="handleClose">
-      <span>关闭</span>
-    </a-menu-item>
-    <a-menu-item key="1" title="">
-      <span>关闭其他</span>
-    </a-menu-item>
-    <a-menu-item key="3" title="">
-      <span>全部关闭</span>
-    </a-menu-item>
+    <template v-for="(item, index) in menuItems" :key="index">
+      <a-menu-item title="" @click="item.func(itemId)">
+        <span>{{ item.label }}</span>
+      </a-menu-item>
+    </template>
   </a-menu>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue'
-import { useStore } from 'vuex'
+import { computed, defineComponent, reactive, toRefs } from 'vue'
 
 export default defineComponent({
   name: 'ContextMenu',
   props: {
+    items: {
+      type: Array,
+      default: () => {
+        return []
+      },
+    },
     itemId: String,
   },
   setup(props) {
-    const { commit } = useStore()
+    const menuItems = computed(() => props.items)
+    const itemId = computed(() => props.itemId)
 
-    const handleClose = () => {
-      if (props.itemId === 'settings') commit('showHubSettings', false)
-      commit('removeHubItem', { id: props.itemId })
-    }
-
-    const data = reactive({})
+    const data = reactive({
+      menuItems,
+      itemId,
+    })
     return {
       ...toRefs(data),
-      handleClose,
     }
   },
 })

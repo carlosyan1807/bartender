@@ -3,7 +3,7 @@
     <div class="drag-region">
       <div class="window-appicon" />
       <div class="window-title">
-        <span>{{ `${appName} v${appVersion}` }}</span>
+        <span>{{ `${appName} ${appVersion}` }}</span>
       </div>
       <div class="window-actions">
         <div class="min-button" @click="handleWindowAction('window-min')">
@@ -26,47 +26,43 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs } from 'vue'
 import { useIpc, useService } from '/@/hooks'
-import { Modal } from 'ant-design-vue'
 
 // TODO: 失去焦点时的背景色和字体颜色变更
 
 export default defineComponent({
   name: 'TitleBar',
-  props: {
-    appName: String,
-  },
   setup(props, { emit }) {
     const { getBasicInformation } = useService('BaseService')
-    const appName = ref(props.appName)
+    const appName = ref('Bartender')
     const appVersion = ref('')
     const exitConfirmVisiable = ref(false)
-    const isFocus = ref(false)
+    const isFocus = ref(true)
     const isMaximized = ref(false)
 
     // 获取版本信息
     const fetchAppVersion = async () => {
-      const { electron } = await getBasicInformation()
-      appVersion.value = electron
+      const { app } = await getBasicInformation()
+      appVersion.value = 'v' + app
     }
-    fetchAppVersion()
+    if (process.env.NODE_ENV === 'production') fetchAppVersion()
 
     // 窗口控制
     const handleWindowAction = (action: string) => {
       if (action === 'app-exit') {
-        Modal.confirm({
-          title: '确认退出吗？',
-          cancelText: '取消',
-          okText: '退出',
-          onOk() {
-            useIpc().send('renderer2main', 'app-exit')
-          },
-        })
+        // Modal.confirm({
+        //   title: '确认退出吗？',
+        //   cancelText: '取消',
+        //   okText: '退出',
+        //   onOk() {
+        //     useIpc().send('renderer2main', 'app-exit')
+        //   },
+        // })
       } else useIpc().send('renderer2main', action)
     }
 
     useIpc().on('updateWindowStatus', (event, result) => {
       if (result.isFocus !== undefined) isFocus.value = result.isFocus
-      if (result.isMaximized !== undefined) isMaximized.value =result.isMaximized
+      if (result.isMaximized !== undefined) isMaximized.value = result.isMaximized
     })
 
     const data = reactive({
@@ -85,19 +81,19 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
-@import url('../../themes/variables');
-
+<style lang="scss">
 .app-title-bar {
-  display: block;
-  position: fixed;
+  // display: block;
+  // position: fixed;
   width: 100%;
+  height: $app-titlebar-height;
+  // overflow: hidden;
 
   &.is-blur {
-    background-color: @app-background;
+    background-color: $app-background;
   }
   &.is-focus {
-    background-color: @app-component-background;
+    background-color: $component-background;
   }
 
   .drag-region {
@@ -111,13 +107,14 @@ export default defineComponent({
   .window-appicon {
     grid-column: 1;
     width: 35px;
-    height: 100%;
+    // height: 100%;
+    // height: @app-titlebar-height;
     position: relative;
     z-index: 3000;
     background-image: url('../../assets/logo.png');
     background-repeat: no-repeat;
     background-position: 50%;
-    background-size: 16px;
+    background-size: $font-size-base;
     flex-shrink: 0;
   }
 
@@ -126,14 +123,14 @@ export default defineComponent({
     display: flex;
     justify-content: center;
     overflow: hidden;
-    font-size: @font-size-sm;
-    color: @text-color-secondary;
+    font-size: $font-size-small;
+    color: $text-color;
 
     span {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      line-height: 30px;
+      line-height: $app-titlebar-height;
     }
   }
 
@@ -145,7 +142,8 @@ export default defineComponent({
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
+    // height: 100%;
+    height: $app-titlebar-height;
 
     .min-button,
     .max-button,
@@ -171,25 +169,32 @@ export default defineComponent({
     }
 
     .min-button:hover,
-    .max-button:hover {
-      background: lighten(@component-background, 4%);
+    .max-button:hover,
+    .restore-button:hover {
+      background: lighten($component-background, 4%);
     }
     .min-button:active,
-    .max-button:active {
-      background: lighten(@component-background, 8%);
+    .max-button:active,
+    .restore-button:hover {
+      background: lighten($component-background, 8%);
     }
 
     .close-button:hover {
-      background: #e81123;
+      background: $app-close-button-hover;
+      .iconfont {
+        color: $text-color-highlight;
+      }
     }
     .close-button:active {
-      background: #f1707a;
-      .icon {
+      background: $app-close-button-active;
+      .iconfont {
+        color: $text-color-highlight;
         filter: invert(1);
       }
     }
-    .icon {
-      font-size: 16px;
+    .iconfont {
+      color: $text-color;
+      font-size: $font-size;
     }
   }
 

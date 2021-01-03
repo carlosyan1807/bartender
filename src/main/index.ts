@@ -8,6 +8,7 @@ async function main() {
   const logger = new Logger()
   logger.initialize(app.getPath('userData'))
   initialize(logger)
+  app.commandLine.appendSwitch("disable-gpu")
   app.whenReady().then(() => {
     createWindow()
   })

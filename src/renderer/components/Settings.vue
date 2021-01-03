@@ -8,7 +8,7 @@
   </ul>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { defineComponent, reactive, toRefs, onMounted } from 'vue'
 
 export default defineComponent({
@@ -18,14 +18,12 @@ export default defineComponent({
   setup(props) {
     const data = reactive({})
 
-    onMounted(()=> {})
+    onMounted(() => {})
     return {
-      ...toRefs(data)
+      ...toRefs(data),
     }
-  }
+  },
 })
 </script>
 
-<style>
-
-</style>
+<style></style>

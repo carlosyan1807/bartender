@@ -25,18 +25,18 @@ export default defineComponent({
   components: {},
   props: {},
   setup(props, context) {
-    let refEditor: Ref<Editor | null> = ref(null)
+    let refEditor: Ref<HTMLElement | null> = ref(null)
     let editor
     onMounted(() => {
       editor = markRaw(
-        codemirror((refEditor.value as unknown) as HTMLElement, {
+        codemirror(<HTMLElement>refEditor.value, {
           value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
           lineNumbers: true,
           theme: 'one-dark',
-          scrollbarStyle: 'simple',
+          // scrollbarStyle: 'simple',
         })
       )
-      editor.setSize('100%', '300px')
+      editor.setSize('300px', '300px')
     })
 
     const data = reactive({})

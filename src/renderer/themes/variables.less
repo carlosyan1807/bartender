@@ -27,10 +27,14 @@
 
 @primary-color: #3399cc;
 @heading-color: @text-color;
+@error-color: #e06c75;
 
 @link-color: @text-color;
 @link-hover-color: @text-color-secondary;
 @link-active-color: @text-color-secondary;
+
+@item-active-bg: lighten(@component-background, 8%);
+@item-hover-bg: lighten(@component-background, 8%);
 
 @border-color-base: lighten(@component-background, 8%);
 @border-color-split: lighten(@component-background, 16%);
@@ -40,6 +44,11 @@
 @shadow-color: darken(@body-background, 8%);
 
 @font-size-sm: 12px;
+
+@padding-lg: 16px; // containers
+@padding-md: 12px; // small containers and buttons
+@padding-sm: 8px; // Form controls and items
+@padding-xs: 4px;
 
 @layout-body-background: @body-background;
 @layout-header-height: @app-titlebar-height;
@@ -71,13 +80,22 @@
 @tree-child-padding: 12px;
 
 @tabs-card-head-background: @body-background;
-@tabs-card-height: 35px;
+@tabs-card-height: @app-sider-header-height;
 @tabs-card-active-color: @text-color-secondary;
 @tabs-hover-color: @text-color-secondary;
+@tabs-bar-margin: 0;
 
 @badge-height: 16px;
 
+@list-item-meta-margin-bottom: @padding-md;
+@list-item-meta-avatar-margin-right: @padding-md;
+@list-item-meta-title-margin-bottom: @padding-sm;
+
 @input-padding-vertical-sm: 0px;
+@input-addon-bg: @app-component-background;
+
+@select-item-active-bg: @item-active-bg;
+@select-item-selected-bg: lighten(@component-background, 16%);
 // @badge-text-color: @text-color;
 // @tabs-highlight-color: @text-color;
 // @tabs-hover-color: @text-color-secondary;

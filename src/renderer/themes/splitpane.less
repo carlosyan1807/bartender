@@ -56,9 +56,15 @@
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
-  min-height: 1px;
+  // min-height: 1px;
   cursor: ns-resize; //row-resize;
 }
+.splitpanes--horizontal > .splitpanes__splitter:before {
+  top: -4px;
+  bottom: -4px;
+  width: 100%;
+}
+
 .splitpanes.splitpanes-theme .splitpanes__pane {
   background-color: @app-component-background;
 }
@@ -118,7 +124,7 @@
 }
 .splitpanes-theme.splitpanes--horizontal > .splitpanes__splitter,
 .splitpanes-theme .splitpanes--horizontal > .splitpanes__splitter {
-  height: 4px;
+  height: 0px;
   // height: 7px;
   // border-top: 1px solid #eee;
   // margin-top: -1px;

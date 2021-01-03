@@ -27,3 +27,6 @@ pnpm-debug.log*
 
 build/*
 !build/icons
+src/renderer/themes/antdv-default.less
+src/renderer/themes/ep-variables.scss
+src/renderer/components/bak/*

@@ -1,36 +1,34 @@
 <template>
-  <a-modal
-    wraplClassName="about-dialog"
-    :visible="aboutDialogVisible"
-    @cancel="handleHideAboutDialog"
+  <el-dialog
+    custom-class="about-dialog"
+    :model-value="aboutDialogVisible"
+    @close="handleHideAboutDialog"
+    :append-to-body="true"
   >
-    <h2>Bartender</h2>
-    <a-list
-      class="about-list"
-      :split="false"
-      size="small"
-      item-layout="horizontal"
-      :data-source="sysInfoArray"
-    >
-      <template #renderItem="{ item }">
-        <a-list-item :title="item.title">
-          <iconfont :name="item.icon" /> {{ item.content }}
-        </a-list-item>
-      </template>
-    </a-list>
-    <template #footer>
-      <a-row type="flex" justify="space-between">
-        <a-col
-          >© Coded & Designed with <iconfont class="heartbeating" name="heart-fill" /> by Carlos.
-        </a-col>
-        <a-col>
-          <a @click.prevent="handleOpenGithub">
-            <iconfont name="github" />
-          </a>
-        </a-col>
-      </a-row>
+    <template #title>
+      Bartender <span class="app-version">{{ appVersion }}</span>
     </template>
-  </a-modal>
+    <el-space class="about-version" direction="vertical" alignment="left">
+      <span v-for="(item, index) in sysInfoArray" :key="index" :title="item.title">
+        <iconfont :name="item.icon" /> {{ item.content }}
+      </span>
+    </el-space>
+    <template #footer>
+      <el-row type="flex" justify="space-between">
+        <el-col :span="20" class="about-copyright">
+          <span
+            >© Coded & Designed with <iconfont class="heartbeating" name="heart-fill" /> by
+            Carlos.</span
+          >
+        </el-col>
+        <el-col :span="4" class="about-github">
+          <el-link :underline="false" @click.prevent="handleOpenGithub">
+            <iconfont name="github" />
+          </el-link>
+        </el-col>
+      </el-row>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -47,9 +45,10 @@ export default defineComponent({
     const { getBasicInformation } = useService('BaseService')
 
     const aboutDialogVisible = computed(() => state.app.aboutDialogVisible)
-    const sysInfoArray: Ref<{ title: string; icon: string; content: string }[]> = ref([])
-
+    const sysInfoArray: Ref<{ title: string; icon?: string; content: string }[]> = ref([])
+    const appVersion = ref('')
     const handleHideAboutDialog = () => {
+      console.log('close')
       commit('updateAboutDialogVisiable', false)
     }
 
@@ -58,15 +57,17 @@ export default defineComponent({
     }
 
     const getSysInfo = async () => {
-      const { electron, os, chrome, nodejs } = await getBasicInformation()
+      const { app, electron, os, chrome, nodejs, v8 } = await getBasicInformation()
       sysInfoArray.value.push({
         title: '操作系统',
         icon: os.type === 'Linux' ? 'linux' : os.type === 'Darwin' ? 'apple' : 'windows',
         content: `${os.type}-${os.arch} ${os.release}`,
       })
       sysInfoArray.value.push({ title: 'Electron', icon: 'electron', content: electron })
-      sysInfoArray.value.push({ title: 'NodeJS', icon: 'nodejs', content: nodejs.version })
+      sysInfoArray.value.push({ title: 'NodeJS', icon: 'nodejs', content: nodejs })
+      sysInfoArray.value.push({ title: 'V8', icon: 'v8', content: v8 })
       sysInfoArray.value.push({ title: 'Chrome', icon: 'chrome', content: chrome })
+      if (process.env.NODE_ENV === 'production') appVersion.value = 'v' + app
     }
 
     onMounted(getSysInfo)
@@ -74,6 +75,7 @@ export default defineComponent({
     const data = reactive({
       aboutDialogVisible,
       sysInfoArray,
+      appVersion,
     })
 
     return {
@@ -85,13 +87,33 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
+<style lang="scss">
 .about-dialog {
-  padding: 0;
-}
-.about-list {
-  .ant-list-item {
-    padding: 0 !important;
+  .el-dialog__header {
+    color: $text-color-highlight;
+    font-size: $font-size-large;
+  }
+  .app-version {
+    font-size: $font-size-small;
+  }
+  .about-version {
+    font-size: $font-size-small;
+    padding-left: $space-extra-large;
+  }
+  .el-dialog__footer {
+    font-size: $font-size-small;
+    line-height: $font-size-small;
+
+    .about-copyright {
+      text-align: left;
+      line-height: $font-size-large;
+    }
+    .about-github {
+      text-align: right;
+      .iconfont {
+        font-size: $font-size-large;
+      }
+    }
   }
 }
 
