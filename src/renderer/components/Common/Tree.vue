@@ -1,12 +1,29 @@
 <template>
-  <a-directory-tree
+  <el-tree
+    class="app-tree"
+    :data="treeNodes"
+    node-key="key"
+    :default-expand-all="true"
+    :indent="12"
+  >
+    <!-- @node-collapse="handleNodeCollapse" -->
+    <!-- @node-click="handleNodeClick" -->
+    <template #default="{ node, data }">
+      <iconfont v-if="data.children && node.expanded" name="folder-open" class="folder-color" />
+      <iconfont v-else-if="data.children && !node.expanded" name="folder" class="folder-color" />
+      <iconfont v-else name="redis" class="redis-color" />
+      <span>{{ data.label }}</span>
+    </template>
+  </el-tree>
+  <!-- :props="defaultProps" -->
+  <!-- <a-directory-tree
     :tree-data="treeNodes"
     :block-node="true"
     :show-icon="!customIcon"
     :show-line="false"
     expand-action="dblclick"
     @select="handleNodeChange"
-    :defaultSelectedKeys="selectedKey"
+    :default-selected-keys="selectedKey"
     v-model:selectedKeys="selectedKey"
     @dblclick="handleDblClick"
   >
@@ -15,9 +32,6 @@
       <iconfont v-else name="folder" class="tree-icon folder-color" />
     </template>
     <template #redis><iconfont name="redis" class="tree-icon redis-color" /></template>
-    <!-- <template #redis-key="item">
-      <TreeBadge :badge="showBadge" :type="item.type" />
-    </template> -->
     <template #node="item">
       {{ item }}
     </template>
@@ -25,7 +39,7 @@
       <TreeBadge v-if="customIcon" :badge="showBadge" :type="item.type" />
       <span>{{ item.title }} </span>
     </template>
-  </a-directory-tree>
+  </a-directory-tree> -->
 </template>
 
 <script lang="ts">
@@ -38,14 +52,14 @@ import {
   watchEffect,
   watch,
   computed,
+  Ref,
 } from 'vue'
 
-import TreeBadge from '/@/components/Common/TreeBadge.vue'
-import ContextMenu from '/@/components/Common/ContextMenu.vue'
+// import TreeBadge from '/@/components/Common/TreeBadge.vue'
 
 export default defineComponent({
   name: 'Tree',
-  components: { TreeBadge, ContextMenu },
+  components: {},
   props: {
     treeNodes: {
       type: Array,
@@ -53,99 +67,119 @@ export default defineComponent({
         return []
       },
     },
-    customIcon: {
-      type: Boolean,
-      default: false,
-    },
-    showBadge: Boolean,
+    // customIcon: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+    // showBadge: Boolean,
   },
+  emits: ['change'],
   setup(props, { emit }) {
-    const treeNodes = computed(() => props.treeNodes)
-    const customIcon = computed(() => props.customIcon)
-    const showBadge = computed(() => props.showBadge)
+    const treeNodes: Ref<any[]> = computed(() => props.treeNodes)
+    // const customIcon = computed(() => props.customIcon)
+    // const showBadge = computed(() => props.showBadge)
     const selectedKey: string[] = reactive([])
-    const handleNodeChange = (key: string, e: any) => {
-      emit('change', key, e)
+    const handleNodeClick = (key: string, e: any) => {
+      console.log(key, e)
+      // emit('change', key, e)
     }
-    const insertNodeIcon = (nodes: any[]) => {
-      nodes.forEach((node) => {
-        if (node.children) {
-          node.slots = { icon: 'folder' }
-          insertNodeIcon(node.children)
-        } else {
-          if (!customIcon) node.slots = { icon: 'redis-key' }
-          else node.slots = { icon: 'redis' }
-        }
-      })
-    }
+    // const insertNodeIcon = (nodes: any[]) => {
+    //   nodes.forEach((node) => {
+    //     if (node.children) {
+    //       node.icon = 'folder'
+    //       insertNodeIcon(node.children)
+    //     } else {
+    //       node.icon = 'redis'
+    //     }
+    //   })
+    // nodes.forEach((node) => {
+    //   if (node.children) {
+    //     node.slots = { icon: 'folder' }
+    //     insertNodeIcon(node.children)
+    //   } else {
+    //     if (!customIcon.value) node.slots = { icon: 'redis-key' }
+    //     else node.slots = { icon: 'redis' }
+    //   }
+    // })
+    // }
     watchEffect(() => {
-      insertNodeIcon(treeNodes.value)
+      // insertNodeIcon(treeNodes.value)
       if (selectedKey.length === 0 && treeNodes.value.length > 0)
         selectedKey.push(treeNodes.value[0].key)
     })
-    const handleDblClick = (a, b, c) => {
-      console.log('dblclick',a, b, c)
-    }
+
     onMounted(() => {})
 
     const data = reactive({
       treeNodes,
-      showBadge,
-      customIcon,
+      // showBadge,
+      // customIcon,
       selectedKey,
     })
     return {
       ...toRefs(data),
-      handleNodeChange,
-      handleDblClick
+      handleNodeClick,
     }
   },
 })
 </script>
 
-<style lang="less">
-@import url('../../themes/variables');
-
-.ant-tree.ant-tree-directory {
-  font-size: 12px;
-
-  li:first-child {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  li {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  // .ant-tree-child-tree > li:first-child {
-  //   padding-top: 0;
-  //   padding-bottom: 0;
-  // }
-  li:last-child {
-    padding-bottom: 0;
-  }
-  .ant-tree-switcher.ant-tree-switcher-noop,
-  .ant-tree-switcher.ant-tree-switcher_close,
-  .ant-tree-switcher.ant-tree-switcher_open {
-    display: none !important;
-  }
-  li .ant-tree-node-content-wrapper {
-    width: 100%;
-    padding: 0 12px;
-    color: @text-color-secondary;
-  }
-  .ant-tree-node-selected {
-    color: @text-color-secondary !important;
-  }
-
-  .ant-tree-title {
-    span {
-      text-overflow: ellipsis;
+<style lang="scss">
+.app-tree.el-tree {
+  height: 100%;
+  .el-tree-node {
+    .iconfont {
+      margin-left: $space-small;
+      margin-right: $space-small;
+    }
+    .el-tree-node__label {
+      font-size: $font-size-small;
+    }
+    .el-tree-node__expand-icon {
+      display: none;
     }
   }
-  .tree-icon {
-    font-size: 14px;
-    line-height: 22px;
-  }
 }
+// .ant-tree.ant-tree-directory {
+//   font-size: 12px;
+
+//   li:first-child {
+//     padding-top: 0;
+//     padding-bottom: 0;
+//   }
+//   li {
+//     padding-top: 0;
+//     padding-bottom: 0;
+//   }
+//   // .ant-tree-child-tree > li:first-child {
+//   //   padding-top: 0;
+//   //   padding-bottom: 0;
+//   // }
+//   li:last-child {
+//     padding-bottom: 0;
+//   }
+//   .ant-tree-switcher.ant-tree-switcher-noop,
+//   .ant-tree-switcher.ant-tree-switcher_close,
+//   .ant-tree-switcher.ant-tree-switcher_open {
+//     display: none !important;
+//   }
+//   li .ant-tree-node-content-wrapper {
+//     width: 100%;
+//     padding: 0 12px;
+//     color: $text-color-highlight;
+//   }
+//   .ant-tree-node-selected {
+//     color: $text-color-highlight !important;
+//   }
+
+//   .ant-tree-title {
+//     span {
+//       text-overflow: ellipsis;
+//     }
+//   }
+//   .tree-icon {
+//     font-size: 14px;
+//     line-height: 22px;
+//   }
+// }
 </style>

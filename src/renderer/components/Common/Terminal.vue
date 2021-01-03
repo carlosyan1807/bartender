@@ -54,6 +54,9 @@ export default defineComponent({
     xterm.loadAddon(xtermWebLinksAddon)
     xterm.loadAddon(xtermFitAddon)
 
+    const handleResize = () => {
+      xtermFitAddon.fit()
+    }
     onMounted(() => {
       xterm.open(terminalContainer.value as HTMLElement)
       xterm.write('Hello world.\n')
@@ -69,15 +72,16 @@ export default defineComponent({
       ...toRefs(data),
       xterm,
       xtermFitAddon,
+      handleResize,
     }
   },
 })
 </script>
 
-<style lang="less">
-@import url('../../themes/variables');
+<style lang="scss">
 .terminal-container {
-  background-color: @app-component-background;
+  height: 100%;
+  background-color: $app-background;
   // padding-left: 8px;
 }
 </style>

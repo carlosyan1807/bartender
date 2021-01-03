@@ -1,38 +1,34 @@
 <template>
-  <a-modal
-    wrap-class-name="about-dialog"
-    :visible="aboutDialogVisible"
-    @cancel="handleHideAboutDialog"
+  <el-dialog
+    custom-class="about-dialog"
+    :model-value="aboutDialogVisible"
+    @close="handleHideAboutDialog"
+    :append-to-body="true"
   >
-    <h2>
+    <template #title>
       Bartender <span class="app-version">{{ appVersion }}</span>
-    </h2>
-    <a-list
-      class="about-list"
-      :split="false"
-      size="small"
-      item-layout="horizontal"
-      :data-source="sysInfoArray"
-    >
-      <template #renderItem="{ item }">
-        <a-list-item :title="item.title">
-          <iconfont :name="item.icon" /> {{ item.content }}
-        </a-list-item>
-      </template>
-    </a-list>
-    <template #footer>
-      <a-row type="flex" justify="space-between">
-        <a-col
-          >© Coded & Designed with <iconfont class="heartbeating" name="heart-fill" /> by Carlos.
-        </a-col>
-        <a-col>
-          <a @click.prevent="handleOpenGithub">
-            <iconfont name="github" />
-          </a>
-        </a-col>
-      </a-row>
     </template>
-  </a-modal>
+    <el-space class="about-version" direction="vertical" alignment="left">
+      <span v-for="(item, index) in sysInfoArray" :key="index" :title="item.title">
+        <iconfont :name="item.icon" /> {{ item.content }}
+      </span>
+    </el-space>
+    <template #footer>
+      <el-row type="flex" justify="space-between">
+        <el-col :span="20" class="about-copyright">
+          <span
+            >© Coded & Designed with <iconfont class="heartbeating" name="heart-fill" /> by
+            Carlos.</span
+          >
+        </el-col>
+        <el-col :span="4" class="about-github">
+          <el-link :underline="false" @click.prevent="handleOpenGithub">
+            <iconfont name="github" />
+          </el-link>
+        </el-col>
+      </el-row>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -52,6 +48,7 @@ export default defineComponent({
     const sysInfoArray: Ref<{ title: string; icon?: string; content: string }[]> = ref([])
     const appVersion = ref('')
     const handleHideAboutDialog = () => {
+      console.log('close')
       commit('updateAboutDialogVisiable', false)
     }
 
@@ -90,16 +87,33 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
+<style lang="scss">
 .about-dialog {
-  padding: 0;
-  .app-version {
-    font-size: 12px;
+  .el-dialog__header {
+    color: $text-color-highlight;
+    font-size: $font-size-large;
   }
-}
-.about-list {
-  .ant-list-item {
-    padding: 0 !important;
+  .app-version {
+    font-size: $font-size-small;
+  }
+  .about-version {
+    font-size: $font-size-small;
+    padding-left: $space-extra-large;
+  }
+  .el-dialog__footer {
+    font-size: $font-size-small;
+    line-height: $font-size-small;
+
+    .about-copyright {
+      text-align: left;
+      line-height: $font-size-large;
+    }
+    .about-github {
+      text-align: right;
+      .iconfont {
+        font-size: $font-size-large;
+      }
+    }
   }
 }
 

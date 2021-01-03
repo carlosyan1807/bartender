@@ -1,36 +1,36 @@
 <template>
   <div class="quick-connect-container">
-    <a-row type="flex" justify="center">
-      <a-col>
-        <a-form
+    <el-row type="flex" justify="center">
+      <el-col>
+        <el-form
           :model="formQuickConnect"
           layout="horizontal"
           label-align="right"
           :label-col="{ span: 8 }"
           :wrapper-col="{ span: 16 }"
         >
-          <a-form-item label="Host">
-            <a-input v-model:value="formQuickConnect.host" />
-          </a-form-item>
-          <a-form-item label="Port">
-            <a-input v-model:value="formQuickConnect.port" />
-          </a-form-item>
-          <a-form-item label="Password">
-            <a-input v-model:value="formQuickConnect.password" />
-          </a-form-item>
-          <a-form-item :wrapper-col="{ span: 16, offset: 8 }">
-            <a-button type="primary" @click="handleSubmitConnect" :loading="isLoading"
-              >连接</a-button
+          <el-form-item label="Host">
+            <el-input v-model:value="formQuickConnect.host" />
+          </el-form-item>
+          <el-form-item label="Port">
+            <el-input v-model:value="formQuickConnect.port" />
+          </el-form-item>
+          <el-form-item label="Password">
+            <el-input v-model:value="formQuickConnect.password" />
+          </el-form-item>
+          <el-form-item :wrapper-col="{ span: 16, offset: 8 }">
+            <el-button type="primary" @click="handleSubmitConnect" :loading="isLoading"
+              >连接</el-button
             >
-          </a-form-item>
-        </a-form>
-      </a-col>
-    </a-row>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
     test
-    <a-button @click="handleSubmitConnect({ port: 6379 })">6379</a-button>
-    <a-button @click="handleSubmitConnect({ port: 6380 })">6380</a-button>
-    <a-button @click="handleSubmitConnect({ port: 6381 })">连接错误提示6381</a-button>
-    <a-button @click="consoleListConnections">listConnections</a-button>
+    <el-button @click="handleSubmitConnect({ port: 6379 })">6379</el-button>
+    <el-button @click="handleSubmitConnect({ port: 6380 })">6380</el-button>
+    <el-button @click="handleSubmitConnect({ port: 6381 })">连接错误提示6381</el-button>
+    <el-button @click="consoleListConnections">listConnections</el-button>
   </div>
 </template>
 
@@ -44,7 +44,7 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const { createConnection, listConnections } = useService('RedisService')
-    const $notification: any = inject('$notification')
+    // const $notification: any = inject('$notification')
     const formQuickConnect = reactive({
       host: '',
       port: '',
@@ -78,12 +78,12 @@ export default defineComponent({
         const found = state.hub.connections.find((e: any) => e.id === watchId.value)
         if (found && found.status === 'end') {
           const description = found.log.slice(-1)[0]
-          $notification.error({
-            key: id,
-            message: 'Connect Failed.',
-            description: String(description.content.message),
-            placement: 'bottomRight',
-          })
+          // $notification.error({
+          //   key: id,
+          //   message: 'Connect Failed.',
+          //   description: String(description.content.message),
+          //   placement: 'bottomRight',
+          // })
           commit('removeConnection', { id })
           isLoading.value = false
         } else if (found && found.status === 'ready') {
@@ -97,7 +97,7 @@ export default defineComponent({
         stopWatchConnection()
       })
     })
-    const consoleListConnections = () =>{
+    const consoleListConnections = () => {
       listConnections()
     }
     const data = reactive({
@@ -107,7 +107,7 @@ export default defineComponent({
     return {
       ...toRefs(data),
       handleSubmitConnect,
-      consoleListConnections
+      consoleListConnections,
     }
   },
 })

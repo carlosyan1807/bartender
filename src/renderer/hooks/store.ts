@@ -7,6 +7,6 @@ export function useStore() {
     state: store.state,
     getters: store.getters as RootGetters,
     commit: store.commit as RootCommit,
-    dispatch: store.dispatch
+    dispatch: store.dispatch,
   }
 }

@@ -1,21 +1,21 @@
 <template>
-  <a-row class="app-statusbar" type="flex" justify="space-between">
-    <a-col flex="auto" class="statusbar-left">
-      <a-space size="small">
-        <a-button type="link" class="icon-button" @click="handleReload" title="重载">
-          <template #icon><iconfont name="reload" /></template>
-        </a-button>
+  <el-row class="app-statusbar" type="flex" justify="space-between">
+    <el-col class="statusbar-left">
+      <el-space size="small">
+        <el-button class="icon-button" @click="handleReload" title="重载">
+          <iconfont name="reload" />
+        </el-button>
         <span class="statusbar-chunk" title="当前连接数">
           <iconfont name="redis" />{{ connectionsCount }}
         </span>
-      </a-space>
-    </a-col>
-    <a-col class="statusbar-right">
+      </el-space>
+    </el-col>
+    <el-col class="statusbar-right">
       <span v-if="keysCount !== false" class="statusbar-chunk" title="匹配数量/键总数">
         <iconfont name="key" />{{ keysCount }}
       </span>
-    </a-col>
-  </a-row>
+    </el-col>
+  </el-row>
 </template>
 
 <script lang="ts">
@@ -57,18 +57,19 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
-@import url('../../themes/variables');
+<style lang="scss">
+// @import url('../../themes/variables');
 
 .app-statusbar {
-  height: @app-statusbar-height;
-  font-size: @font-size-sm;
-  line-height: @app-statusbar-height;
+  height: $app-statusbar-height;
+  font-size: $font-size-small;
+  line-height: $app-statusbar-height;
+  color: $text-color;
 
   .statusbar-chunk {
     .iconfont {
-      font-size: 14px;
-      margin-right: 4px;
+      font-size: $font-size-medium;
+      margin-right: $space-extra-small;
     }
   }
   // .statusbar-label > span::before {
@@ -77,11 +78,12 @@ export default defineComponent({
   //   margin: 0 2px 0 0;
   // }
   .statusbar-right {
-    margin: 0 8px;
+    margin: 0 $space-small;
   }
-  .icon-button {
-    line-height: @app-statusbar-height;
-    height: @app-statusbar-height;
+  .icon-button.el-button {
+    line-height: $app-statusbar-height;
+    height: $app-statusbar-height;
+    background-color: $app-background;
   }
 }
 </style>

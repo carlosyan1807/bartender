@@ -1,12 +1,12 @@
 <template>
-  <a-layout class="app-sider">
-    <a-layout-header class="sider-header">
+  <el-container class="app-sider">
+    <el-header class="sider-header">
       <slot name="header"></slot>
-    </a-layout-header>
-    <a-layout-content class="sider-content">
+    </el-header>
+    <el-container class="sider-content">
       <slot></slot>
-    </a-layout-content>
-  </a-layout>
+    </el-container>
+  </el-container>
   <!-- <component :is="activedComponent" /> -->
 </template>
 
@@ -41,24 +41,26 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
-@import url('../../themes/variables');
+<style lang="scss">
+// @import url('../../themes/variables');
 
 .app-sider {
-  height: calc(100vh - @app-titlebar-height - @app-statusbar-height);
+  // height: calc(100vh - $app-titlebar-height - $app-statusbar-height);
   overflow: hidden;
 
-  .sider-header.ant-layout-header {
-    color: @text-color-secondary;
-    height: @app-sider-header-height;
-    font-size: 12px;
-    line-height: @app-sider-header-height;
-    padding: 0 20px;
-    background-color: @body-background;
+  .sider-header {
+    color: $text-color-highlight;
+    min-height: $app-sider-header-height;
+    max-height: $app-sider-header-height;
+    font-size: $font-size-small;
+    line-height: $app-sider-header-height;
+    padding: 0 $space-extra-large;
+    background-color: $app-background;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .sider-content {
-    overflow: hidden;
-    height: calc(100vh - @app-titlebar-height - @app-statusbar-height - @app-sider-header-height);
+    height: calc(100vh - #{$app-titlebar-height} - #{$app-statusbar-height} - #{$app-sider-header-height});
   }
 }
 </style>

@@ -1,0 +1,69 @@
+$--font-path: $ep-fonts-path;
+$--color-primary: $color-primary;
+$--color-text-primary: $text-color;
+$--color-text-regular: $text-color;
+$--color-text-placeholder: $text-color;
+
+$--font-color-disabled-base: darken($text-color, 5%); // #bbb !default;
+
+$--color-white: $app-background;
+$--background-color-base: $app-background;
+
+$--font-size-base: $font-size-base;
+
+
+$--border-color-base: $border-color-base;
+$--border-color-light: lighten($--border-color-base, 5%);
+$--border-color-lighter: lighten($--border-color-base, 10%);
+$--border-color-extra-light: lighten($--border-color-base, 15%);
+
+$--border-width-base: 1px !default;
+$--border-style-base: solid !default;
+$--border-color-hover: $--color-text-placeholder !default;
+$--border-base: $--border-width-base $--border-style-base $--border-color-base !default;
+
+
+
+$--header-padding: 0;
+$--footer-padding: 0;
+$--main-padding: 0;
+
+$--box-shadow-base: 0 2px 8px $shadow-color;
+
+$--link-color: $text-color;
+$--link-hover-color: $text-color-highlight;
+$--link-default-font-color: $text-color;
+$--link-default-active-color: $text-color-highlight;
+
+$--dialog-box-shadow: $shadow-base;
+$--dialog-title-font-size: $font-size-large;
+$--dialog-padding-primary: 16px;
+
+$--menu-item-font-size: $font-size-medium;
+$--menu-item-font-color: $text-color;
+$--menu-background-color: $component-background;
+$--menu-item-hover-fill: $component-background;
+
+$--collapse-header-height: $tree-node-height;
+$--collapse-header-background-color: $component-background;
+$--collapse-header-font-color: $text-color;
+$--collapse-header-font-size: $font-size-small;
+$--collapse-content-background-color: $app-background;
+
+$--tree-node-hover-background-color: $component-background;
+$--tree-font-color: $text-color;
+// $--tree-expand-icon-color: $--color-text-placeholder !default;
+
+$--input-height: $font-size-base * 2.25; // 40px !default;
+$--input-border: $--border-base !default;
+$--input-border-radius: 0; // $--border-radius-base !default;
+$--input-background-color: darken($app-background, 5%); //$--color-white !default;
+
+$--input-focus-border: lighten($--border-color-base, 5%); // $--color-primary !default;
+
+$--input-medium-font-size: $font-size-medium; // 14px !default;
+$--input-medium-height: $font-size-base * 2; // 36px !default;
+$--input-small-font-size: $font-size-small; // 13px !default;
+$--input-small-height: $font-size-base * 1.75; // 32px !default;
+$--input-mini-font-size: $font-size-extra-small; // 12px !default;
+$--input-mini-height: $font-size-base * 1.5; //28px !default;

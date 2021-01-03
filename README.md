@@ -16,7 +16,7 @@
 [WIP] 基于 vue3 + vite + electron 的个人练习项目
 
 - 功能：尝试实现Redis的可视化管理。
-- 界面：使用AntDesignVue模仿VSCode的布局和样式，配色必须是最爱的 One Dark。
+- 界面：使用Element-Plus模仿VSCode的布局和样式，配色必须是最爱的 One Dark。
 - 结构：
 ```sh
 ├── scripts                  # 编译脚本
@@ -38,7 +38,7 @@
 
 | | 依赖|
 | --- | -- |
-| UI | [![Vue](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/ant-design-vue)](https://github.com/vueComponent/ant-design-vue) |
+| UI | [![element-plus](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/element-plus)](https://github.com/element-plus/element-plus) |
 | Editor | [![monaco-editor](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/monaco-editor)](https://github.com/microsoft/monaco-editor) [![codemirror](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/codemirror)](https://github.com/codemirror/CodeMirror) <br/> 目前均未搞懂怎么在Vue3+Vite中使用，库内资源加载都有问题。 ![help wanted](https://img.shields.io/badge/-help%20wanted-red)|
 | Redis | [![ioredis](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/ioredis)](https://github.com/luin/ioredis) |
 | Terminal | [![xterm](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/xterm)](https://github.com/xtermjs/xterm.js)|

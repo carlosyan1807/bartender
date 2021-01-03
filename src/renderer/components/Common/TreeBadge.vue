@@ -1,5 +1,5 @@
 <template>
-  <a-badge v-if="showBadge" class="badge-redis" :class="className" :count="label" />
+  <el-badge v-if="showBadge" class="badge-redis" :class="className" :value="label" />
   <iconfont v-else class="icon-redis" :class="className" :name="iconName" />
 </template>
 
@@ -42,7 +42,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
+<style>
 .ant-badge-not-a-wrapper:not(.ant-badge-status) {
   vertical-align: text-top !important;
 }

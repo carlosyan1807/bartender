@@ -41,7 +41,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
+<style>
 .key-content {
   height: 100vh;
 }

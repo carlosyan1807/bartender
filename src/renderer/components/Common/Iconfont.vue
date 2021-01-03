@@ -1,5 +1,5 @@
 <template>
-  <svg class="anticon iconfont" aria-hidden="true">
+  <svg class="iconfont" aria-hidden="true">
     <use :xlink:href="iconName" />
   </svg>
 </template>
@@ -10,7 +10,10 @@ import { defineComponent, reactive, toRefs } from 'vue'
 export default defineComponent({
   name: 'Iconfont',
   props: {
-    name: String,
+    name: {
+      type: String,
+      default: '',
+    },
   },
   setup(props) {
     const data = reactive({
@@ -28,7 +31,7 @@ export default defineComponent({
 .iconfont {
   width: 1em;
   height: 1em;
-  vertical-align: -0.2em;
+  vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
 }

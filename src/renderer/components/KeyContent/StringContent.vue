@@ -1,8 +1,8 @@
 <template>
-  <a-textarea
-    v-model:value="strResult"
-    placeholder="Basic usage"
-    :rows="4"
+  <el-input
+    type="textarea"
+    v-model="strResult"
+    placeholder="<空>"
     class="string-content"
   />
 </template>
@@ -40,6 +40,7 @@ export default defineComponent({
       const result = await getStringKey(id, name)
       return result
     }
+
     watchEffect(async () => {
       const name = <string>toRaw(keyName.value)
       strResult.value = await getKey(name)
@@ -56,7 +57,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
+<style lang="scss">
 .string-content.ant-input {
   border: 0;
   height: 100% !important;

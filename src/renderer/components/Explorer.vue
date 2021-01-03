@@ -1,37 +1,29 @@
 <template>
-  <!-- <a-layout class="app-explorer">
-    <a-layout-header class="explorer-header"> -->
   <Sider>
     <template #header>
       <span>资源管理器</span>
     </template>
-    <!-- </a-layout-header> -->
-    <a-collapse
-      class="explorer-collapse"
-      v-model:activeKey="expandedKeys"
-      :bordered="false"
-      ref="collapse"
-      :open-animation="{ onEnter: null }"
-    >
-      <a-collapse-panel key="1" header="收藏夹">
+    <el-collapse class="explorer-collapse" v-model="expandedKeys">
+      <el-collapse-item name="1">
+        <template #title><iconfont name="right" />收藏夹</template>
         <Tree :tree-nodes="favNodes" />
-      </a-collapse-panel>
-      <a-collapse-panel key="2" header="This is panel header 2">
+      </el-collapse-item>
+      <el-collapse-item name="2">
+        <template #title><iconfont name="right" />This is panel header 2</template>
         <Tree :tree-nodes="favNodes" />
-      </a-collapse-panel>
-      <a-collapse-panel key="3" header="This is panel header 3">
+      </el-collapse-item>
+      <el-collapse-item name="3">
+        <template #title><iconfont name="right" />This is panel header 3</template>
         <Tree :tree-nodes="favNodes" />
-      </a-collapse-panel>
-    </a-collapse>
-    <!-- </a-layout> -->
+      </el-collapse-item>
+    </el-collapse>
   </Sider>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref, toRaw, toRefs, watchEffect } from 'vue'
+import { defineComponent, onMounted, reactive, toRefs } from 'vue'
 import Sider from '/@/components/Layout/Sider.vue'
 import Tree from '/@/components/Common/Tree.vue'
-import TempComponent from './TempComponent.vue'
 
 export default defineComponent({
   name: 'Explorer',
@@ -41,31 +33,31 @@ export default defineComponent({
   },
   setup() {
     const favNodes = reactive([
-      { title: 'server1', key: '1' },
-      { title: 'server2', key: '2' },
+      { label: 'server1', key: '1' },
+      { label: 'server2', key: '2' },
       {
-        title: '公司',
+        label: '公司',
         key: '3',
         // slots: { icon: 'folder' },
         children: [
-          { title: '官网', key: '4' },
-          { title: 'dev', key: '5' },
+          { label: '官网', key: '4' },
+          { label: 'dev', key: '5' },
           {
-            title: '苏州xx项目',
+            label: '苏州xx项目',
             key: '6',
             children: [
-              { title: 'prod', key: '7' },
-              { title: 'sit', key: '8' },
+              { label: 'prod', key: '7' },
+              { label: 'sit', key: '8' },
             ],
           },
         ],
       },
       {
-        title: '个人',
+        label: '个人',
         key: '9',
         children: [
-          { title: '本地', key: '10' },
-          { title: 'WSL', key: '11' },
+          { label: '本地', key: '10' },
+          { label: 'WSL', key: '11' },
         ],
       },
     ])
@@ -102,36 +94,36 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
-@import url('../themes/variables');
+<style lang="scss">
+.explorer-collapse.el-collapse {
+  background-color: $app-background;
+  width: 100%;
+  border-top: 1px solid $component-background;
+  border-bottom: 1px solid $app-background;
 
-.explorer-collapse.ant-collapse-borderless {
-  height: calc(100vh - @app-titlebar-height - @app-statusbar-height - @app-sider-header-height);
-  background-color: @body-background;
-
-  .ant-collapse-header {
-    background-color: @component-background;
-    color: @text-color-secondary;
-    font-size: 11px;
-    font-weight: 600;
-
-    .ant-collapse-arrow {
-      left: 2px !important;
-      margin: 0 2px;
-    }
-    text-overflow: ellipsis;
+  .el-collapse-item__wrap {
+    border-bottom: 1px solid $app-background;
+  }
+  .el-collapse-item__header {
+    border-bottom: 1px solid $component-background;
     white-space: nowrap;
-  }
-  // .ant-collapse-content {
-  //   overflow: auto;
-  // }
+    text-overflow: ellipsis;
 
-  .ant-collapse-item {
-    border-bottom: none !important;
+    .iconfont {
+      margin: 0 $space-extra-small;
+      transition: transform 0.3s ease 0s;
+    }
+    &.is-active {
+      .iconfont {
+        transform: rotate(90deg);
+      }
+    }
   }
-
-  .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-    padding-top: 0 !important;
+  .el-collapse-item__arrow {
+    display: none;
+  }
+  .el-collapse-item__content {
+    padding-bottom: 0;
   }
 }
 </style>

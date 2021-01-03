@@ -1,92 +1,93 @@
 <template>
-  <splitpanes
-    class="splitpanes-theme"
-    horizontal
-    :push-other-panes="false"
-    @resize="handlePaneResize"
-  >
-    <pane size="80">
-      <splitpanes class="splitpanes-theme" :push-other-panes="false" @resize="handlePaneResize">
+  <splitpanes horizontal :push-other-panes="false" @resize="handlePaneResize">
+    <pane size="50">
+      <splitpanes :push-other-panes="false" @resize="handlePaneResize">
         <pane size="20" min-size="20">
           <div class="connection-key-container" ref="refKeyContainer">
-            <a-row>
-              <a-col :span="24">
+            <el-row type="flex">
+              <el-col :span="24">
                 <div class="key-list-header" ref="refKeyHeader">
-                  <a-input size="small" :allow-clear="true">
+                  <el-input size="small" :clearable="true" v-model="keySearchPatterns">
                     <template #prefix><iconfont name="search" /></template>
-                    <template #addonAfter>
+                    <template #append>
                       <iconfont name="reload" @click="fetchKeys" />
                     </template>
-                  </a-input>
+                  </el-input>
                 </div>
-              </a-col>
-              <a-col :span="24">
+              </el-col>
+              <el-col :span="24">
                 <div class="key-list-container" ref="refKeyList">
                   <perfect-scrollbar
                     class="key-list-scrollbar"
                     ref="refKeyListScrollbar"
                     :options="{ suppressScrollX: true }"
                   >
-                    <Tree
-                      :treeNodes="keysData"
+                    <el-tree :data="keysData" node-key="key">
+                      <!-- @node-collapse="handleNodeCollapse" -->
+                      <!-- @node-click="handleNodeClick" -->
+                      <!-- <template #default="{ node, data }">
+                        <span>{{ data.label }}</span>
+                      </template> -->
+                    </el-tree>
+                    <!-- <Tree
+                      :tree-nodes="keysData"
                       :custom-icon="true"
                       :show-badge="showBadge"
                       @change="handleShowKeyContent"
                       class="key-list"
-                    />
+                    /> -->
                   </perfect-scrollbar>
                 </div>
-              </a-col>
-            </a-row>
+              </el-col>
+            </el-row>
           </div>
         </pane>
         <pane min-size="20">
           <div class="key-editor-container">
-            <a-row class="key-editor-header" justify="space-between">
-              <a-col class="key-editor-header-left">
-                <a-select
+            <el-row class="key-editor-header" type="flex" justify="space-between">
+              <el-col :span="20" class="key-editor-header-left">
+                <el-select
+                  style="width: 80px"
+                  size="small"
+                  v-model="dbSelected"
+                  @change="handleChangeDb"
+                >
+                  <template #prefix><iconfont name="redis-db" /></template>
+                  <el-option
+                    v-for="item in dbItems"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+                <!-- <a-select
                   size="small"
                   v-model:value="dbSelected"
                   :options="dbItems"
                   style="width: 100px"
                   @change="handleChangeDb"
                 >
-                </a-select>
+                </a-select> -->
                 <!-- <MonacoEditor /> -->
                 <!-- <CodeEditor /> -->
                 <!-- <a-switch v-model:checked="showBadge" /> -->
-              </a-col>
-              <a-col class="key-editor-header-right">
-                <a-button
-                  size="small"
-                  class="icon-button"
-                  @click="showConsole = !showConsole"
-                  type="link"
-                >
+              </el-col>
+              <el-col :span="4" class="key-editor-header-right">
+                <el-button size="small" class="icon-button" @click="showConsole = !showConsole">
                   <iconfont name="console" />
-                </a-button>
-              </a-col>
-            </a-row>
-            <KeyContent :item="keySelectedItem" />
+                </el-button>
+              </el-col>
+            </el-row>
+            <div ref="refKeyContent">
+              <KeyContent :item="keySelectedItem" />
+            </div>
           </div>
         </pane>
       </splitpanes>
     </pane>
-    <pane size="20" min-size="10" v-if="showConsole" ref="refConsolePane">
-      <a-layout>
-        <a-layout-header class="console-header">
-          <div class="console-header-left"><span>终端</span></div>
-          <div class="console-header-right">
-            <a-button class="icon-button" type="link">
-              <template #icon><iconfont name="up" /></template>
-            </a-button>
-            <a-button class="icon-button" type="link" @click="showConsole = false">
-              <template #icon><iconfont name="close" /></template>
-            </a-button>
-          </div>
-        </a-layout-header>
-        <Terminal />
-      </a-layout>
+    <pane size="50" min-size="10" v-if="showConsole" ref="refConsolePane">
+      <Console ref="refConsole" />
     </pane>
   </splitpanes>
 </template>
@@ -111,19 +112,21 @@ import {
 import { Splitpanes, Pane } from 'splitpanes'
 // import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
 // import CodeEditor from '/@/components/Common/CodeEditor.vue'
-import Tree from '/@/components/Common/Tree.vue'
-import TreeBadge from '/@/components/Common/TreeBadge.vue'
+// import Tree from '/@/components/Common/Tree.vue'
 import KeyContent from '/@/components/KeyContent/KeyContent.vue'
-import Terminal from '/@/components/Common/Terminal.vue'
+import Console from '/@/components/Common/Console.vue'
 
 import { useStore } from 'vuex'
 import { useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'Connection',
-  components: { Splitpanes, Pane, Tree, TreeBadge, KeyContent, Terminal },
+  components: { Splitpanes, Pane, KeyContent, Console },
   props: {
-    connectionId: String,
+    connectionId: {
+      type: String,
+      required: true,
+    },
   },
   setup(props) {
     const { state, commit } = useStore()
@@ -143,7 +146,7 @@ export default defineComponent({
     // 获取DB数量
     const dbCount = ref(0)
     const dbItems: any[] = reactive([])
-    const dbSelected = ref(0)
+    const dbSelected = ref('0')
     const fetchDatabaseCount = async () => {
       const result = await getConfig(toRaw(connection.value.id), 'databases')
       if (result[1]) {
@@ -160,36 +163,42 @@ export default defineComponent({
       const result = await changeDb(toRaw(connection.value.id), value)
       if (result) fetchKeys()
     }
+    const keySearchPatterns = ref('')
     // 获取键列表
-    let keysData: any[] = reactive([])
+    let keysData: any[] = reactive([{ label: '1', key: 1 }])
     const fetchKeys = async () => {
       const keys = await scanKeys(toRaw(connection.value.id))
-      const result: { title: string; type: string; key: string }[] = []
+      const result: { label: string; type: string; key: string }[] = []
       if (keys && keys.length > 0)
-        keys.forEach((e) => result.push({ title: e[0], type: e[1], key: e[0] }))
+        keys.forEach((e) => result.push({ label: e[0], type: e[1], key: e[0] }))
       keysData.splice(0, keysData.length, ...result)
       commit('updateConnectionKeysCount', { id: connection.value.id, count: keysData.length })
-      if (result.length > 0) keySelectedItem.value = { name: result[0].title, type: result[0].type }
+      if (result.length > 0) keySelectedItem.value = { name: result[0].label, type: result[0].type }
     }
     // 键列表选择
     const keySelectedItem = ref({})
     const handleShowKeyContent = (key: any, e: any) => {
-      const { title, type } = e.node.dataRef
-      keySelectedItem.value = { name: title, type }
+      const { label, type } = e.node.dataRef
+      keySelectedItem.value = { name: label, type }
     }
-
     // 设置组件大小
-    const refKeyContainer = ref(null)
-    const refKeyList = ref(null)
-    const refKeyHeader = ref(null)
-    const refKeyListScrollbar = ref(null)
-    const refConsolePane = ref(null)
-
+    const refKeyContainer: Ref<any> = ref(null)
+    const refKeyList: Ref<any> = ref(null)
+    const refKeyHeader: Ref<any> = ref(null)
+    const refKeyListScrollbar: Ref<any> = ref(null)
+    const refKeyContent: Ref<any> = ref(null)
+    const refConsolePane: Ref<any> = ref(null)
+    const refConsole: Ref<any> = ref(null)
     const handlePaneResize = () => {
       refKeyList.value.style.height = `${
         refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
       }px`
+      refKeyContent.value.style.height = `${
+        refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
+      }px`
       if (refKeyListScrollbar.value.ps) refKeyListScrollbar.value.ps.update()
+      // console.log(refConsole)
+      if (refConsole.value) refConsole.value.handleResize()
     }
 
     onMounted(async () => {
@@ -214,7 +223,6 @@ export default defineComponent({
         refKeyListScrollbar.value.ps = null
       }
     })
-
     const data = reactive({
       isLoading,
       connection,
@@ -225,6 +233,7 @@ export default defineComponent({
       showBadge,
       showConsole,
       keySelectedItem,
+      keySearchPatterns,
     })
     return {
       ...toRefs(data),
@@ -233,9 +242,11 @@ export default defineComponent({
       handleShowKeyContent,
       refKeyContainer,
       refConsolePane,
+      refConsole,
       refKeyListScrollbar,
       refKeyList,
       refKeyHeader,
+      refKeyContent,
       handlePaneResize,
       handleChangeDb,
     }
@@ -243,64 +254,118 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
-@import url('../themes/variables');
-
-.connection-container {
-  padding: 16px 16px 0 16px;
-}
-
-.console-header.ant-layout-header {
-  border-top: 1px solid @border-color-base;
-  width: inherit;
-  display: flex;
-  justify-content: space-between;
-
-  .icon-button {
-    color: @text-color-secondary;
-    &:hover,
-    &:focus,
-    &:active {
-      color: @text-color-secondary;
-    }
-  }
-  .console-header-left {
-    padding-left: 16px;
-    font-size: @font-size-sm;
-  }
-}
+<style lang="scss">
 .connection-key-container {
+  // padding-top: $space-small;
+  padding-left: $space-small;
+  padding-right: $space-extra-small;
   height: 100%;
 
-  .key-list-header {
-    padding: @padding-sm;
-  }
   .key-list-container {
-    position: relative;
-    overflow: hidden;
-  }
-  .key-list-scrollbar {
+    box-sizing: border-box;
     height: 100%;
-    width: 100%;
-    padding-bottom: @padding-sm;
+    border-right: 1px solid $border-color-base;
+    border-image: -webkit-linear-gradient(to bottom, $component-background, $border-color-base) 1
+      100%;
+    border-image: -moz-linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
+    border-image: linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
   }
-  .key-list {
-    width: 100%;
+  .key-list-header {
+    padding: $space-small 0;
+  }
+  .key-list-scrollbar.ps {
+    height: 100%;
+    padding-bottom: $space-small;
+  }
+  .el-input__prefix {
+    .iconfont {
+      height: 100%;
+    }
+  }
+  .el-input--prefix .el-input__inner {
+    padding-left: $space-extra-large;
+  }
+  .el-input-group__append {
+    padding: 0 $space-small;
   }
 }
 .key-editor-container {
-  border-left: 1px solid @border-color-split;
-  border-image: -webkit-linear-gradient(to bottom, @app-component-background, @border-color-split) 1
-    100%;
-  border-image: -moz-linear-gradient(to bottom, @app-component-background, @border-color-split) 1
-    100%;
-  border-image: linear-gradient(to bottom, @app-component-background, @border-color-split) 1 100%;
-  // border-image: linear-gradient(to bottom, red , blue) 500 100%;
+  height: 100%;
+  padding-left: $space-extra-small;
+
   .key-editor-header {
-    padding: @padding-sm;
+    padding: $space-small 0;
   }
-  .key-editor-header-right {
-    padding-right: @padding-sm;
+  .key-content {
+    height: 100%;
+  }
+  .el-input__prefix {
+    .iconfont {
+      height: 100%;
+    }
+  }
+  .el-input--prefix .el-input__inner {
+    padding-left: $space-extra-large;
+  }
+  .el-input-group__append {
+    padding: 0 $space-small;
   }
 }
+// .connection-container {
+//   padding: 16px 16px 0 16px;
+// }
+
+// .console-header.ant-layout-header {
+//   border-top: 1px solid @border-color-base;
+//   width: inherit;
+//   display: flex;
+//   justify-content: space-between;
+
+//   .icon-button {
+//     color: @text-color-secondary;
+//     &:hover,
+//     &:focus,
+//     &:active {
+//       color: @text-color-secondary;
+//     }
+//   }
+//   .console-header-left {
+//     padding-left: 16px;
+//     font-size: @font-size-sm;
+//   }
+// }
+// .connection-key-container {
+//   height: 100%;
+
+//   .key-list-header {
+//     padding: @padding-sm;
+//   }
+//   .key-list-container {
+//     position: relative;
+//     overflow: hidden;
+//   }
+//   .key-list-scrollbar {
+//     height: 100%;
+//     width: 100%;
+//     padding-bottom: @padding-sm;
+//   }
+//   .key-list {
+//     width: 100%;
+//   }
+// }
+// .key-editor-container {
+//   border-left: 1px solid @border-color-split;
+//   border-image: -webkit-linear-gradient(to bottom, @app-component-background, @border-color-split) 1
+//     100%;
+//   border-image: -moz-linear-gradient(to bottom, @app-component-background, @border-color-split) 1
+//     100%;
+//   border-image: linear-gradient(to bottom, @app-component-background, @border-color-split) 1 100%;
+//   // border-image: linear-gradient(to bottom, red , blue) 500 100%;
+//   .key-editor-header {
+//     padding: @padding-sm;
+//   }
+//   .key-editor-header-right {
+//     padding-right: @padding-sm;
+//   }
+// }
 </style>

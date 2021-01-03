@@ -1,10 +1,36 @@
 <template>
-  <a-layout>
-    <!-- <a-layout-header> -->
+  <el-container class="app-layout">
+    <el-header class="app-layout-header">
+      <TitleBar :app-name="appName" />
+    </el-header>
+    <el-container class="app-layout-content">
+      <el-aside class="app-layout-navmenu">
+        <NavMenu />
+      </el-aside>
+      <el-main class="app-layout-main">
+        <splitpanes :dbl-click-splitter="false">
+          <pane :size="siderSize" v-show="siderVisiable">
+            <keep-alive>
+              <component :is="activedComponent" />
+            </keep-alive>
+          </pane>
+          <pane :size="100 - siderSize">
+            <Hub />
+          </pane>
+        </splitpanes>
+      </el-main>
+    </el-container>
+    <el-footer class="app-layout-footer">
+      <StatusBar />
+    </el-footer>
+    <AboutDialog />
+  </el-container>
+  <!-- <a-layout>
     <TitleBar :app-name="appName" />
-    <!-- </a-layout-header> -->
     <a-layout>
-      <a-layout-sider collapsedWidth="48" :collapsed="true"><NavMenu /></a-layout-sider>
+      <a-layout-sider collapsed-width="48" :collapsed="true">
+        <NavMenu />
+      </a-layout-sider>
       <a-layout>
         <splitpanes class="splitpanes-theme" :dbl-click-splitter="false">
           <pane :size="siderSize" v-show="siderVisiable">
@@ -13,11 +39,7 @@
             </keep-alive>
           </pane>
           <pane :size="100 - siderSize">
-            <!-- <a-layout class="app-content">
-              <a-layout-content> -->
             <Hub />
-            <!-- </a-layout-content>
-            </a-layout> -->
           </pane>
         </splitpanes>
       </a-layout>
@@ -26,11 +48,11 @@
       <StatusBar />
     </a-layout-footer>
     <AboutDialog />
-  </a-layout>
+  </a-layout> -->
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, reactive, ref, toRefs, watchEffect } from 'vue'
+import { computed, defineComponent, inject, provide, reactive, ref, toRefs, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 
 import { Splitpanes, Pane } from 'splitpanes'
@@ -62,33 +84,23 @@ export default defineComponent({
     TempComponent,
   },
   setup(props) {
-    const $notification: any = inject('$notification')
     const { state, commit } = useStore()
     const appName = ref('Bartender')
     const siderVisiable = computed(() => !!state.app.activedNavMenuItem)
     const activedComponent = computed(() =>
       state.app.activedNavMenuItem === 'explorer' ? Explorer : TempComponent
     )
-
     useIpc().on('connectionStatusUpdated', (event, res) => {
       console.log('%c connectionStatusUpdated', 'color:cyan', res)
       commit('updateConnectionStatus', res)
     })
     useIpc().on('connectionLogUpdated', (event, res) => {
-      // const { id, error } = res
-      // $notification.error({
-      //   key: id,
-      //   message: 'Error',
-      //   description: String(error),
-      //   placement: 'bottomRight',
-      //   duration: 0,
-      // })
       commit('updateConnectionLog', res)
     })
     // 容器大小
     const siderSize = ref(20)
     // const hubSize = ref(80)
-    const handleToggleSider = (value: string) => {
+    const handleToggleSider = (value: any) => {
       if (!value) siderSize.value = 0
       else siderSize.value = 20
     }

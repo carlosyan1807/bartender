@@ -1,7 +1,20 @@
 <template>
-  <a-tabs
+  <el-tabs class="app-hub" type="card" :active-name="activedTab" @tab-click="handleChangeTab">
+    <el-tab-pane v-for="(item, index) in connections" :key="index" :name="item.id">
+      <template #label  @click.right="alert(1)">
+        <iconfont v-if="item.id === 'quick-connect'" class="folder-color" name="thunderbolt" />
+        <iconfont v-else-if="item.id === 'settings'" class="settings-color" name="setting" />
+        <iconfont v-else class="redis-color" name="redis" />
+        <span class="hub-header-label">{{ item.label }}</span>
+      </template>
+      <QuickConnect v-if="item.id === 'quick-connect'" />
+      <Settings v-else-if="item.id === 'settings'" />
+      <Connection v-else :connection-id="item.id" />
+    </el-tab-pane>
+  </el-tabs>
+  <!-- <a-tabs
     class="app-hub"
-    :activeKey="activedTab"
+    :active-key="activedTab"
     size="small"
     type="editable-card"
     :hide-add="true"
@@ -29,7 +42,7 @@
       <Settings v-else-if="item.id === 'settings'" />
       <Connection v-else :connection-id="item.id" />
     </a-tab-pane>
-  </a-tabs>
+  </a-tabs> -->
 </template>
 
 <script lang="ts">
@@ -39,7 +52,7 @@ import { useStore } from 'vuex'
 import QuickConnect from '/@/components/QuickConnect.vue'
 import Connection from '/@/components/Connection.vue'
 import Settings from '/@/components/Settings.vue'
-import ContextMenu from '/@/components/Common/ContextMenu.vue'
+// import ContextMenu from '/@/components/Common/ContextMenu.vue'
 
 import { useService } from '/@/hooks'
 
@@ -49,7 +62,7 @@ export default defineComponent({
     QuickConnect,
     Settings,
     Connection,
-    ContextMenu,
+    // ContextMenu,
   },
   setup() {
     const { state, commit } = useStore()
@@ -72,8 +85,8 @@ export default defineComponent({
       }
     })
     // 切换页
-    const handleChangeTab = (actived: string) => {
-      commit('updateHubActivedTab', actived)
+    const handleChangeTab = (tab: any, event: Event) => {
+      commit('updateHubActivedTab', tab.paneName)
     }
     // Tabs右键菜单 - 关闭
     const handleCloseTab = (targetId: string) => {
@@ -112,65 +125,123 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less">
-@import url('../../themes/variables');
-
-.app-hub {
+<style lang="scss">
+.app-hub.el-tabs {
   height: 100%;
-  overflow: hidden;
 
-  .ant-tabs-bar.ant-tabs-card-bar {
+  .el-tabs__header {
+    background-color: $app-background;
     border-bottom: none;
-    background-color: @body-background;
+    margin: 0;
   }
-  .ant-tabs-tab {
-    font-size: @font-size-sm;
-    padding: 0 !important;
+  .el-tabs__nav {
+    border-radius: 0 !important;
     border: none !important;
-
-    .contextmenu-region {
-      padding: 0 8px;
-    }
-    .ant-tabs-close-x {
-      display: none;
-    }
-    .anticon.iconfont {
-      font-size: 14px;
-      margin-right: 4px;
-    }
   }
-  .ant-tabs-tab.ant-tabs-tab-active {
-    font-weight: normal;
+  .el-tabs__nav-wrap {
+    margin-bottom: 0;
   }
-  .ant-tabs-nav .ant-tabs-tab::before {
+  .el-tabs__item {
+    font-size: $font-size-small;
+    height: $app-hub-header-height;
+    line-height: $app-hub-header-height;
+    border: none !important;
     border-radius: 0;
-  }
-  .ant-tabs-nav .ant-tabs-tab:hover {
-    background: lighten(@component-background, 4%) !important;
-  }
-  .ant-tabs-tab.ant-tabs-tab-active::before {
-    position: absolute;
-    content: '';
-    top: 0px;
-    left: 0px;
-    height: 2px;
-    width: 100%;
-    display: block;
-    background-color: @primary-color;
-    transition-property: background-color;
-    transition-duration: 0ms;
-    transition-delay: 0.1s;
-  }
-  .ant-tabs-content {
-    position: absolute;
-    top: @app-sider-header-height;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    padding: 0 $space-small !important;
+    color: $text-color;
 
-    .ant-tabs-tabpane-active {
+    .iconfont {
+      margin-right: $space-extra-small;
+    }
+
+    &:hover,
+    &:focus {
+      .hub-header-label {
+        color: $text-color;
+      }
+    }
+    &.is-active {
+      background-color: $component-background;
+      .hub-header-label {
+        color: $text-color-highlight;
+      }
+      ::before {
+        position: absolute;
+        content: '';
+        top: 0px;
+        left: 0px;
+        height: 2px;
+        width: 100%;
+        display: block;
+        background-color: $--color-primary;
+        transition: background-color 0.3s ease 0s;
+      }
+    }
+  }
+  .el-tabs__content {
+    height: calc(100vh - #{$app-titlebar-height} - #{$app-statusbar-height} - #{$app-hub-header-height});
+
+    .el-tab-pane {
       height: 100%;
     }
   }
 }
+// .app-hub {
+//   height: 100%;
+//   overflow: hidden;
+
+//   .ant-tabs-bar.ant-tabs-card-bar {
+//     border-bottom: none;
+//     background-color: @body-background;
+//   }
+//   .ant-tabs-tab {
+//     font-size: @font-size-sm;
+//     padding: 0 !important;
+//     border: none !important;
+
+//     .contextmenu-region {
+//       padding: 0 8px;
+//     }
+//     .ant-tabs-close-x {
+//       display: none;
+//     }
+//     .anticon.iconfont {
+//       font-size: 14px;
+//       margin-right: 4px;
+//     }
+//   }
+//   .ant-tabs-tab.ant-tabs-tab-active {
+//     font-weight: normal;
+//   }
+//   .ant-tabs-nav .ant-tabs-tab::before {
+//     border-radius: 0;
+//   }
+//   .ant-tabs-nav .ant-tabs-tab:hover {
+//     background: lighten(@component-background, 4%) !important;
+//   }
+//   .ant-tabs-tab.ant-tabs-tab-active::before {
+//     position: absolute;
+//     content: '';
+//     top: 0px;
+//     left: 0px;
+//     height: 2px;
+//     width: 100%;
+//     display: block;
+//     background-color: @primary-color;
+//     transition-property: background-color;
+//     transition-duration: 0ms;
+//     transition-delay: 0.1s;
+//   }
+//   .ant-tabs-content {
+//     position: absolute;
+//     top: @app-sider-header-height;
+//     bottom: 0;
+//     left: 0;
+//     right: 0;
+
+//     .ant-tabs-tabpane-active {
+//       height: 100%;
+//     }
+//   }
+// }
 </style>

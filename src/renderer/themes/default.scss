@@ -1,0 +1,85 @@
+body {
+  position: relative;
+  user-select: none;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  margin: 0;
+  font-size: $font-size-base;
+  color: $text-color;
+  text-align: left;
+}
+.app-layout {
+  background-color: $app-background;
+}
+.app-layout-header {
+  flex: 0 0 auto;
+  max-height: $app-titlebar-height;
+  min-height: $app-titlebar-height;
+}
+.app-layout-content {
+  height: calc(100vh - #{$app-titlebar-height} - #{$app-statusbar-height});
+}
+.app-layout-navmenu {
+  background-color: $component-background;
+  flex: 0 0 $app-navmenu-width;
+  max-width: $app-navmenu-width;
+  min-width: $app-navmenu-width;
+}
+// .app-layout-main {
+// }
+.app-layout-footer {
+  min-height: $app-statusbar-height;
+  max-height: $app-statusbar-height;
+  flex: 0 0 auto;
+  background-color: $app-background;
+}
+
+.redis-color {
+  color: $icon-reids-color;
+}
+
+.folder-color {
+  color: $icon-folder-color;
+}
+
+.settings-color {
+  color: $icon-settings-color;
+}
+
+.icon-button.el-button {
+  border: 0;
+  padding: 0 $space-small;
+  border-radius: 0;
+  background-color: $component-background;
+  color: $text-color;
+
+  &:hover,
+  &:focus {
+    color: $text-color-highlight;
+    background-color: lighten($component-background, 5%);
+  }
+}
+.app-popper-menu {
+  border: none !important;
+  padding: 0 !important;
+  .el-menu {
+    border-right: 1px solid $component-background;
+
+    .el-divider--horizontal {
+      margin: $space-extra-small 0;
+    }
+    .el-menu-item {
+      padding: 0;
+      color: $text-color;
+      height: $app-popper-menu-height;
+      line-height: $app-popper-menu-height;
+      vertical-align: middle;
+      &:hover,
+      &:focus {
+        color: $text-color-highlight;
+        background-color: $item-hover-background;
+      }
+    }
+  }
+}
