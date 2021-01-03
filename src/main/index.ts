@@ -8,7 +8,8 @@ async function main() {
   const logger = new Logger()
   logger.initialize(app.getPath('userData'))
   initialize(logger)
-  app.commandLine.appendSwitch("disable-gpu")
+  // app.commandLine.appendSwitch('disable-gpu')
+  app.commandLine.appendSwitch('disable-pinch')
   app.whenReady().then(() => {
     createWindow()
   })
@@ -51,6 +52,12 @@ function createWindow() {
 
   mainWindow.on('focus', function () {
     mainWindow.webContents.send('updateWindowStatus', { isFocus: true })
+  })
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.setZoomFactor(1)
+    mainWindow.webContents.setVisualZoomLevelLimits(1, 1)
+    // mainWindow.webContents.setLayoutZoomLevelLimits(0, 0)
   })
 
   ipcMain.on('renderer2main', (event, func) => {

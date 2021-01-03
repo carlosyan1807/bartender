@@ -1,13 +1,14 @@
 <template>
   <div class="quick-connect-container">
     <el-row type="flex" justify="center">
-      <el-col>
+      <el-col :xs="24" :sm="16" :md="12" :lg="8">
         <el-form
           :model="formQuickConnect"
           layout="horizontal"
-          label-align="right"
-          :label-col="{ span: 8 }"
-          :wrapper-col="{ span: 16 }"
+          label-position="right"
+          label-width="auto"
+          label-suffix=":"
+          size="small"
         >
           <el-form-item label="Host">
             <el-input v-model:value="formQuickConnect.host" />
@@ -18,10 +19,10 @@
           <el-form-item label="Password">
             <el-input v-model:value="formQuickConnect.password" />
           </el-form-item>
-          <el-form-item :wrapper-col="{ span: 16, offset: 8 }">
-            <el-button type="primary" @click="handleSubmitConnect" :loading="isLoading"
-              >连接</el-button
-            >
+          <el-form-item>
+            <el-button size="mini" type="primary" @click="handleSubmitConnect" :loading="isLoading">
+              连接
+            </el-button>
           </el-form-item>
         </el-form>
       </el-col>

@@ -23,30 +23,64 @@
 //   },
 // }
 
-import { defineComponent, onMounted, reactive, Ref, ref, toRefs, onUnmounted, markRaw } from 'vue'
+import {
+  defineComponent,
+  onMounted,
+  reactive,
+  Ref,
+  ref,
+  toRefs,
+  onUnmounted,
+  markRaw,
+  computed,
+  watchEffect,
+  inject,
+} from 'vue'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'MonacoEditor',
+  props: {
+    content: {
+      type: String,
+      default: '',
+    },
+  },
   setup(props) {
     const refMonaco: Ref<HTMLElement | null> = ref(null)
     let monacoInstance: monaco.editor.IStandaloneCodeEditor
+
+    const content = computed(() => props.content)
+    const { commit } = useStore()
+    const connectionId = inject('connectionId')
+    watchEffect(() => {
+      const value = content.value
+      if (monacoInstance) monacoInstance.setValue(value)
+    })
     onMounted(() => {
       monacoInstance = markRaw(
         monaco.editor.create(<HTMLElement>refMonaco.value, {
-          value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+          // model: null,
+          value: content.value,
           language: 'json',
           theme: 'vs-dark',
         })
       )
-      console.log(monacoInstance)
-
+      monacoInstance.onDidChangeCursorPosition((e) => {
+        commit('updateConnectionEditorCursorPosition', {
+          id: connectionId,
+          cursorPosition: { column: e.position.column, lineNumber: e.position.lineNumber },
+        })
+      })
     })
 
     onUnmounted(() => {
       monacoInstance.dispose()
     })
-    const data = reactive({})
+    const data = reactive({
+      content,
+    })
     return {
       ...toRefs(data),
       refMonaco,

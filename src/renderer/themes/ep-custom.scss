@@ -9,8 +9,7 @@ $--font-color-disabled-base: darken($text-color, 5%); // #bbb !default;
 $--color-white: $app-background;
 $--background-color-base: $app-background;
 
-$--font-size-base: $font-size-base;
-
+$--font-size-base: $font-size-medium;
 
 $--border-color-base: $border-color-base;
 $--border-color-light: lighten($--border-color-base, 5%);
@@ -22,7 +21,7 @@ $--border-style-base: solid !default;
 $--border-color-hover: $--color-text-placeholder !default;
 $--border-base: $--border-width-base $--border-style-base $--border-color-base !default;
 
-
+$--border-radius-base: 0; // 4px !default;
 
 $--header-padding: 0;
 $--footer-padding: 0;
@@ -37,7 +36,7 @@ $--link-default-active-color: $text-color-highlight;
 
 $--dialog-box-shadow: $shadow-base;
 $--dialog-title-font-size: $font-size-large;
-$--dialog-padding-primary: 16px;
+$--dialog-padding-primary: $space-large;
 
 $--menu-item-font-size: $font-size-medium;
 $--menu-item-font-color: $text-color;
@@ -50,16 +49,19 @@ $--collapse-header-font-color: $text-color;
 $--collapse-header-font-size: $font-size-small;
 $--collapse-content-background-color: $app-background;
 
-$--tree-node-hover-background-color: $component-background;
+$--tree-node-hover-background-color: lighten($component-background, 5%);
 $--tree-font-color: $text-color;
 // $--tree-expand-icon-color: $--color-text-placeholder !default;
 
+$--input-font-size: $--font-size-base;
 $--input-height: $font-size-base * 2.25; // 40px !default;
 $--input-border: $--border-base !default;
 $--input-border-radius: 0; // $--border-radius-base !default;
 $--input-background-color: darken($app-background, 5%); //$--color-white !default;
 
-$--input-focus-border: lighten($--border-color-base, 5%); // $--color-primary !default;
+$--input-focus-border: $--border-color-hover; //lighten($--border-color-base, 5%); // $--color-primary !default;
+// $--input-hover-border: // $--border-color-hover !default;
+// $--input-border-color-hover: // $--border-color-hover !default;
 
 $--input-medium-font-size: $font-size-medium; // 14px !default;
 $--input-medium-height: $font-size-base * 2; // 36px !default;

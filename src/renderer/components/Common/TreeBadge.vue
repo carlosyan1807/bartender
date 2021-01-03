@@ -25,7 +25,7 @@ export default defineComponent({
       return props.type.substr(0, 4).toUpperCase()
     })
     const className = computed(() => {
-      if (props.badge) return `badge-redis-${props.type}`
+      if (props.badge) return `redis-${props.type}`
       else return `icon-redis-${props.type}`
     })
     const iconName = computed(() => `redis-${props.type}`)
@@ -42,8 +42,36 @@ export default defineComponent({
 })
 </script>
 
-<style>
-.ant-badge-not-a-wrapper:not(.ant-badge-status) {
-  vertical-align: text-top !important;
+<style lang="scss">
+.badge-redis.el-badge {
+  margin: 0 $space-extra-small;
+  height: 22px;
+  margin-top: 3px;
+
+  .el-badge__content {
+    border-radius: 2px;
+    padding: 0;
+    width: 32px;
+    font-size: $font-size-extra-small;
+    font-weight: bold;
+    height: 14px;
+    line-height: 14px;
+    // height: 22px;
+  }
+  &.redis-list .el-badge__content{
+    background-color: $redis-list-color;
+  }
+  &.redis-set .el-badge__content{
+    background-color: $redis-set-color;
+  }
+  &.redis-zset .el-badge__content{
+    background-color: $redis-zset-color;
+  }
+  &.redis-string .el-badge__content{
+    background-color: $redis-string-color;
+  }
+  &.redis-hash .el-badge__content{
+    background-color: $redis-hash-color;
+  }
 }
 </style>

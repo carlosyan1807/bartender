@@ -22,20 +22,14 @@
                     ref="refKeyListScrollbar"
                     :options="{ suppressScrollX: true }"
                   >
-                    <el-tree :data="keysData" node-key="key">
-                      <!-- @node-collapse="handleNodeCollapse" -->
-                      <!-- @node-click="handleNodeClick" -->
-                      <!-- <template #default="{ node, data }">
-                        <span>{{ data.label }}</span>
-                      </template> -->
-                    </el-tree>
-                    <!-- <Tree
+                    <Tree
+                      v-if="keysTreeVisiable"
                       :tree-nodes="keysData"
                       :custom-icon="true"
                       :show-badge="showBadge"
                       @change="handleShowKeyContent"
                       class="key-list"
-                    /> -->
+                    />
                   </perfect-scrollbar>
                 </div>
               </el-col>
@@ -61,6 +55,9 @@
                   >
                   </el-option>
                 </el-select>
+                <el-button @click="keysTreeVisiable = !keysTreeVisiable" size="mini">
+                  EP Tree Bug
+                </el-button>
                 <!-- <a-select
                   size="small"
                   v-model:value="dbSelected"
@@ -112,7 +109,7 @@ import {
 import { Splitpanes, Pane } from 'splitpanes'
 // import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
 // import CodeEditor from '/@/components/Common/CodeEditor.vue'
-// import Tree from '/@/components/Common/Tree.vue'
+import Tree from '/@/components/Common/Tree.vue'
 import KeyContent from '/@/components/KeyContent/KeyContent.vue'
 import Console from '/@/components/Common/Console.vue'
 
@@ -121,7 +118,7 @@ import { useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'Connection',
-  components: { Splitpanes, Pane, KeyContent, Console },
+  components: { Splitpanes, Pane, KeyContent, Tree, Console },
   props: {
     connectionId: {
       type: String,
@@ -177,11 +174,12 @@ export default defineComponent({
     }
     // 键列表选择
     const keySelectedItem = ref({})
-    const handleShowKeyContent = (key: any, e: any) => {
-      const { label, type } = e.node.dataRef
+    const handleShowKeyContent = (node: any) => {
+      const { label, type } = node
       keySelectedItem.value = { name: label, type }
     }
     // 设置组件大小
+    // TODO: 要控制高宽的地方很多，需改用ResizeObserver做全局
     const refKeyContainer: Ref<any> = ref(null)
     const refKeyList: Ref<any> = ref(null)
     const refKeyHeader: Ref<any> = ref(null)
@@ -200,7 +198,7 @@ export default defineComponent({
       // console.log(refConsole)
       if (refConsole.value) refConsole.value.handleResize()
     }
-
+    const keysTreeVisiable = ref(true)
     onMounted(async () => {
       // const payload = {
       //   id: toRaw(connection.value.id),
@@ -234,6 +232,7 @@ export default defineComponent({
       showConsole,
       keySelectedItem,
       keySearchPatterns,
+      keysTreeVisiable,
     })
     return {
       ...toRefs(data),
@@ -258,17 +257,12 @@ export default defineComponent({
 .connection-key-container {
   // padding-top: $space-small;
   padding-left: $space-small;
-  padding-right: $space-extra-small;
+  // padding-right: $space-extra-small;
   height: 100%;
 
   .key-list-container {
     box-sizing: border-box;
     height: 100%;
-    border-right: 1px solid $border-color-base;
-    border-image: -webkit-linear-gradient(to bottom, $component-background, $border-color-base) 1
-      100%;
-    border-image: -moz-linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
-    border-image: linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
   }
   .key-list-header {
     padding: $space-small 0;
@@ -282,6 +276,12 @@ export default defineComponent({
       height: 100%;
     }
   }
+  .key-list {
+    background-color: $component-background;
+    .iconfont {
+      font-size: $font-size-medium !important;
+    }
+  }
   .el-input--prefix .el-input__inner {
     padding-left: $space-extra-large;
   }
@@ -292,7 +292,10 @@ export default defineComponent({
 .key-editor-container {
   height: 100%;
   padding-left: $space-extra-small;
-
+  border-left: 1px solid $border-color-base;
+  border-image: -webkit-linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
+  border-image: -moz-linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
+  border-image: linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
   .key-editor-header {
     padding: $space-small 0;
   }

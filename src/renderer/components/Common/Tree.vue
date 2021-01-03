@@ -5,14 +5,27 @@
     node-key="key"
     :default-expand-all="true"
     :indent="12"
+    @node-click="handleNodeClick"
+    :current-node-key="selectedKey"
   >
     <!-- @node-collapse="handleNodeCollapse" -->
     <!-- @node-click="handleNodeClick" -->
     <template #default="{ node, data }">
-      <iconfont v-if="data.children && node.expanded" name="folder-open" class="folder-color" />
-      <iconfont v-else-if="data.children && !node.expanded" name="folder" class="folder-color" />
-      <iconfont v-else name="redis" class="redis-color" />
-      <span>{{ data.label }}</span>
+      <div style="height: 100%">
+        <template v-if="data.type">
+          <TreeBadge :badge="showBadge" :type="data.type" />
+        </template>
+        <template v-else>
+          <iconfont v-if="data.children && node.expanded" name="folder-open" class="folder-color" />
+          <iconfont
+            v-else-if="data.children && !node.expanded"
+            name="folder"
+            class="folder-color"
+          />
+          <iconfont v-else name="redis" class="redis-color" />
+        </template>
+        <span>{{ data.label }}</span>
+      </div>
     </template>
   </el-tree>
   <!-- :props="defaultProps" -->
@@ -55,11 +68,11 @@ import {
   Ref,
 } from 'vue'
 
-// import TreeBadge from '/@/components/Common/TreeBadge.vue'
+import TreeBadge from '/@/components/Common/TreeBadge.vue'
 
 export default defineComponent({
   name: 'Tree',
-  components: {},
+  components: { TreeBadge },
   props: {
     treeNodes: {
       type: Array,
@@ -71,16 +84,16 @@ export default defineComponent({
     //   type: Boolean,
     //   default: false,
     // },
-    // showBadge: Boolean,
+    showBadge: Boolean,
   },
   emits: ['change'],
   setup(props, { emit }) {
     const treeNodes: Ref<any[]> = computed(() => props.treeNodes)
     // const customIcon = computed(() => props.customIcon)
     // const showBadge = computed(() => props.showBadge)
-    const selectedKey: string[] = reactive([])
-    const handleNodeClick = (key: string, e: any) => {
-      console.log(key, e)
+    const selectedKey = ref('')
+    const handleNodeClick = (data: { key: string }, node: any, ref: any) => {
+      if (data.key !== selectedKey.value) emit('change', data)
       // emit('change', key, e)
     }
     // const insertNodeIcon = (nodes: any[]) => {
@@ -104,8 +117,8 @@ export default defineComponent({
     // }
     watchEffect(() => {
       // insertNodeIcon(treeNodes.value)
-      if (selectedKey.length === 0 && treeNodes.value.length > 0)
-        selectedKey.push(treeNodes.value[0].key)
+      if (!selectedKey.value && treeNodes.value.length > 0)
+        selectedKey.value = treeNodes.value[0].key
     })
 
     onMounted(() => {})
@@ -127,10 +140,21 @@ export default defineComponent({
 <style lang="scss">
 .app-tree.el-tree {
   height: 100%;
+  width: 100%;
+
   .el-tree-node {
     .iconfont {
-      margin-left: $space-small;
-      margin-right: $space-small;
+      margin: 0 $space-small;
+    }
+    .el-tree-node__content {
+      align-items: center;
+      // justify-content: center;
+      height: 22px;
+      span {
+        font-size: $font-size-small;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
     .el-tree-node__label {
       font-size: $font-size-small;

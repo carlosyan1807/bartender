@@ -1,11 +1,13 @@
 <template>
   <el-tabs class="app-hub" type="card" :active-name="activedTab" @tab-click="handleChangeTab">
     <el-tab-pane v-for="(item, index) in connections" :key="index" :name="item.id">
-      <template #label  @click.right="alert(1)">
-        <iconfont v-if="item.id === 'quick-connect'" class="folder-color" name="thunderbolt" />
-        <iconfont v-else-if="item.id === 'settings'" class="settings-color" name="setting" />
-        <iconfont v-else class="redis-color" name="redis" />
-        <span class="hub-header-label">{{ item.label }}</span>
+      <template #label>
+        <div class="hub-tab-header" @click.middle.stop="handleCloseTab(item.id, $event)">
+          <iconfont v-if="item.id === 'quick-connect'" class="folder-color" name="thunderbolt" />
+          <iconfont v-else-if="item.id === 'settings'" class="settings-color" name="setting" />
+          <iconfont v-else class="redis-color" name="redis" />
+          <span class="hub-header-label">{{ item.label }}</span>
+        </div>
       </template>
       <QuickConnect v-if="item.id === 'quick-connect'" />
       <Settings v-else-if="item.id === 'settings'" />
@@ -89,15 +91,18 @@ export default defineComponent({
       commit('updateHubActivedTab', tab.paneName)
     }
     // Tabs右键菜单 - 关闭
-    const handleCloseTab = (targetId: string) => {
-      const found = connections.value.findIndex((e: { id: string }) => e.id === targetId)
-      let newIndex = 0
-      if (found < connections.value.length - 1) newIndex = found + 1
-      else newIndex = found - 1
-      const newActived = connections.value[newIndex]
-      dropConnection(targetId)
-      commit('removeConnection', { id: targetId })
-      if (targetId === activedTab.value) commit('updateHubActivedTab', newActived.id)
+    const handleCloseTab = (targetId: string, event?: MouseEvent) => {
+      if (event?.button === 1) event.preventDefault()
+      if (targetId !== 'quick-connect') {
+        const found = connections.value.findIndex((e: { id: string }) => e.id === targetId)
+        let newIndex = 0
+        if (found < connections.value.length - 1) newIndex = found + 1
+        else newIndex = found - 1
+        const newActived = connections.value[newIndex]
+        dropConnection(targetId)
+        commit('removeConnection', { id: targetId })
+        if (targetId === activedTab.value) commit('updateHubActivedTab', newActived.id)
+      }
     }
     // tabs右键菜单 - 关闭全部
     const handleCloseAllTabs = () => {}
@@ -110,16 +115,23 @@ export default defineComponent({
     ])
     // 关闭页
     // TODO: 关闭当前 tab 时, 先切换为 +1 或 -1 索引的 tab, 再进行 remove, 关闭非当前 tab 时, actived 不变
-
+    const tabContextMenuVisiable = ref(false)
+    const handleTabContextMenu = (id: string, event: Event) => {
+      console.log(event, id)
+      tabContextMenuVisiable.value = true
+    }
     const data = reactive({
       connections,
       activedTab,
       settingsVisiable,
       contextMenuItems,
+      tabContextMenuVisiable,
     })
     return {
       ...toRefs(data),
       handleChangeTab,
+      handleCloseTab,
+      handleTabContextMenu,
     }
   },
 })
@@ -129,6 +141,9 @@ export default defineComponent({
 .app-hub.el-tabs {
   height: 100%;
 
+  .hub-tab-header {
+    padding: 0 $space-small;
+  }
   .el-tabs__header {
     background-color: $app-background;
     border-bottom: none;
@@ -147,7 +162,7 @@ export default defineComponent({
     line-height: $app-hub-header-height;
     border: none !important;
     border-radius: 0;
-    padding: 0 $space-small !important;
+    padding: 0 !important;
     color: $text-color;
 
     .iconfont {
@@ -178,8 +193,13 @@ export default defineComponent({
       }
     }
   }
+  .el-tabs__item:focus.is-active.is-focus:not(:active) {
+    box-shadow: none;
+  }
   .el-tabs__content {
-    height: calc(100vh - #{$app-titlebar-height} - #{$app-statusbar-height} - #{$app-hub-header-height});
+    height: calc(
+      100vh - #{$app-titlebar-height} - #{$app-statusbar-height} - #{$app-hub-header-height}
+    );
 
     .el-tab-pane {
       height: 100%;

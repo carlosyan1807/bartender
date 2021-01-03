@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs, onMounted, ref, computed, h, watchEffect } from 'vue'
-import StringContent from '/@/components/KeyContent/StringContent.vue'
+import StringContent from '/@/components/KeyContent/KeyContentString.vue'
 
 export default defineComponent({
   name: 'KeyContent',

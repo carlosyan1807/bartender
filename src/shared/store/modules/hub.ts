@@ -1,5 +1,15 @@
 import { ModuleOption } from '../definition'
-import { IHubConnection } from '../interface'
+
+interface IHubConnection {
+  id: string
+  isTrying?: boolean
+  label?: string
+  status?: string
+  options?: any
+  log: any[]
+  keysCount?: number
+  cursorPosition?: { column: number; lineNumber: number }
+}
 
 interface IState {
   connections: IHubConnection[]
@@ -15,6 +25,10 @@ interface IMutations {
   updateConnectionStatus: IHubConnection
   updateConnectionLog: { id: string; content: any }
   updateConnectionKeysCount: { id: string; count: number }
+  updateConnectionEditorCursorPosition: {
+    id: string
+    cursorPosition: { column: number; lineNumber: number }
+  }
   removeConnection: { id: string }
   removeHubItem: { id: string }
   // createHubItem: IHubConnection
@@ -61,6 +75,12 @@ const module: HubModule = {
       const { id, count } = item
       const found = state.connections.find((e) => e.id === id)
       if (found) found.keysCount = count
+    },
+    updateConnectionEditorCursorPosition(state, item) {
+      const { id, cursorPosition } = item
+      const { column, lineNumber } = cursorPosition
+      const found = state.connections.find((e) => e.id === id)
+      if (found) found.cursorPosition = { column, lineNumber }
     },
     removeConnection(state, item) {
       state.connections.splice(

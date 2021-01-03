@@ -32,7 +32,11 @@ $border-color-light: lighten($border-color-base, 5%);
 $icon-reids-color: #e06c75;
 $icon-folder-color: #3399cc;
 $icon-settings-color: #e2c08d;
-
+$redis-list-color: #e5c07b;
+$redis-set-color: #61afef;
+$redis-zset-color: #e06c75;
+$redis-string-color: #98c379;
+$redis-hash-color: #c678dd;
 // 字体
 $font-size-base: 16px;
 $font-size-extra-large: 1.25rem;
