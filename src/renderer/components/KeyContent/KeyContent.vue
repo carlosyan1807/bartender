@@ -5,12 +5,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, ref, computed, h, watchEffect } from 'vue'
-import StringContent from '/@/components/KeyContent/KeyContentString.vue'
+import { defineComponent, reactive, toRefs, computed } from 'vue'
+import ContentString from '/@/components/KeyContent/KeyContentString.vue'
+import ContentHash from '/@/components/KeyContent/KeyContentHash.vue'
+import ContentList from '/@/components/KeyContent/KeyContentList.vue'
+import ContentSet from '/@/components/KeyContent/KeyContentSet.vue'
+import ContentZset from '/@/components/KeyContent/KeyContentZset.vue'
 
 export default defineComponent({
   name: 'KeyContent',
-  components: { StringContent },
+  components: { ContentString, ContentHash, ContentList, ContentSet, ContentZset },
   props: {
     item: {
       type: Object,
@@ -23,15 +27,21 @@ export default defineComponent({
     const contentComponent = computed(() => {
       switch (props.item?.type) {
         case 'string':
-          return StringContent
-          break
+          return ContentString
+        case 'hash':
+          return ContentHash
+        case 'list':
+          return ContentList
+        case 'set':
+          return ContentSet
+        case 'zset':
+          return ContentZset
         default:
           return undefined
       }
     })
     const keyName = computed(() => props.item.name)
 
-    onMounted(() => {})
     const data = reactive({ keyName })
     return {
       ...toRefs(data),
@@ -41,8 +51,8 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="scss">
 .key-content {
-  height: 100vh;
+  height: 100%;
 }
 </style>

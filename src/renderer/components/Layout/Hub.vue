@@ -93,7 +93,7 @@ export default defineComponent({
     // Tabs右键菜单 - 关闭
     const handleCloseTab = (targetId: string, event?: MouseEvent) => {
       if (event?.button === 1) event.preventDefault()
-      if (targetId !== 'quick-connect') {
+      if (targetId !== 'quick-connect' && targetId !== 'settings') {
         const found = connections.value.findIndex((e: { id: string }) => e.id === targetId)
         let newIndex = 0
         if (found < connections.value.length - 1) newIndex = found + 1

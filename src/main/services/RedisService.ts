@@ -4,8 +4,9 @@ import { Logger } from '/@main/logger'
 import { app, WebContents } from 'electron'
 import IORedis, { RedisOptions } from 'ioredis'
 import { v4 as uuidv4 } from 'uuid'
+
 export class RedisService extends Service {
-  private clients: any[] = []
+  private clients: { id: string; client: IORedis.Redis }[] = []
   private webContent!: WebContents
 
   constructor(logger: Logger) {
@@ -16,15 +17,15 @@ export class RedisService extends Service {
     })
   }
 
-  private whichClient(id: string): IORedis.Redis | undefined {
+  private whichClient(id: string): Promise<IORedis.Redis> {
     const found = this.clients.find((e) => e.id === id)
     if (found) {
-      return found.client
+      return Promise.resolve(found.client)
     }
-    return
+    return Promise.reject('client not found.')
   }
 
-  createStandAloneConnection(options: RedisOptions): Promise<any> {
+  private createStandAloneConnection(options: RedisOptions): string {
     const _options = Object.assign({}, options, {
       retryStrategy(attempts: number) {
         if (attempts < 3) return 100
@@ -65,15 +66,15 @@ export class RedisService extends Service {
       //   this.webContent?.send('connectionLogUpdated', { id, content: e })
       this.log('onSelect', dbIndex)
     })
-    return new Promise((resolve) => {
-      resolve(id)
-    })
+    return id
   }
-  createConnection(options: RedisOptions): Promise<any> {
+
+  createConnection(options: RedisOptions): string {
     return this.createStandAloneConnection(options)
   }
-  async dropConnection(id: string) {
-    const client = this.whichClient(id)
+
+  async dropConnection(id: string): Promise<boolean> {
+    const client = await this.whichClient(id)
     this.listConnections()
     this.clients.splice(
       this.clients.findIndex((e) => e.id === id),
@@ -82,64 +83,62 @@ export class RedisService extends Service {
     this.listConnections()
     if (client) {
       client.disconnect()
-      await client.quit()
+      client.quit()
     }
+    return true
   }
+
   listConnections() {
     this.log(
       this.clients.length,
       this.clients.map((e) => e.id)
     )
   }
-  getConfig(id: string, name: string): Promise<string[]> {
-    return new Promise(async (resolve, reject) => {
-      const client = this.whichClient(id)
-      if (client) {
-        const res = await client.config('GET', name)
-        resolve(res)
-      }
-    })
-  }
-  changeDb(id: string, db: number): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const client = this.whichClient(id)
-      if (client) {
-        const res = await client.select(db)
-        if (res === 'OK') resolve(true)
-        reject('错误')
-      }
-    })
-  }
-  getStringKey(id: string, name: string): Promise<string | null> {
-    return new Promise(async (resolve, reject) => {
-      const client = this.whichClient(id)
-      if (client) {
-        const res = await client.get(name)
-        resolve(res)
-      }
-      reject('client 不存在的错误')
-    })
+
+  async getConfig(id: string, name: string): Promise<string[]> {
+    const client = await this.whichClient(id)
+    return client.config('GET', name)
   }
 
-  scanKeys(id: string): Promise<any[][]> {
-    let pattern = '*',
-      fetchCount = 100
-    const client = this.whichClient(id)
-    let result: any[][]
-    return new Promise(async (resolve, reject) => {
-      if (client) {
-        const [cursor, res] = await client.scan(0, 'MATCH', pattern, 'COUNT', fetchCount)
-        if (res.length) {
-          const pipeline = client.pipeline()
-          res.forEach((key) => pipeline.type(key))
-          const [...typesRes] = await pipeline.exec()
-          // FIXME: pipeline.exec 未捕获异常
-          result = res.map((e, i) => [e, typesRes[i][1]])
-        }
-        resolve(result)
+  async changeDb(id: string, db: number): Promise<'OK'> {
+    const client = await this.whichClient(id)
+    return client.select(db)
+  }
+
+  async getStringKey(id: string, name: string): Promise<string | null> {
+    const client = await this.whichClient(id)
+    return client.get(name)
+  }
+  async getHashKey(id: string, name: string): Promise<[string, string[][]]> {
+    const client = await this.whichClient(id)
+    const result: string[][] = []
+    const [cursor, res] = await client.hscan(name, 0)
+    if (res.length) {
+      for (let i = 0; i < res.length - 1; i += 2) {
+        result.push([res[i].toString(), res[i + 1]])
       }
-      // TODO: client 不存在时的错误处理
-      reject('client 不存在的错误')
-    })
+    }
+    return Promise.resolve([cursor, result])
+  }
+  async getListKey(id: string, name: string): Promise<string[]> {
+    const client = await this.whichClient(id)
+    const result = await client.lrange(name, 0, 100)
+    return Promise.resolve(result)
+  }
+
+  async scanKeys(id: string): Promise<[string, string[][]]> {
+    const client = await this.whichClient(id)
+    const pattern = '*'
+    const fetchCount = 100
+    let result: string[][] = []
+    const [cursor, res] = await client.scan(0, 'MATCH', pattern, 'COUNT', fetchCount)
+    if (res.length) {
+      const pipeline = client.pipeline()
+      res.forEach((key) => pipeline.type(key))
+      const [...typesRes] = await pipeline.exec()
+      // FIXME: pipeline.exec 未捕获异常
+      result = res.map((e, i) => [e, typesRes[i][1]])
+    }
+    return Promise.resolve([cursor, result])
   }
 }

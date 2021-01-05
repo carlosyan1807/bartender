@@ -93,7 +93,10 @@ export default defineComponent({
     // const showBadge = computed(() => props.showBadge)
     const selectedKey = ref('')
     const handleNodeClick = (data: { key: string }, node: any, ref: any) => {
-      if (data.key !== selectedKey.value) emit('change', data)
+      if (data.key !== selectedKey.value) {
+        selectedKey.value = data.key
+        emit('change', data)
+      }
       // emit('change', key, e)
     }
     // const insertNodeIcon = (nodes: any[]) => {

@@ -1,92 +1,73 @@
 <template>
-  <splitpanes horizontal :push-other-panes="false" @resize="handlePaneResize">
-    <pane size="50">
-      <splitpanes :push-other-panes="false" @resize="handlePaneResize">
-        <pane size="20" min-size="20">
-          <div class="connection-key-container" ref="refKeyContainer">
-            <el-row type="flex">
-              <el-col :span="24">
-                <div class="key-list-header" ref="refKeyHeader">
-                  <el-input size="small" :clearable="true" v-model="keySearchPatterns">
-                    <template #prefix><iconfont name="search" /></template>
-                    <template #append>
-                      <iconfont name="reload" @click="fetchKeys" />
-                    </template>
-                  </el-input>
-                </div>
-              </el-col>
-              <el-col :span="24">
-                <div class="key-list-container" ref="refKeyList">
+  <div class="connection-container">
+    <div class="connection-header">
+      <div class="connection-header-left">
+        <el-space>
+          <el-input v-model="keySearchPatterns" size="small" :clearable="true">
+            <template #prefix><iconfont name="search" /></template>
+            <template #append>
+              <iconfont name="reload" @click="fetchKeys" />
+            </template>
+          </el-input>
+          <el-button size="mini"><iconfont name="plus" /></el-button>
+        </el-space>
+      </div>
+      <div class="connection-header-right">
+        <el-space>
+          <el-select v-model="dbSelected" style="width: 80px" size="small" @change="handleChangeDb">
+            <template #prefix><iconfont name="redis-db" /></template>
+            <el-option
+              v-for="item in dbItems"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+          <el-button size="small" class="icon-button" @click="showConsole = !showConsole">
+            <iconfont name="console" />
+          </el-button>
+        </el-space>
+      </div>
+    </div>
+    <div class="connection-main">
+      <splitpanes horizontal :push-other-panes="false" @resize="handlePaneResize">
+        <pane size="50">
+          <splitpanes :push-other-panes="false" @resize="handlePaneResize">
+            <pane size="20" min-size="20">
+              <div ref="refKeyContainer" class="connection-key-container">
+                <div ref="refKeyList" class="key-list-container">
                   <perfect-scrollbar
-                    class="key-list-scrollbar"
                     ref="refKeyListScrollbar"
+                    class="key-list-scrollbar"
                     :options="{ suppressScrollX: true }"
                   >
                     <Tree
-                      v-if="keysTreeVisiable"
                       :tree-nodes="keysData"
                       :custom-icon="true"
                       :show-badge="showBadge"
-                      @change="handleShowKeyContent"
                       class="key-list"
+                      @change="handleShowKeyContent"
                     />
                   </perfect-scrollbar>
                 </div>
-              </el-col>
-            </el-row>
-          </div>
+              </div>
+            </pane>
+            <pane min-size="20">
+              <div class="key-editor-container">
+                <div ref="refKeyContent">
+                  <KeyContent :item="keySelectedItem" />
+                </div>
+              </div>
+            </pane>
+          </splitpanes>
         </pane>
-        <pane min-size="20">
-          <div class="key-editor-container">
-            <el-row class="key-editor-header" type="flex" justify="space-between">
-              <el-col :span="20" class="key-editor-header-left">
-                <el-select
-                  style="width: 80px"
-                  size="small"
-                  v-model="dbSelected"
-                  @change="handleChangeDb"
-                >
-                  <template #prefix><iconfont name="redis-db" /></template>
-                  <el-option
-                    v-for="item in dbItems"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
-                  </el-option>
-                </el-select>
-                <el-button @click="keysTreeVisiable = !keysTreeVisiable" size="mini">
-                  EP Tree Bug
-                </el-button>
-                <!-- <a-select
-                  size="small"
-                  v-model:value="dbSelected"
-                  :options="dbItems"
-                  style="width: 100px"
-                  @change="handleChangeDb"
-                >
-                </a-select> -->
-                <!-- <MonacoEditor /> -->
-                <!-- <CodeEditor /> -->
-                <!-- <a-switch v-model:checked="showBadge" /> -->
-              </el-col>
-              <el-col :span="4" class="key-editor-header-right">
-                <el-button size="small" class="icon-button" @click="showConsole = !showConsole">
-                  <iconfont name="console" />
-                </el-button>
-              </el-col>
-            </el-row>
-            <div ref="refKeyContent">
-              <KeyContent :item="keySelectedItem" />
-            </div>
-          </div>
+        <pane v-if="showConsole" ref="refConsolePane" size="50" min-size="10">
+          <Console ref="refConsole" />
         </pane>
       </splitpanes>
-    </pane>
-    <pane size="50" min-size="10" v-if="showConsole" ref="refConsolePane">
-      <Console ref="refConsole" />
-    </pane>
-  </splitpanes>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -98,9 +79,7 @@ import {
   ref,
   computed,
   defineComponent,
-  Ref,
   watchEffect,
-  getCurrentInstance,
   provide,
   nextTick,
   onUnmounted,
@@ -127,7 +106,7 @@ export default defineComponent({
   },
   setup(props) {
     const { state, commit } = useStore()
-    const { changeDb, createStandAloneConnection, getConfig, scanKeys } = useService('RedisService')
+    const { changeDb, getConfig, scanKeys } = useService('RedisService')
 
     const found = state.hub.connections.findIndex(
       (e: { id: string | undefined }) => e.id === props.connectionId
@@ -138,11 +117,11 @@ export default defineComponent({
     const isLoading = computed(() => connection.value.status !== 'ready')
     const showBadge = ref(true)
 
-    const showConsole = ref(true)
+    const showConsole = ref(false)
 
     // 获取DB数量
     const dbCount = ref(0)
-    const dbItems: any[] = reactive([])
+    const dbItems: { label: string; value: string }[] = reactive([])
     const dbSelected = ref('0')
     const fetchDatabaseCount = async () => {
       const result = await getConfig(toRaw(connection.value.id), 'databases')
@@ -152,7 +131,7 @@ export default defineComponent({
     }
     watchEffect(() => {
       for (let i = 0; i < dbCount.value; i++) {
-        dbItems.push({ label: i, value: i })
+        dbItems.push({ label: String(i), value: String(i) })
       }
     })
     // 改变选择的 Db
@@ -162,43 +141,43 @@ export default defineComponent({
     }
     const keySearchPatterns = ref('')
     // 获取键列表
-    let keysData: any[] = reactive([{ label: '1', key: 1 }])
+    let keysData: { label: string; type: string; key: string }[] = reactive([])
     const fetchKeys = async () => {
-      const keys = await scanKeys(toRaw(connection.value.id))
+      const [cursor, keys] = await scanKeys(toRaw(connection.value.id))
       const result: { label: string; type: string; key: string }[] = []
       if (keys && keys.length > 0)
         keys.forEach((e) => result.push({ label: e[0], type: e[1], key: e[0] }))
       keysData.splice(0, keysData.length, ...result)
       commit('updateConnectionKeysCount', { id: connection.value.id, count: keysData.length })
-      if (result.length > 0) keySelectedItem.value = { name: result[0].label, type: result[0].type }
+      if (result.length > 0 && !keySelectedItem.value)
+        keySelectedItem.value = { name: result[0].label, type: result[0].type }
     }
     // 键列表选择
     const keySelectedItem = ref({})
-    const handleShowKeyContent = (node: any) => {
+    const handleShowKeyContent = (node: { label: string; type: string }) => {
       const { label, type } = node
       keySelectedItem.value = { name: label, type }
     }
     // 设置组件大小
     // TODO: 要控制高宽的地方很多，需改用ResizeObserver做全局
-    const refKeyContainer: Ref<any> = ref(null)
-    const refKeyList: Ref<any> = ref(null)
-    const refKeyHeader: Ref<any> = ref(null)
-    const refKeyListScrollbar: Ref<any> = ref(null)
-    const refKeyContent: Ref<any> = ref(null)
-    const refConsolePane: Ref<any> = ref(null)
-    const refConsole: Ref<any> = ref(null)
+    const refKeyContainer = ref(null)
+    const refKeyList = ref(null)
+    const refKeyHeader = ref(null)
+    const refKeyListScrollbar = ref(null)
+    const refKeyContent = ref(null)
+    const refConsolePane = ref(null)
+    const refConsole = ref(null)
     const handlePaneResize = () => {
-      refKeyList.value.style.height = `${
-        refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
-      }px`
-      refKeyContent.value.style.height = `${
-        refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
-      }px`
-      if (refKeyListScrollbar.value.ps) refKeyListScrollbar.value.ps.update()
-      // console.log(refConsole)
-      if (refConsole.value) refConsole.value.handleResize()
+      // refKeyList.value.style.height = `${
+      //   refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
+      // }px`
+      // refKeyContent.value.style.height = `${
+      //   refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
+      // }px`
+      // if (refKeyListScrollbar.value.ps) refKeyListScrollbar.value.ps.update()
+      // // console.log(refConsole)
+      // if (refConsole.value) refConsole.value.handleResize()
     }
-    const keysTreeVisiable = ref(true)
     onMounted(async () => {
       // const payload = {
       //   id: toRaw(connection.value.id),
@@ -232,7 +211,6 @@ export default defineComponent({
       showConsole,
       keySelectedItem,
       keySearchPatterns,
-      keysTreeVisiable,
     })
     return {
       ...toRefs(data),
@@ -254,6 +232,22 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.connection-container {
+  height: 100%;
+
+  .connection-header {
+    padding: $space-small;
+    display: flex;
+    flex-flow: row nowrap;
+    box-sizing: border-box;
+    min-height: $connection-header-height;
+    max-height: $connection-header-height;
+
+    .connection-header-left {
+      margin-right: auto;
+    }
+  }
+}
 .connection-key-container {
   // padding-top: $space-small;
   padding-left: $space-small;
@@ -292,10 +286,10 @@ export default defineComponent({
 .key-editor-container {
   height: 100%;
   padding-left: $space-extra-small;
-  border-left: 1px solid $border-color-base;
-  border-image: -webkit-linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
-  border-image: -moz-linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
-  border-image: linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
+  // border-left: 1px solid $border-color-base;
+  // border-image: -webkit-linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
+  // border-image: -moz-linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
+  // border-image: linear-gradient(to bottom, $component-background, $border-color-base) 1 100%;
   .key-editor-header {
     padding: $space-small 0;
   }

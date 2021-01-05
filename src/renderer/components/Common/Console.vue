@@ -6,12 +6,12 @@
           <span>控制台</span>
         </el-col>
         <el-col :span="4" class="console-header-right">
-          <el-button class="icon-button"><iconfont name="close"/></el-button>
+          <el-button class="icon-button"><iconfont name="close" /></el-button>
         </el-col>
       </el-row>
     </el-header>
     <el-main class="console-main">
-      <Terminal ref="refTerminal"/>
+      <Terminal ref="refTerminal" />
     </el-main>
   </el-container>
 </template>
@@ -28,7 +28,7 @@ export default defineComponent({
     const data = reactive({})
 
     const refTerminal: Ref<any> = ref(null)
-    const handleResize =() => {
+    const handleResize = () => {
       refTerminal.value.handleResize()
     }
 
@@ -50,13 +50,15 @@ export default defineComponent({
   overflow: hidden;
 
   .console-header {
-    min-height: $app-console-header-height;
-    max-height: $app-console-header-height;
+    min-height: $console-header-height;
+    max-height: $console-header-height;
     font-size: $font-size-small;
     padding-left: $space-medium;
-    line-height: $app-console-header-height;
+    line-height: $console-header-height;
   }
-  .icon-button.el-button:hover,.icon-button.el-button:focus,.icon-button.el-button:active {
+  .icon-button.el-button:hover,
+  .icon-button.el-button:focus,
+  .icon-button.el-button:active {
     background-color: $component-background;
   }
   .console-header-left {

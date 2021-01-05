@@ -69,3 +69,10 @@ $--input-small-font-size: $font-size-small; // 13px !default;
 $--input-small-height: $font-size-base * 1.75; // 32px !default;
 $--input-mini-font-size: $font-size-extra-small; // 12px !default;
 $--input-mini-height: $font-size-base * 1.5; //28px !default;
+
+$--table-row-hover-background-color: $item-hover-background; // $--background-color-base !default;
+$--table-current-row-background-color: $item-active-background; // $--color-primary-light-9 !default;
+$--table-header-background-color: $component-background;// $--color-white !default;
+$--table-fixed-box-shadow: none; // 0 0 10px rgba(0, 0, 0, .12) !default;
+$--table-border-color: $border-color-base; // $--border-color-lighter !default;
+$--table-border: 1px solid $--table-border-color !default;

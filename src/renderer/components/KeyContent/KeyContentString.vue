@@ -5,7 +5,8 @@
     placeholder="<空>"
     class="string-content"
   /> -->
-  <MonacoEditor :content="stringContent" />
+  <!-- <MonacoEditor :content="stringContent" /> -->
+  <CodeMirrorEditor :content="contentValue" />
 </template>
 
 <script lang="ts">
@@ -23,35 +24,36 @@ import {
 } from 'vue'
 
 import { useService } from '/@/hooks'
-import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
+// import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
+import CodeMirrorEditor from '/@/components/Common/CodeMirrorEditor.vue'
 
 export default defineComponent({
   name: 'StringContent',
-  components: { MonacoEditor },
+  components: { CodeMirrorEditor },
   props: {
     keyName: {
       type: String,
       required: true,
     },
   },
-  setup(props, { attrs }) {
+  setup(props) {
     const { getStringKey } = useService('RedisService')
-    const connectionId = inject('connectionId')
+    const connectionId = inject('connectionId') as string
     const keyName = computed(() => props.keyName)
-    const stringContent: Ref<string | null> = ref('')
+    const contentValue: Ref<string | null> = ref('')
 
     const getKey = async (name: string) => {
-      const id = <string>connectionId
+      const id = connectionId
       const result = await getStringKey(id, name)
       return result
     }
 
     watchEffect(async () => {
-      stringContent.value = await getKey(keyName.value)
+      contentValue.value = await getKey(keyName.value)
     })
     onMounted(() => {})
 
-    const data = reactive({ stringContent })
+    const data = reactive({ contentValue })
 
     return {
       ...toRefs(data),
@@ -61,15 +63,4 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
-.string-content.ant-input {
-  border: 0;
-  height: 100% !important;
-
-  &:hover,
-  &:focus {
-    border: 0;
-    box-shadow: none;
-  }
-}
-</style>
+<style></style>

@@ -5,11 +5,12 @@ module.exports = {
     browser: true,
   },
   extends: [
-    'plugin:vue/vue3-strongly-recommended',
-    // 'eslint:recommended',
-    'prettier',
+    'plugin:vue/vue3-recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'eslint:recommended',
     'prettier/vue',
-    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
     // '@vue/standard',
     // '@vue/typescript/recommended',
     // '@vue/prettier',
@@ -17,6 +18,7 @@ module.exports = {
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {
+    sourceType: 'module',
     parser: '@typescript-eslint/parser',
     ecmaVersion: 2020,
     ecmaFeatures: {
