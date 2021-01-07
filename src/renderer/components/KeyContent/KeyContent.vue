@@ -6,11 +6,11 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs, computed } from 'vue'
-import ContentString from '/@/components/KeyContent/KeyContentString.vue'
-import ContentHash from '/@/components/KeyContent/KeyContentHash.vue'
-import ContentList from '/@/components/KeyContent/KeyContentList.vue'
-import ContentSet from '/@/components/KeyContent/KeyContentSet.vue'
-import ContentZset from '/@/components/KeyContent/KeyContentZset.vue'
+import ContentString from '/@/components/KeyContent/Type/String.vue'
+import ContentHash from '/@/components/KeyContent/Type/Hash.vue'
+import ContentList from '/@/components/KeyContent/Type/List.vue'
+import ContentSet from '/@/components/KeyContent/Type/Set.vue'
+import ContentZset from '/@/components/KeyContent/Type/ZSet.vue'
 
 export default defineComponent({
   name: 'KeyContent',

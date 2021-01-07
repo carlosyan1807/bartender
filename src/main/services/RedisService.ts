@@ -109,17 +109,22 @@ export class RedisService extends Service {
     const client = await this.whichClient(id)
     return client.get(name)
   }
-  async getHashKey(id: string, name: string): Promise<[string, string[][]]> {
+  async getHashKey(id: string, name: string): Promise<[string, string[]]> {
     const client = await this.whichClient(id)
-    const result: string[][] = []
     const [cursor, res] = await client.hscan(name, 0)
-    if (res.length) {
-      for (let i = 0; i < res.length - 1; i += 2) {
-        result.push([res[i].toString(), res[i + 1]])
-      }
-    }
-    return Promise.resolve([cursor, result])
+    return Promise.resolve([cursor, res])
   }
+  async getSetKey(id: string, name: string): Promise<[string, string[]]> {
+    const client = await this.whichClient(id)
+    const [cursor, res] = await client.sscan(name, 0, 'COUNT', 100)
+    return Promise.resolve([cursor, res])
+  }
+  async getZSetKey(id: string, name: string): Promise<string[]> {
+    const client = await this.whichClient(id)
+    const result = await client.zrange(name, 0, 100, 'WITHSCORES')
+    return Promise.resolve(result)
+  }
+
   async getListKey(id: string, name: string): Promise<string[]> {
     const client = await this.whichClient(id)
     const result = await client.lrange(name, 0, 100)

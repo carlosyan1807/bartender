@@ -1,12 +1,5 @@
 <template>
-  <!-- <el-input
-    type="textarea"
-    v-model="stringContent"
-    placeholder="<空>"
-    class="string-content"
-  /> -->
-  <!-- <MonacoEditor :content="stringContent" /> -->
-  <CodeMirrorEditor :content="contentValue" />
+  <CodeMirrorEditor :content="keyValue" />
 </template>
 
 <script lang="ts">
@@ -18,13 +11,11 @@ import {
   computed,
   inject,
   ref,
-  toRaw,
   watchEffect,
   Ref,
 } from 'vue'
 
 import { useService } from '/@/hooks'
-// import MonacoEditor from '/@/components/Common/MonacoEditor.vue'
 import CodeMirrorEditor from '/@/components/Common/CodeMirrorEditor.vue'
 
 export default defineComponent({
@@ -40,7 +31,7 @@ export default defineComponent({
     const { getStringKey } = useService('RedisService')
     const connectionId = inject('connectionId') as string
     const keyName = computed(() => props.keyName)
-    const contentValue: Ref<string | null> = ref('')
+    const keyValue: Ref<string | null> = ref('')
 
     const getKey = async (name: string) => {
       const id = connectionId
@@ -49,11 +40,11 @@ export default defineComponent({
     }
 
     watchEffect(async () => {
-      contentValue.value = await getKey(keyName.value)
+      keyValue.value = await getKey(keyName.value)
     })
     onMounted(() => {})
 
-    const data = reactive({ contentValue })
+    const data = reactive({ keyValue })
 
     return {
       ...toRefs(data),

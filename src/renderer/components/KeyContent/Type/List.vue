@@ -1,14 +1,22 @@
 <template>
-  <div>KeyContentList{{ keyMembers }}</div>
+  <KeyContentPane>
+    <template #keyTable>
+      <KeyContentTable :items="keyItems" type="list" />
+    </template>
+    <CodeMirrorEditor />
+  </KeyContentPane>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, inject, reactive, toRefs, watchEffect } from 'vue'
 import { useService } from '/@/hooks'
+import KeyContentPane from '/@/components/KeyContent/KeyContentPane.vue'
+import KeyContentTable from '/@/components/KeyContent/KeyContentTable.vue'
+import CodeMirrorEditor from '/@/components/Common/CodeMirrorEditor.vue'
 
 export default defineComponent({
   name: 'KeyContentList',
-  components: {},
+  components: { KeyContentPane, KeyContentTable, CodeMirrorEditor },
   props: {
     keyName: {
       type: String,
@@ -19,21 +27,23 @@ export default defineComponent({
     const { getListKey } = useService('RedisService')
     const connectionId = inject('connectionId') as string
     const keyName = computed(() => props.keyName)
-    const keyMembers: string[] = reactive([])
+    const keyItems: { index: number; item: string }[] = reactive([])
 
     const getKey = async (name: string) => {
       const id = connectionId
-      const result = await getListKey(id, name)
+      const res = await getListKey(id, name)
+      const result: { index: number; item: string }[] = []
+      if (res && res.length > 0) res.forEach((e, i) => result.push({ index: i, item: e }))
       return result
     }
     watchEffect(async () => {
       const _key = keyName.value
       const result = await getKey(_key)
-      if (result && result.length > 0) keyMembers.splice(0, keyMembers.length, ...result)
+      keyItems.splice(0, keyItems.length, ...result)
     })
 
     const data = reactive({
-      keyMembers,
+      keyItems,
     })
     return {
       ...toRefs(data),

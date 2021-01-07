@@ -3,11 +3,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, ref, toRaw, Ref, markRaw } from 'vue'
+import { defineComponent, reactive, toRefs, onMounted, ref, Ref, markRaw } from 'vue'
 
 import { Terminal } from 'xterm'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { FitAddon } from 'xterm-addon-fit'
+import { AttachAddon } from 'xterm-addon-attach'
 import 'xterm/css/xterm.css'
 
 export default defineComponent({
@@ -15,7 +16,7 @@ export default defineComponent({
   components: {},
   props: {},
   setup(props, context) {
-    const terminalContainer: Ref<HTMLElement | null> = ref(null)
+    const terminalContainer = ref(null)
     const terminalOptions = {
       theme: {
         foreground: '#dcdfe4',
@@ -51,6 +52,10 @@ export default defineComponent({
     const xtermWebLinksAddon = new WebLinksAddon()
     const xtermFitAddon = new FitAddon()
 
+    // const terminalSocket = new WebSocket('ws://127.0.0.1:6379')
+    // const xtermAttachAddon = new AttachAddon(terminalSocket)
+
+    // xterm.loadAddon(xtermAttachAddon)
     xterm.loadAddon(xtermWebLinksAddon)
     xterm.loadAddon(xtermFitAddon)
 
@@ -58,8 +63,9 @@ export default defineComponent({
       xtermFitAddon.fit()
     }
     onMounted(() => {
-      xterm.open(terminalContainer.value as HTMLElement)
-      xterm.write('Hello world.\n')
+      xterm.open((terminalContainer.value as unknown) as HTMLElement)
+      xterm.writeln('Hello world.')
+
       // xterm.focus()
       xtermFitAddon.fit()
     })

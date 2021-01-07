@@ -87,29 +87,3 @@ body {
 .el-input .el-input__inner {
   padding: 0 $space-small;
 }
-
-.key-memebers-table.el-table.el-table--mini {
-  width: 100%;
-
-  &::before {
-    height: 0;
-  }
-  .current-row .cell::after {
-    position: absolute;
-    content: '';
-    width: $inkbar-width;
-    display: block;
-    background-color: $color-primary;
-    height: 100%;
-    right: 0;
-    top: 0;
-    display: block;
-    transition: background-color 0.3s ease 0s;
-  }
-  th, td {
-    padding: 0;
-  }
-  th.is-leaf, td {
-    border-bottom: 0;
-  }
-}

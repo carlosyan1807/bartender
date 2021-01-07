@@ -5,8 +5,9 @@
     node-key="key"
     :default-expand-all="true"
     :indent="12"
-    @node-click="handleNodeClick"
     :current-node-key="selectedKey"
+    :highlight-current="true"
+    @node-click="handleNodeClick"
   >
     <!-- @node-collapse="handleNodeCollapse" -->
     <!-- @node-click="handleNodeClick" -->
@@ -56,17 +57,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  reactive,
-  toRefs,
-  onMounted,
-  ref,
-  watchEffect,
-  watch,
-  computed,
-  Ref,
-} from 'vue'
+import { defineComponent, reactive, toRefs, onMounted, ref, watchEffect, computed, Ref } from 'vue'
 
 import TreeBadge from '/@/components/Common/TreeBadge.vue'
 
@@ -145,6 +136,9 @@ export default defineComponent({
   height: 100%;
   width: 100%;
 
+  .el-tree-node.is-current > .el-tree-node__content {
+    background-color: lighten($component-background, 8%);
+  }
   .el-tree-node {
     .iconfont {
       margin: 0 $space-small;
