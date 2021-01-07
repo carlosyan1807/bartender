@@ -188,7 +188,7 @@ export default defineComponent({
         height: 2px;
         width: 100%;
         display: block;
-        background-color: $--color-primary;
+        background-color: $color-primary;
         transition: background-color 0.3s ease 0s;
       }
     }
