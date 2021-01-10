@@ -1,6 +1,6 @@
 <template>
   <div class="connection-container">
-    <div class="connection-header">
+    <div ref="refKeyHeader" class="connection-header">
       <div class="connection-header-left">
         <el-space>
           <el-input v-model="keySearchPatterns" size="small" :clearable="true">
@@ -24,16 +24,16 @@
             >
             </el-option>
           </el-select>
-          <el-button size="small" class="icon-button" @click="showConsole = !showConsole">
+          <el-button size="small" class="icon-button" @click="handleToggleConsole">
             <iconfont name="console" />
           </el-button>
         </el-space>
       </div>
     </div>
     <div class="connection-main">
-      <splitpanes horizontal :push-other-panes="false" @resize="handlePaneResize">
+      <splitpanes horizontal :push-other-panes="false" @resize="handleComponentResize">
         <pane size="50">
-          <splitpanes :push-other-panes="false" @resize="handlePaneResize">
+          <splitpanes :push-other-panes="false" @resize="handleComponentResize">
             <pane size="20" min-size="20">
               <div ref="refKeyContainer" class="connection-key-container">
                 <div ref="refKeyList" class="key-list-container">
@@ -54,15 +54,13 @@
               </div>
             </pane>
             <pane min-size="20">
-              <div class="key-editor-container">
-                <div ref="refKeyContent">
-                  <KeyContent :item="keySelectedItem" />
-                </div>
+              <div ref="refKeyContent" class="key-editor-container">
+                <KeyContent :item="keySelectedItem" />
               </div>
             </pane>
           </splitpanes>
         </pane>
-        <pane v-if="showConsole" ref="refConsolePane" size="50" min-size="10">
+        <pane v-if="showConsole" size="50" min-size="10">
           <Console ref="refConsole" />
         </pane>
       </splitpanes>
@@ -117,7 +115,7 @@ export default defineComponent({
     const isLoading = computed(() => connection.value.status !== 'ready')
     const showBadge = ref(true)
 
-    const showConsole = ref(false)
+    const showConsole = ref(true)
 
     // 获取DB数量
     const dbCount = ref(0)
@@ -167,7 +165,11 @@ export default defineComponent({
     const refKeyContent = ref(null)
     const refConsolePane = ref(null)
     const refConsole = ref(null)
-    const handlePaneResize = () => {
+    const handleComponentResize = () => {
+      refKeyList.value.style.height = `${refKeyContainer.value.offsetHeight}px`
+      refKeyContent.value.style.height = `${refKeyContainer.value.offsetHeight}px`
+      refKeyListScrollbar.value.ps.update()
+      if (refConsole.value) refConsole.value.handleResize()
       // refKeyList.value.style.height = `${
       //   refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
       // }px`
@@ -177,6 +179,10 @@ export default defineComponent({
       // if (refKeyListScrollbar.value.ps) refKeyListScrollbar.value.ps.update()
       // // console.log(refConsole)
       // if (refConsole.value) refConsole.value.handleResize()
+    }
+    const handleToggleConsole = () => {
+      showConsole.value = !showConsole.value
+      handleComponentResize()
     }
     onMounted(async () => {
       // const payload = {
@@ -190,7 +196,7 @@ export default defineComponent({
       // }
 
       nextTick(() => {
-        handlePaneResize()
+        handleComponentResize()
       })
     })
 
@@ -224,8 +230,9 @@ export default defineComponent({
       refKeyList,
       refKeyHeader,
       refKeyContent,
-      handlePaneResize,
+      handleComponentResize,
       handleChangeDb,
+      handleToggleConsole,
     }
   },
 })
@@ -236,6 +243,7 @@ export default defineComponent({
   height: 100%;
 
   .connection-header {
+    width: 100%;
     padding: $space-small;
     display: flex;
     flex-flow: row nowrap;
@@ -246,6 +254,9 @@ export default defineComponent({
     .connection-header-left {
       margin-right: auto;
     }
+  }
+  .connection-main {
+    height: calc(100% - #{$connection-header-height});
   }
 }
 .connection-key-container {
@@ -261,9 +272,11 @@ export default defineComponent({
   .key-list-header {
     padding: $space-small 0;
   }
+  .key-list-scrollbar {
+    position: relative;
+  }
   .key-list-scrollbar.ps {
-    height: 100%;
-    padding-bottom: $space-small;
+    height: calc(100% - #{$space-small});
   }
   .el-input__prefix {
     .iconfont {
@@ -271,6 +284,7 @@ export default defineComponent({
     }
   }
   .key-list {
+    height: calc(100% + 100px);
     background-color: $component-background;
     .iconfont {
       font-size: $font-size-medium !important;
@@ -308,61 +322,4 @@ export default defineComponent({
     padding: 0 $space-small;
   }
 }
-// .connection-container {
-//   padding: 16px 16px 0 16px;
-// }
-
-// .console-header.ant-layout-header {
-//   border-top: 1px solid @border-color-base;
-//   width: inherit;
-//   display: flex;
-//   justify-content: space-between;
-
-//   .icon-button {
-//     color: @text-color-secondary;
-//     &:hover,
-//     &:focus,
-//     &:active {
-//       color: @text-color-secondary;
-//     }
-//   }
-//   .console-header-left {
-//     padding-left: 16px;
-//     font-size: @font-size-sm;
-//   }
-// }
-// .connection-key-container {
-//   height: 100%;
-
-//   .key-list-header {
-//     padding: @padding-sm;
-//   }
-//   .key-list-container {
-//     position: relative;
-//     overflow: hidden;
-//   }
-//   .key-list-scrollbar {
-//     height: 100%;
-//     width: 100%;
-//     padding-bottom: @padding-sm;
-//   }
-//   .key-list {
-//     width: 100%;
-//   }
-// }
-// .key-editor-container {
-//   border-left: 1px solid @border-color-split;
-//   border-image: -webkit-linear-gradient(to bottom, @app-component-background, @border-color-split) 1
-//     100%;
-//   border-image: -moz-linear-gradient(to bottom, @app-component-background, @border-color-split) 1
-//     100%;
-//   border-image: linear-gradient(to bottom, @app-component-background, @border-color-split) 1 100%;
-//   // border-image: linear-gradient(to bottom, red , blue) 500 100%;
-//   .key-editor-header {
-//     padding: @padding-sm;
-//   }
-//   .key-editor-header-right {
-//     padding-right: @padding-sm;
-//   }
-// }
 </style>

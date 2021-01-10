@@ -36,7 +36,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onMounted, reactive, ref, toRaw, toRefs, watchEffect } from 'vue'
+import {
+  defineComponent,
+  inject,
+  onMounted,
+  reactive,
+  ref,
+  toRaw,
+  toRefs,
+  watchEffect,
+  WatchStopHandle,
+} from 'vue'
 import { useStore } from 'vuex'
 import { useIpc, useService } from '/@/hooks'
 
@@ -56,15 +66,15 @@ export default defineComponent({
     const handleSubmitConnect = async (options: {
       host?: string
       port?: number | string
-      password: string
+      password?: string
     }) => {
       isLoading.value = true
       const payload = {
         host: options.host || formQuickConnect.host || 'localhost',
-        port: options.port || formQuickConnect.port || '6379',
-        password: options.password || formQuickConnect.password || '',
+        port: options.port || formQuickConnect.port || 6379,
+        password: options.password || formQuickConnect.password || null,
       }
-      const res = await createConnection(<any>payload)
+      const res = await createConnection(payload)
       // emit('newConnection', payload)
     }
     const { state, commit } = useStore()
@@ -76,7 +86,7 @@ export default defineComponent({
       watchId.value = id
       commit('updateConnectionStatus', { id, options, isTrying: true })
       stopWatchConnection = watchEffect(() => {
-        const found = state.hub.connections.find((e: any) => e.id === watchId.value)
+        const found = state.hub.connections.find((e: { id: string }) => e.id === watchId.value)
         if (found && found.status === 'end') {
           const description = found.log.slice(-1)[0]
           // $notification.error({
@@ -114,8 +124,8 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="scss">
 .quick-connect-container {
-  padding: 16px;
+  padding: $space-large;
 }
 </style>

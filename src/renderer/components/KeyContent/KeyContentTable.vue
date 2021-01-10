@@ -5,6 +5,7 @@
     :data="keyData"
     highlight-current-row
     :current-row-key="selectedRow"
+    :height="'100%'"
   >
     <el-table-column v-if="keyType === 'hash'" property="key" label="key"> </el-table-column>
     <el-table-column v-if="keyType === 'list'" property="index" label="index"> </el-table-column>

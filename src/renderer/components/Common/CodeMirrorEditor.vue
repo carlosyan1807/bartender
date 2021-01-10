@@ -97,11 +97,31 @@ export default defineComponent({
   &:focus {
     outline: none !important;
   }
+  .cm-wrap {
+    height: 100%;
+  }
   .cm-wrap:focus {
     outline: none !important;
   }
   .cm-focused {
     outline: none !important;
+  }
+  .cm-scroller {
+    font-family: $font-family;
+    // scrollbar-color: red;
+    scrollbar-width: thin;
+  }
+  .cm-scroller::-webkit-scrollbar {
+    background-color: $component-background;
+    border-radius: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .cm-scroller::-webkit-scrollbar-thumb {
+    border-radius: 14px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    box-shadow: 10px 10px 0 $border-color-base inset;
   }
 }
 </style>

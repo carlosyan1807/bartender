@@ -57,9 +57,4 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
-.key-content-table-wrapper {
-  border: 1px solid $border-color-base;
-  margin-right: $space-extra-small;
-}
-</style>
+<style></style>

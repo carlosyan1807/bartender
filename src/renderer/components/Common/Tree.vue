@@ -14,7 +14,7 @@
     <template #default="{ node, data }">
       <div style="height: 100%">
         <template v-if="data.type">
-          <TreeBadge :badge="showBadge" :type="data.type" />
+          <TreeKeyIcon :badge="!showIcon" :type="data.type" />
         </template>
         <template v-else>
           <iconfont v-if="data.children && node.expanded" name="folder-open" class="folder-color" />
@@ -58,12 +58,12 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs, onMounted, ref, watchEffect, computed, Ref } from 'vue'
-
-import TreeBadge from '/@/components/Common/TreeBadge.vue'
+import { useStore } from 'vuex'
+import TreeKeyIcon from '/@/components/Common/TreeKeyIcon.vue'
 
 export default defineComponent({
   name: 'Tree',
-  components: { TreeBadge },
+  components: { TreeKeyIcon },
   props: {
     treeNodes: {
       type: Array,
@@ -75,10 +75,11 @@ export default defineComponent({
     //   type: Boolean,
     //   default: false,
     // },
-    showBadge: Boolean,
   },
   emits: ['change'],
   setup(props, { emit }) {
+    const { state } = useStore()
+    const showIcon = computed(() => state.app.keyDisplayByIcon)
     const treeNodes: Ref<any[]> = computed(() => props.treeNodes)
     // const customIcon = computed(() => props.customIcon)
     // const showBadge = computed(() => props.showBadge)
@@ -119,7 +120,7 @@ export default defineComponent({
 
     const data = reactive({
       treeNodes,
-      // showBadge,
+      showIcon,
       // customIcon,
       selectedKey,
     })

@@ -1,23 +1,28 @@
 <template>
-  <div ref="terminalContainer" class="terminal-container"></div>
+  <div ref="refTerminalWrapper" class="terminal-wrapper">
+      <div ref="refTerminal"></div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, ref, Ref, markRaw } from 'vue'
+import { defineComponent, reactive, toRefs, onMounted, ref, markRaw, onBeforeUnmount } from 'vue'
 
-import { Terminal } from 'xterm'
+import { Terminal, ITerminalOptions } from 'xterm'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { FitAddon } from 'xterm-addon-fit'
 import { AttachAddon } from 'xterm-addon-attach'
-import 'xterm/css/xterm.css'
+// import 'xterm/css/xterm.css'
 
 export default defineComponent({
   name: 'Terminal',
   components: {},
   props: {},
-  setup(props, context) {
-    const terminalContainer = ref(null)
-    const terminalOptions = {
+  setup() {
+    const terminalOptions: ITerminalOptions = {
+      cursorBlink: true,
+      cursorStyle: 'bar',
+      cursorWidth: 4,
+      fontSize: 14,
       theme: {
         foreground: '#dcdfe4',
         background: '#282c34',
@@ -59,25 +64,33 @@ export default defineComponent({
     xterm.loadAddon(xtermWebLinksAddon)
     xterm.loadAddon(xtermFitAddon)
 
+    const refTerminalWrapper = ref(null)
+    const refTerminal = ref(null)
     const handleResize = () => {
+      refTerminal.value.style.height = `${refTerminalWrapper.value.offsetHeight}px`
       xtermFitAddon.fit()
     }
     onMounted(() => {
-      xterm.open((terminalContainer.value as unknown) as HTMLElement)
+      xterm.open((refTerminal.value as unknown) as HTMLElement)
       xterm.writeln('Hello world.')
-
+      for (let i = 0; i < 100; i++) {
+        xterm.writeln('Hello world.' + i)
+      }
+      handleResize()
       // xterm.focus()
-      xtermFitAddon.fit()
     })
 
-    const data = reactive({
-      terminalContainer,
+    onBeforeUnmount(() => {
+      xterm.dispose()
     })
+    const data = reactive({})
 
     return {
       ...toRefs(data),
       xterm,
       xtermFitAddon,
+      refTerminalWrapper,
+      refTerminal,
       handleResize,
     }
   },
@@ -85,9 +98,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.terminal-container {
+.terminal-wrapper {
   height: 100%;
-  background-color: $app-background;
-  // padding-left: 8px;
+  position: relative;
+  padding-left: $space-medium;
 }
 </style>

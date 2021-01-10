@@ -1,6 +1,6 @@
 <template>
-  <el-container class="console-container">
-    <el-header class="console-header">
+  <div ref="refConsoleContainer" class="console-container">
+    <div ref="refConsoleHeader" class="console-header">
       <el-row type="flex" justify="space-between">
         <el-col :span="20" class="console-header-left">
           <span>控制台</span>
@@ -9,33 +9,42 @@
           <el-button class="icon-button"><iconfont name="close" /></el-button>
         </el-col>
       </el-row>
-    </el-header>
-    <el-main class="console-main">
+    </div>
+    <div ref="refConsoleMain" class="console-main">
       <Terminal ref="refTerminal" />
-    </el-main>
-  </el-container>
+    </div>
+  </div>
 </template>
 
-<script lang='ts'>
-import { defineComponent, reactive, toRefs, onMounted, ref, Ref } from 'vue'
+<script lang="ts">
+import { defineComponent, reactive, toRefs, ref } from 'vue'
 import Terminal from '/@/components/Common/Terminal.vue'
 
 export default defineComponent({
   name: 'Console',
   components: { Terminal },
   props: {},
-  setup(props) {
+  setup() {
     const data = reactive({})
 
-    const refTerminal: Ref<any> = ref(null)
+    const refConsoleContainer = ref(null)
+    const refConsoleHeader = ref(null)
+    const refConsoleMain = ref(null)
+    const refTerminal = ref(null)
     const handleResize = () => {
+      // console.log(refConsoleContainer.value.offsetHeight)
+      refConsoleMain.value.style.height = `${
+        refConsoleContainer.value.offsetHeight - refConsoleHeader.value.offsetHeight
+      }px`
+      // console.log('resize', refConsoleMain.value.style.height)
       refTerminal.value.handleResize()
     }
 
-    onMounted(() => {})
-
     return {
       ...toRefs(data),
+      refConsoleContainer,
+      refConsoleHeader,
+      refConsoleMain,
       refTerminal,
       handleResize,
     }
@@ -68,8 +77,11 @@ export default defineComponent({
     text-align: right;
   }
   .console-main {
-    overflow: hidden;
     height: 100%;
+    // position: relative;
+    // background-color: red;
+    // box-sizing: border-box;
+    // height: calc(100% - #{$console-header-height});
   }
 }
 </style>

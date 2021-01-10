@@ -9,7 +9,7 @@
       </el-aside>
       <el-main class="app-layout-main">
         <splitpanes :dbl-click-splitter="false">
-          <pane :size="siderSize" v-show="siderVisiable">
+          <pane v-show="siderVisiable" :size="siderSize">
             <keep-alive>
               <component :is="activedComponent" />
             </keep-alive>
@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, provide, reactive, ref, toRefs, watchEffect } from 'vue'
+import { computed, defineComponent, onMounted, reactive, ref, toRefs, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 
 import { Splitpanes, Pane } from 'splitpanes'
@@ -67,7 +67,7 @@ import AboutDialog from '/@/components/AboutDialog.vue'
 import Explorer from '/@/components/Explorer.vue'
 import TempComponent from '/@/components/TempComponent.vue'
 
-import { useIpc } from '/@/hooks'
+import { useIpc, useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'App',
@@ -83,8 +83,9 @@ export default defineComponent({
     Explorer,
     TempComponent,
   },
-  setup(props) {
+  setup() {
     const { state, commit } = useStore()
+    const { getKeyDisplayByIcon } = useService('ConfigService')
     const appName = ref('Bartender')
     const siderVisiable = computed(() => !!state.app.activedNavMenuItem)
     const activedComponent = computed(() =>
@@ -100,12 +101,16 @@ export default defineComponent({
     // 容器大小
     const siderSize = ref(20)
     // const hubSize = ref(80)
-    const handleToggleSider = (value: any) => {
+    const handleToggleSider = (value: number) => {
       if (!value) siderSize.value = 0
       else siderSize.value = 20
     }
     watchEffect(() => handleToggleSider(state.app.activedNavMenuItem))
 
+    onMounted(async () => {
+      const keyDisplayByIcon = await getKeyDisplayByIcon()
+      commit('updateKeyDisplayByIcon', keyDisplayByIcon)
+    })
     const data = reactive({
       appName,
       activedComponent,

@@ -4,10 +4,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, computed, ref } from 'vue'
+import { defineComponent, reactive, toRefs, onMounted, computed } from 'vue'
 
 export default defineComponent({
-  name: 'TreeBadge',
+  name: 'TreeKeyIcon',
   components: {},
   props: {
     type: {
@@ -58,19 +58,19 @@ export default defineComponent({
     line-height: 14px;
     // height: 22px;
   }
-  &.redis-list .el-badge__content{
+  &.redis-list .el-badge__content {
     background-color: $redis-list-color;
   }
-  &.redis-set .el-badge__content{
+  &.redis-set .el-badge__content {
     background-color: $redis-set-color;
   }
-  &.redis-zset .el-badge__content{
+  &.redis-zset .el-badge__content {
     background-color: $redis-zset-color;
   }
-  &.redis-string .el-badge__content{
+  &.redis-string .el-badge__content {
     background-color: $redis-string-color;
   }
-  &.redis-hash .el-badge__content{
+  &.redis-hash .el-badge__content {
     background-color: $redis-hash-color;
   }
 }

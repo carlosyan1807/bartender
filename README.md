@@ -39,7 +39,7 @@
 | | 依赖|
 | --- | -- |
 | UI | [![element-plus](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/element-plus)](https://github.com/element-plus/element-plus) |
-| Editor | [![monaco-editor](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/monaco-editor)](https://github.com/microsoft/monaco-editor) [![codemirror](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/@codemirror/basic-setup)](https://github.com/codemirror/CodeMirror) <br/> monaco-editor或者codemirror-next，都在尝试中。 ![help wanted](https://img.shields.io/badge/-help%20wanted-red)|
+| Editor | [![codemirror.next](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/@codemirror/basic-setup)](https://github.com/codemirror/CodeMirror) |
 | Redis | [![ioredis](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/ioredis)](https://github.com/luin/ioredis) |
 | Terminal | [![xterm](https://img.shields.io/github/package-json/dependency-version/unclecarlos/bartender/xterm)](https://github.com/xtermjs/xterm.js)|
 

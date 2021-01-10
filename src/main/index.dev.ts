@@ -9,15 +9,15 @@ global.__windowUrls = new Proxy(
     },
   }
 )
-app.whenReady().then(async () => {
-  try {
-    await session.defaultSession.loadExtension(
-      app.getPath('home') + '\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ljjemllljcmogpfapbkkighbhhppjdbg\\6.0.0.3_0'
-    )
-  } catch (e) {
-    console.error('Vue Devtools failed to install:', e.toString())
-  }
-})
+// app.whenReady().then(async () => {
+//   try {
+//     await session.defaultSession.loadExtension(
+//       app.getPath('home') + '\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ljjemllljcmogpfapbkkighbhhppjdbg\\6.0.0.3_0'
+//     )
+//   } catch (e) {
+//     console.error('Vue Devtools failed to install:', e.toString())
+//   }
+// })
 app.on('browser-window-created', (event, window) => {
   if (!window.webContents.isDevToolsOpened()) {
     window.webContents.openDevTools()

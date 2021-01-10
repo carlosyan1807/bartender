@@ -8,6 +8,7 @@ body {
   font-size: $font-size-base;
   color: $text-color;
   text-align: left;
+  font-family: $font-family;
 }
 .app-layout {
   background-color: $app-background;
@@ -46,7 +47,23 @@ body {
 .settings-color {
   color: $icon-settings-color;
 }
-
+.icon-redis {
+  &.icon-redis-list {
+    color: $redis-list-color;
+  }
+  &.icon-redis-set {
+    color: $redis-set-color;
+  }
+  &.icon-redis-zset {
+    color: $redis-zset-color;
+  }
+  &.icon-redis-string {
+    color: $redis-string-color;
+  }
+  &.icon-redis-hash {
+    color: $redis-hash-color;
+  }
+}
 .icon-button.el-button {
   border: 0;
   padding: 0 $space-small;

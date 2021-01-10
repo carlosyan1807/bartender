@@ -60,7 +60,9 @@ export default defineComponent({
     text-overflow: ellipsis;
   }
   .sider-content {
-    height: calc(100vh - #{$app-titlebar-height} - #{$app-statusbar-height} - #{$app-sider-header-height});
+    height: calc(
+      100vh - #{$app-titlebar-height} - #{$app-statusbar-height} - #{$app-sider-header-height}
+    );
   }
 }
 </style>

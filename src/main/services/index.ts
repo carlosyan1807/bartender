@@ -3,12 +3,14 @@ import { Logger } from '../logger'
 import { BaseService } from './BaseService'
 import { FooService } from './FooService'
 import { RedisService } from './RedisService'
+import { ConfigService } from './ConfigService'
 import { INJECTIONS_SYMBOL } from './Service'
 
 /**
  * All services definition
  */
 export interface Services {
+  ConfigService: ConfigService
   FooService: FooService
   BaseService: BaseService
   RedisService: RedisService
@@ -26,6 +28,7 @@ export function initialize(logger: Logger) {
     BaseService: new BaseService(logger),
     FooService: new FooService(logger),
     RedisService: new RedisService(logger),
+    ConfigService: new ConfigService(logger),
   })
 }
 
