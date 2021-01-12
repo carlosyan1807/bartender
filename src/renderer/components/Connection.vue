@@ -60,7 +60,7 @@
             </pane>
           </splitpanes>
         </pane>
-        <pane v-if="showConsole" size="50" min-size="10">
+        <pane v-if="showConsole" ref="refConsolePane" size="50" min-size="10">
           <Console ref="refConsole" />
         </pane>
       </splitpanes>
@@ -79,7 +79,6 @@ import {
   defineComponent,
   watchEffect,
   provide,
-  nextTick,
   onUnmounted,
 } from 'vue'
 
@@ -157,7 +156,6 @@ export default defineComponent({
       keySelectedItem.value = { name: label, type }
     }
     // 设置组件大小
-    // TODO: 要控制高宽的地方很多，需改用ResizeObserver做全局
     const refKeyContainer = ref(null)
     const refKeyList = ref(null)
     const refKeyHeader = ref(null)
@@ -195,9 +193,9 @@ export default defineComponent({
       fetchKeys()
       // }
 
-      nextTick(() => {
-        handleComponentResize()
-      })
+      // nextTick(() => {
+      handleComponentResize()
+      // })
     })
 
     onUnmounted(() => {

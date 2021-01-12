@@ -1,17 +1,39 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, Tray } from 'electron'
 import { join } from 'path'
 import './dialog'
 import { Logger } from './logger'
 import { initialize } from './services'
+
+let appTray = null
+let trayContextMenu = null
+let appCurrentWindowId: number | null = null
 
 async function main() {
   const logger = new Logger()
   logger.initialize(app.getPath('userData'))
   initialize(logger)
   // app.commandLine.appendSwitch('disable-gpu')
-  app.commandLine.appendSwitch('disable-pinch')
+  // app.commandLine.appendSwitch('disable-pinch')
   app.whenReady().then(() => {
     createWindow()
+    // tray icon
+    const trayMenuTemplate = [
+      {
+        label: '退出',
+        click: () => app.quit(),
+      },
+    ]
+    trayContextMenu = Menu.buildFromTemplate(trayMenuTemplate)
+    appTray = new Tray(join(__dirname, './../../static/app-icon.png'))
+    appTray.setToolTip('Bartender')
+    appTray.setContextMenu(trayContextMenu)
+
+    appTray.on('click', () => {
+      if (appCurrentWindowId) {
+        const currentWindow = BrowserWindow.fromId(appCurrentWindowId)
+        return currentWindow.isVisible() ? currentWindow.hide() : currentWindow.show()
+      }
+    })
   })
 }
 
@@ -31,6 +53,7 @@ function createWindow() {
       nodeIntegration: false,
     },
   })
+  appCurrentWindowId = mainWindow.id
 
   mainWindow.loadURL(__windowUrls.index)
 
@@ -77,7 +100,7 @@ function createWindow() {
         mainWindow.reload()
         break
       case 'app-exit':
-        mainWindow.close()
+        mainWindow.hide()
         break
       default:
     }

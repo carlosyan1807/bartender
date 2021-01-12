@@ -24,14 +24,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref, toRefs } from 'vue'
+import { defineComponent, reactive, ref, toRefs } from 'vue'
 import { useIpc, useService } from '/@/hooks'
 
 // TODO: 失去焦点时的背景色和字体颜色变更
 
 export default defineComponent({
   name: 'TitleBar',
-  setup(props, { emit }) {
+  setup() {
     const { getBasicInformation } = useService('BaseService')
     const appName = ref('Bartender')
     const appVersion = ref('')
@@ -48,16 +48,7 @@ export default defineComponent({
 
     // 窗口控制
     const handleWindowAction = (action: string) => {
-      if (action === 'app-exit') {
-        // Modal.confirm({
-        //   title: '确认退出吗？',
-        //   cancelText: '取消',
-        //   okText: '退出',
-        //   onOk() {
-        //     useIpc().send('renderer2main', 'app-exit')
-        //   },
-        // })
-      } else useIpc().send('renderer2main', action)
+      useIpc().send('renderer2main', action)
     }
 
     useIpc().on('updateWindowStatus', (event, result) => {
@@ -110,8 +101,8 @@ export default defineComponent({
     // height: 100%;
     // height: @app-titlebar-height;
     position: relative;
-    z-index: 3000;
-    background-image: url('../../assets/logo.png');
+    z-index: 1000;
+    background-image: url('../../assets/app-icon.png');
     background-repeat: no-repeat;
     background-position: 50%;
     background-size: $font-size-base;

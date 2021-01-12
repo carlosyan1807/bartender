@@ -103,8 +103,11 @@
     // scrollbar-color: $border-color-base;
     scrollbar-width: thin;
 }
+.xterm-viewport::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
 .xterm-viewport::-webkit-scrollbar {
-  background-color: $component-background;
+  background-color: transparent;
   border-radius: 14px;
   width: 14px;
   height: 14px;

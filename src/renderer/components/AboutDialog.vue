@@ -2,8 +2,8 @@
   <el-dialog
     custom-class="about-dialog"
     :model-value="aboutDialogVisible"
-    @close="handleHideAboutDialog"
     :append-to-body="true"
+    @close="handleHideAboutDialog"
   >
     <template #title>
       Bartender <span class="app-version">{{ appVersion }}</span>

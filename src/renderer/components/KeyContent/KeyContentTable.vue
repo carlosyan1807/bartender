@@ -72,6 +72,23 @@ export default defineComponent({
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+  .el-table__body-wrapper {
+    &::-webkit-scrollbar-corner {
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar {
+      background-color: transparent;
+      width: 14px;
+      height: 14px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 14px;
+      border: 4px solid rgba(0, 0, 0, 0);
+      box-shadow: 10px 10px 0 $border-color-base inset;
+    }
+  }
+
   tr.current-row td:last-child::after {
     position: absolute;
     content: '';
