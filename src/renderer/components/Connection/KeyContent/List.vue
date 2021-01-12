@@ -1,7 +1,7 @@
 <template>
   <KeyContentPane>
     <template #keyTable>
-      <KeyContentTable :items="keyItems" type="zset" />
+      <KeyContentTable :items="keyItems" type="list" />
     </template>
     <CodeMirrorEditor />
   </KeyContentPane>
@@ -10,12 +10,12 @@
 <script lang="ts">
 import { computed, defineComponent, inject, reactive, toRefs, watchEffect } from 'vue'
 import { useService } from '/@/hooks'
-import KeyContentPane from '/@/components/KeyContent/KeyContentPane.vue'
-import KeyContentTable from '/@/components/KeyContent/KeyContentTable.vue'
+import KeyContentPane from '/@/components/Connection/KeyContentPane.vue'
+import KeyContentTable from '/@/components/Connection/KeyContentTable.vue'
 import CodeMirrorEditor from '/@/components/Common/CodeMirrorEditor.vue'
 
 export default defineComponent({
-  name: 'KeyContentZSet',
+  name: 'KeyContentList',
   components: { KeyContentPane, KeyContentTable, CodeMirrorEditor },
   props: {
     keyName: {
@@ -24,21 +24,17 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { getZSetKey } = useService('RedisService')
+    const { getListKey } = useService('RedisService')
     const connectionId = inject('connectionId') as string
     const keyName = computed(() => props.keyName)
-    const keyItems: { member: string }[] = reactive([])
+    const keyItems: { index: number; item: string }[] = reactive([])
 
     const getKey = async (name: string) => {
       const id = connectionId
-      const res = await getZSetKey(id, name)
-      const payload: { member: string; score: number }[] = []
-      if (res && res.length) {
-        for (let i = 0; i < res.length - 1; i += 2) {
-          payload.push({ member: res[i], score: Number(res[i + 1]) })
-        }
-      }
-      return payload
+      const res = await getListKey(id, name)
+      const result: { index: number; item: string }[] = []
+      if (res && res.length > 0) res.forEach((e, i) => result.push({ index: i, item: e }))
+      return result
     }
     watchEffect(async () => {
       const _key = keyName.value
@@ -49,7 +45,6 @@ export default defineComponent({
     const data = reactive({
       keyItems,
     })
-
     return {
       ...toRefs(data),
     }

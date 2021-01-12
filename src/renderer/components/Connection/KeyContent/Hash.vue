@@ -1,7 +1,7 @@
 <template>
   <KeyContentPane>
     <template #keyTable>
-      <KeyContentTable :items="keyItems" type="set" />
+      <KeyContentTable :items="keyItems" type="hash" />
     </template>
     <CodeMirrorEditor />
   </KeyContentPane>
@@ -10,12 +10,12 @@
 <script lang="ts">
 import { computed, defineComponent, inject, reactive, toRefs, watchEffect } from 'vue'
 import { useService } from '/@/hooks'
-import KeyContentPane from '/@/components/KeyContent/KeyContentPane.vue'
-import KeyContentTable from '/@/components/KeyContent/KeyContentTable.vue'
+import KeyContentPane from '/@/components/Connection/KeyContentPane.vue'
+import KeyContentTable from '/@/components/Connection/KeyContentTable.vue'
 import CodeMirrorEditor from '/@/components/Common/CodeMirrorEditor.vue'
 
 export default defineComponent({
-  name: 'KeyContentSet',
+  name: 'KeyContentHash',
   components: { KeyContentPane, KeyContentTable, CodeMirrorEditor },
   props: {
     keyName: {
@@ -24,28 +24,32 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { getSetKey } = useService('RedisService')
+    const { getHashKey } = useService('RedisService')
     const connectionId = inject('connectionId') as string
     const keyName = computed(() => props.keyName)
-    const keyItems: { member: string }[] = reactive([])
+    const keyItems: { key: string; value: string }[] = reactive([])
 
-    const getKey = async (name: string) => {
+    const getKey = async (name: string): Promise<[string, { key: string; value: string }[]]> => {
       const id = connectionId
-      const result = await getSetKey(id, name)
-      return result
+      const [cursor, res] = await getHashKey(id, name)
+      const result: { key: string; value: string }[] = []
+      if (res.length) {
+        for (let i = 0; i < res.length - 1; i += 2) {
+          result.push({ key: res[i].toString(), value: res[i + 1].toString() })
+        }
+      }
+      return [cursor, result]
     }
+
     watchEffect(async () => {
       const _key = keyName.value
       const [cursor, result] = await getKey(_key)
-      const payload: { member: string }[] = []
-      if (result && result.length > 0) result.forEach((e) => payload.push({ member: e }))
-      keyItems.splice(0, keyItems.length, ...payload)
+      keyItems.splice(0, keyItems.length, ...result)
     })
 
     const data = reactive({
       keyItems,
     })
-
     return {
       ...toRefs(data),
     }

@@ -7,32 +7,17 @@
       <slot></slot>
     </el-container>
   </el-container>
-  <!-- <component :is="activedComponent" /> -->
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, computed, watchEffect } from 'vue'
-// import Explorer from '/@/components/Explorer.vue'
-// import TempComponent from '/@/components/TempComponent.vue'
-
-import { useStore } from 'vuex'
+import { defineComponent, reactive, toRefs } from 'vue'
 
 export default defineComponent({
   name: 'Sider',
   components: {},
   props: {},
-  setup(props) {
-    const { state } = useStore()
-
-    // const activedComponent = computed(() =>
-    //   state.app.activedNavMenuItem === 'explorer' ? Explorer : TempComponent
-    // )
-    onMounted(() => {})
-
-    const data = reactive({
-      // siderVisiable,
-      // activedComponent
-    })
+  setup() {
+    const data = reactive({})
 
     return {
       ...toRefs(data),
@@ -42,10 +27,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-// @import url('../../themes/variables');
-
 .app-sider {
-  // height: calc(100vh - $app-titlebar-height - $app-statusbar-height);
   overflow: hidden;
 
   .sider-header {

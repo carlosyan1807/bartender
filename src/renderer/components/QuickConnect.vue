@@ -36,24 +36,14 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  inject,
-  onMounted,
-  reactive,
-  ref,
-  toRaw,
-  toRefs,
-  watchEffect,
-  WatchStopHandle,
-} from 'vue'
+import { defineComponent, reactive, ref, toRefs, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useIpc, useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'QuickConnect',
 
-  setup(props, { emit }) {
+  setup() {
     const { createConnection, listConnections } = useService('RedisService')
     // const $notification: any = inject('$notification')
     const formQuickConnect = reactive({

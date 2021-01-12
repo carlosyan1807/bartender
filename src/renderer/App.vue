@@ -23,32 +23,8 @@
     <el-footer class="app-layout-footer">
       <StatusBar />
     </el-footer>
-    <AboutDialog />
+    <DialogAbout />
   </el-container>
-  <!-- <a-layout>
-    <TitleBar :app-name="appName" />
-    <a-layout>
-      <a-layout-sider collapsed-width="48" :collapsed="true">
-        <NavMenu />
-      </a-layout-sider>
-      <a-layout>
-        <splitpanes class="splitpanes-theme" :dbl-click-splitter="false">
-          <pane :size="siderSize" v-show="siderVisiable">
-            <keep-alive>
-              <component :is="activedComponent" />
-            </keep-alive>
-          </pane>
-          <pane :size="100 - siderSize">
-            <Hub />
-          </pane>
-        </splitpanes>
-      </a-layout>
-    </a-layout>
-    <a-layout-footer>
-      <StatusBar />
-    </a-layout-footer>
-    <AboutDialog />
-  </a-layout> -->
 </template>
 
 <script lang="ts">
@@ -62,10 +38,10 @@ import NavMenu from '/@/components/Layout/NavMenu.vue'
 import Sider from '/@/components/Layout/Sider.vue'
 import StatusBar from '/@/components/Layout/StatusBar.vue'
 import Hub from '/@/components/Layout/Hub.vue'
-import AboutDialog from '/@/components/AboutDialog.vue'
+import DialogAbout from '/@/components/DialogAbout.vue'
 
-import Explorer from '/@/components/Explorer.vue'
-import TempComponent from '/@/components/TempComponent.vue'
+import SiderExplorer from '/@/components/SiderExplorer.vue'
+import SiderTemp from '/@/components/SiderTemp.vue'
 
 import { useIpc, useService } from '/@/hooks'
 
@@ -79,9 +55,9 @@ export default defineComponent({
     Splitpanes,
     Pane,
     Hub,
-    AboutDialog,
-    Explorer,
-    TempComponent,
+    DialogAbout,
+    SiderExplorer,
+    SiderTemp,
   },
   setup() {
     const { state, commit } = useStore()
@@ -89,7 +65,7 @@ export default defineComponent({
     const appName = ref('Bartender')
     const siderVisiable = computed(() => !!state.app.activedNavMenuItem)
     const activedComponent = computed(() =>
-      state.app.activedNavMenuItem === 'explorer' ? Explorer : TempComponent
+      state.app.activedNavMenuItem === 'explorer' ? SiderExplorer : SiderTemp
     )
     useIpc().on('connectionStatusUpdated', (event, res) => {
       console.log('%c connectionStatusUpdated', 'color:cyan', res)

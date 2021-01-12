@@ -3,7 +3,7 @@
     <template #header>
       <span>资源管理器</span>
     </template>
-    <el-collapse class="explorer-collapse" v-model="expandedKeys">
+    <el-collapse v-model="expandedKeys" class="explorer-collapse">
       <el-collapse-item name="1">
         <template #title><iconfont name="right" />收藏夹</template>
         <Tree :tree-nodes="favNodes" />
@@ -26,7 +26,7 @@ import Sider from '/@/components/Layout/Sider.vue'
 import Tree from '/@/components/Common/Tree.vue'
 
 export default defineComponent({
-  name: 'Explorer',
+  name: 'SiderExplorer',
   components: {
     Sider,
     Tree,
