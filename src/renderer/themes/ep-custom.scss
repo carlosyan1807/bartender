@@ -76,3 +76,11 @@ $--table-header-background-color: $component-background;// $--color-white !defau
 $--table-fixed-box-shadow: none; // 0 0 10px rgba(0, 0, 0, .12) !default;
 $--table-border-color: $border-color-base; // $--border-color-lighter !default;
 $--table-border: 1px solid $--table-border-color !default;
+
+$--radio-button-checked-background-color: darken($app-background, 5%); // $--color-primary !default;
+$--radio-button-checked-font-color: $text-color-highlight; // $--color-white !default;
+$--radio-button-checked-border-color: $--border-color-lighter; // $--color-primary !default;
+
+$--button-primary-border-color: $--color-primary !default;
+$--button-primary-font-color: $text-color-highlight; // $--color-white !default;
+$--button-primary-background-color: $--color-primary !default;

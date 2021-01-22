@@ -50,10 +50,16 @@ export default defineComponent({
         state: cmState,
         parent: (refEditor.value as unknown) as HTMLElement,
       })
-
       watchEffect(() => {
-        const newContent = content.value
-        cmView.dispatch({ changes: { from: 0, to: cmView.state.doc.length, insert: newContent } })
+        const cmState = markRaw(
+          EditorState.create({
+            doc: content.value,
+            extensions: [basicSetup, json(), oneDark, EditorView.lineWrapping],
+          })
+        )
+        cmView.setState(cmState)
+        // const newContent = content.value
+        // cmView.dispatch({ changes: { from: 0, to: cmView.state.doc.length, insert: newContent } })
       })
 
       // editorInstance = markRaw(CodeMirror.fromTextArea(instance.refs.refTextarea, {

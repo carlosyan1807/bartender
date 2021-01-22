@@ -50,7 +50,7 @@ function createWindow() {
     webPreferences: {
       preload: join(__static, 'preload.js'),
       contextIsolation: false,
-      nodeIntegration: false,
+      nodeIntegration: true,
     },
   })
   appCurrentWindowId = mainWindow.id

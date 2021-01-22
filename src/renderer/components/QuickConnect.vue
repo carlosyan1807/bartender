@@ -39,7 +39,6 @@
 import { defineComponent, reactive, ref, toRefs, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useIpc, useService } from '/@/hooks'
-
 export default defineComponent({
   name: 'QuickConnect',
 
@@ -51,7 +50,6 @@ export default defineComponent({
       port: '',
       password: '',
     })
-
     const isLoading = ref(false)
     const handleSubmitConnect = async (options: {
       host?: string
@@ -101,6 +99,7 @@ export default defineComponent({
     const consoleListConnections = () => {
       listConnections()
     }
+
     const data = reactive({
       formQuickConnect,
       isLoading,

@@ -48,7 +48,6 @@ export default defineComponent({
     const sysInfoArray: Ref<{ title: string; icon?: string; content: string }[]> = ref([])
     const appVersion = ref('')
     const handleHideAboutDialog = () => {
-      console.log('close')
       commit('updateAboutDialogVisiable', false)
     }
 
@@ -70,7 +69,7 @@ export default defineComponent({
       if (process.env.NODE_ENV === 'production') appVersion.value = 'v' + app
     }
 
-    onMounted(getSysInfo)
+    onMounted(() => getSysInfo())
 
     const data = reactive({
       aboutDialogVisible,

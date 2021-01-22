@@ -9,7 +9,9 @@
               <iconfont name="reload" @click="fetchKeys" />
             </template>
           </el-input>
-          <el-button size="mini"><iconfont name="plus" /></el-button>
+          <el-button plain size="mini" @click="handleShowDialogCreateKey">
+            <iconfont name="plus" />
+          </el-button>
         </el-space>
       </div>
       <div class="connection-header-right">
@@ -65,6 +67,7 @@
         </pane>
       </splitpanes>
     </div>
+    <DialogCreateKey :show="dialogCreateKeyVisiable" @close="dialogCreateKeyVisiable = false" />
   </div>
 </template>
 
@@ -80,6 +83,8 @@ import {
   watchEffect,
   provide,
   onUnmounted,
+  nextTick,
+  watch,
 } from 'vue'
 
 import { Splitpanes, Pane } from 'splitpanes'
@@ -88,13 +93,14 @@ import { Splitpanes, Pane } from 'splitpanes'
 import Tree from '/@/components/Common/Tree.vue'
 import KeyContent from '/@/components/Connection/KeyContent.vue'
 import Console from '/@/components/Connection/ConnectionConsole.vue'
+import DialogCreateKey from '/@/components/Connection/DialogCreateKey.vue'
 
 import { useStore } from 'vuex'
 import { useService } from '/@/hooks'
 
 export default defineComponent({
   name: 'Connection',
-  components: { Splitpanes, Pane, KeyContent, Tree, Console },
+  components: { Splitpanes, Pane, KeyContent, Tree, Console, DialogCreateKey },
   props: {
     connectionId: {
       type: String,
@@ -114,7 +120,7 @@ export default defineComponent({
     const isLoading = computed(() => connection.value.status !== 'ready')
     const showBadge = ref(true)
 
-    const showConsole = ref(true)
+    const showConsole = ref(false)
 
     // 获取DB数量
     const dbCount = ref(0)
@@ -164,10 +170,13 @@ export default defineComponent({
     const refConsolePane = ref(null)
     const refConsole = ref(null)
     const handleComponentResize = () => {
-      refKeyList.value.style.height = `${refKeyContainer.value.offsetHeight}px`
-      refKeyContent.value.style.height = `${refKeyContainer.value.offsetHeight}px`
-      refKeyListScrollbar.value.ps.update()
-      if (refConsole.value) refConsole.value.handleResize()
+      setTimeout(() => {
+        refKeyList.value.style.height = `${refKeyContainer.value.offsetHeight}px`
+        refKeyContent.value.style.height = `${refKeyContainer.value.offsetHeight}px`
+        refKeyListScrollbar.value.ps.update()
+        if (refConsole.value) refConsole.value.handleResize()
+      }, 0)
+
       // refKeyList.value.style.height = `${
       //   refKeyContainer.value.offsetHeight - refKeyHeader.value.offsetHeight
       // }px`
@@ -182,24 +191,21 @@ export default defineComponent({
       showConsole.value = !showConsole.value
       handleComponentResize()
     }
+    const dialogCreateKeyVisiable = ref(false)
+    const handleShowDialogCreateKey = () => {
+      dialogCreateKeyVisiable.value = true
+    }
     onMounted(async () => {
-      // const payload = {
-      //   id: toRaw(connection.value.id),
-      //   options: toRaw(connection.value.options),
-      // }
-      // const result = await createStandAloneConnection(payload.id, payload.options)
-      // if (result) {
       fetchDatabaseCount()
       fetchKeys()
-      // }
 
-      // nextTick(() => {
-      handleComponentResize()
-      // })
+      nextTick(() => {
+        handleComponentResize()
+      })
     })
 
     onUnmounted(() => {
-      if (refKeyListScrollbar.value?.ps) {
+      if (refKeyListScrollbar.value.ps) {
         refKeyListScrollbar.value.ps.destory()
         refKeyListScrollbar.value.ps = null
       }
@@ -215,6 +221,7 @@ export default defineComponent({
       showConsole,
       keySelectedItem,
       keySearchPatterns,
+      dialogCreateKeyVisiable,
     })
     return {
       ...toRefs(data),
@@ -231,6 +238,7 @@ export default defineComponent({
       handleComponentResize,
       handleChangeDb,
       handleToggleConsole,
+      handleShowDialogCreateKey,
     }
   },
 })
@@ -258,9 +266,7 @@ export default defineComponent({
   }
 }
 .connection-key-container {
-  // padding-top: $space-small;
   padding-left: $space-small;
-  // padding-right: $space-extra-small;
   height: 100%;
 
   .key-list-container {

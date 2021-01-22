@@ -7,12 +7,15 @@ const { external } = require('../package.json')
  * camelCase to kebab-case
  * @param {string} str
  */
-const kebabize = str => {
-  return str.split('').map((letter, idx) => {
-    return letter.toUpperCase() === letter
-     ? `${idx !== 0 ? '-' : ''}${letter.toLowerCase()}`
-     : letter;
-  }).join('');
+const kebabize = (str) => {
+  return str
+    .split('')
+    .map((letter, idx) => {
+      return letter.toUpperCase() === letter
+        ? `${idx !== 0 ? '-' : ''}${letter.toLowerCase()}`
+        : letter
+    })
+    .join('')
 }
 // const scssData = Object.keys(scssVariables).map(i => `\$${kebabize(i)}: ${scssVariables[i]};`).join('\n')
 // console.log(scssData)
@@ -28,12 +31,13 @@ const config = {
     '/@/': join(__dirname, '../src/renderer'),
   },
   optimizeDeps: {
+    link: ['ioredis'],
     exclude: external,
   },
   cssPreprocessOptions: {
     scss: {
       // additionalData: scssData
-      additionalData: `@import "../src/renderer/themes/variables.scss";`
+      additionalData: `@import "../src/renderer/themes/variables.scss";`,
     },
     // less: {
     //   javascriptEnabled: true,
